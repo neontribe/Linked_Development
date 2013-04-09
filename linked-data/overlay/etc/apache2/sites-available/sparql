@@ -1,0 +1,12 @@
+ProxyRequests Off
+ProxyPreserveHost On
+    
+	<Proxy *>
+            Order allow,deny
+            Allow from all
+    </Proxy>
+
+	ProxyPass /sparql/ http://localhost:8890/sparql/
+ProxyPassReverse /sparql/ http://localhost:8890/sparql/
+CustomLog /var/log/apache2/sparql.log vhost_combined
+LogLevel warn
