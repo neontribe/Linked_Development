@@ -1,0 +1,25 @@
+#!/bin/bash -ex
+# executed after apply-overlay
+
+# setting up apache for sparql and snorql
+a2enmod auth_digest proxy_http
+a2ensite sparql
+
+# clean up apache
+rm /var/www/index.html
+
+
+#load test eldis data into virtuoso
+
+#get data to where it is needed
+#python /opt/tools/eldis_crawl.py 
+
+
+#note we cannot do this here as virtuoso will not start in the chrooted patch environment
+#so we should do it on first boot
+#isql-vt -H localhost -S 1111 -U dba -P dba < /opt/tools/eldis_load.isql
+
+
+
+# tell the world what we've done!
+echo 'Hello world - I just patched TurnKey!' >> /etc/issue
