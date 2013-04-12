@@ -1,5 +1,5 @@
 #!/bin/bash
-python ../use_eldis.py 
+python /usr/lib/inithooks/bin/use_eldis.py 
 function pause(){
    read -p "$*"
 }

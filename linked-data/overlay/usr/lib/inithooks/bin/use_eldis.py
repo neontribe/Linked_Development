@@ -59,7 +59,7 @@ def main():
         #loop while there are new urls to go to. see Eldis documentation as to why
         while next_url != "No more pages":
             loop += 1
-            os.system('python /opt/tools/eldis_crawl "' + next_url + '" ' + str(loop) + ' /home/eldis/')
+            os.system('python /opt/tools/eldis_crawl.py "' + next_url + '" ' + str(loop) + ' /home/eldis/')
             next_url_fh = open('/home/eldis/nexturl','r')
             next_url = next_url_fh.read()
             next_url_fh.close()
