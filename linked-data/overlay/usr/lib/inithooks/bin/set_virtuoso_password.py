@@ -39,13 +39,7 @@ def main():
     password = d.get_password(
         "",
         "Please enter new password for the virtuoso.")
-    
-    try:
-        #if password is a number it needs to be a double quoted string
-        float(password)
-        qpassword = '"' + password + '"'
-    except:
-        qpassword = password
+
     f = open('/usr/lib/inithooks/firstboot.d/setpass', 'w')
     isql = """set password "dba" \"""" + password + """\";
 update DB.DBA.SYS_USERS set U_PASSWORD='""" + password + """' where U_NAME='dav';"""
