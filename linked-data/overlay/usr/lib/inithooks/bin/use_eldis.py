@@ -69,6 +69,11 @@ def main():
         #open default conection to isql and run commands in a file
         os.system("service  virtuoso-opensource-6.1 restart")
         os.system("isql-vt 1111 dba dba /opt/tools/eldis_load.isql")
+        
+        #so now look at add file to cron tab
+        fh = open('/etc/cron.d/eldis'), 'w')
+        fh.write('0 0 * * 0 /usr/bin/python /opt/tools/eldis_update.py')
+        fh.close()
 
 
 if __name__ == "__main__":

@@ -51,6 +51,10 @@ update DB.DBA.SYS_USERS set U_PASSWORD='""" + password + """' where U_NAME='dav'
     os.system(command)
     os.system('rm -f /usr/lib/inithooks/firstboot.d/setpass')
 
+    #we need to know the password for future use in scripts so we write it to a file
+    fh = open('/etc/virtuoso-opensource-6.1/password', 'w')
+    fh.wrtie(password)
+    fh.close()
 
 if __name__ == "__main__":
     main()
