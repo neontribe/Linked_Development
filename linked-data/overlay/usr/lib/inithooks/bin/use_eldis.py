@@ -67,7 +67,8 @@ def main():
             if loop > 500:
                 break
         #open default conection to isql and run commands in a file
-        os.system("service  virtuoso-opensource-6.1 start && isql-vt 1111 dba dba /opt/tools/eldis_load.isql")
+        os.system("service  virtuoso-opensource-6.1 restart")
+        os.system("isql-vt 1111 dba dba /opt/tools/eldis_load.isql")
 
 
 if __name__ == "__main__":
