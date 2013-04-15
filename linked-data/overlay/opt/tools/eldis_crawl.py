@@ -13,6 +13,7 @@ eg python eldis_crawl.py "http://www.getdata.com" 0 /home/neil/getdata
 #Crawler for Bridge / ELDIS
 #Currently works in one big batch - but may be better to rework so that it outputs a file for every 100 records, and then to merge and upload those later...
 
+import datetime
 import getopt
 import json
 import os
@@ -115,8 +116,11 @@ class Eldis(object):
         and take this as the input, and run a loop from outside this code to spawn a series
         of python processes so the memory is always freed when the process ends.
         
-        """
+        file names have a datestamp in them because virtuoso by default does not import the same
+        file twice. So without this updates will not be read.
         
+        """
+        date = datetime.date.today().isoformat()
         print "Reading "+self.data_url
         content = self.fetch_data(self.data_url)
         try:
@@ -191,7 +195,7 @@ class Eldis(object):
                         self.graph.add((uri,self.BIBO['uri'],fix_iri(document_url)))
                 except:
                     pass
-            rdf = open(self.out_dir + 'rdf/'+self.database+'-'+str(self.loop)+'.rdf','w')
+            rdf = open(self.out_dir + 'rdf/' + self.database + '-' + date + '-' + str(self.loop) + '.rdf','w')
             rdf.write(self.graph.serialize())
             rdf.close()
 

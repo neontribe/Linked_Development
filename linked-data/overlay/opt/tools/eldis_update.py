@@ -36,7 +36,7 @@ def main():
             break
     #open default conection to isql and run commands in a file
     #get virtuoso password
-    fh = open('/etc/virtuoso-opensource-6.1/password', 'w')
+    fh = open('/etc/virtuoso-opensource-6.1/password', 'r')
     password = fh.read()
     fh.close()
     os.system("isql-vt 1111 dba " + password + " /opt/tools/eldis_update.isql")
