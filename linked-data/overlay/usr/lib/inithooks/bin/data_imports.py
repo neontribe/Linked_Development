@@ -19,16 +19,6 @@ from subprocess import PIPE
 from use_eldis import main as eldis_setup
 from use_r4d import main as r4d_setup
 
-def fatal(s):
-    print >> sys.stderr, "Error:", s
-    sys.exit(1)
-
-def usage(e=None):
-    if e:
-        print >> sys.stderr, "Error:", e
-    print >> sys.stderr, "Syntax: %s" % sys.argv[0]
-    print >> sys.stderr, __doc__
-    sys.exit(1)
 
 def main():
     
