@@ -22,6 +22,9 @@ from use_r4d import main as r4d_setup
 
 def main():
     
+    #ensure virtuoso is using new ini file
+    os.system('service virtuoso-opensource-6.1 restart')
+    
     d = Dialog('TurnKey Linux - First boot configuration')
     eldis = d.yesno(
         "ELDIS data",

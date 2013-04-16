@@ -19,11 +19,11 @@ def main():
     os.system('echo http://r4d.graph.iri > /home/r4d/rdf/global.graph')
     os.system('touch /home/r4d/active')
     
-    os.system('wget  http://www.dfid.gov.uk/r4d/rdf/R4DOutputsData.zip > /home/r4d/rdf/R4D.zip')
+    os.system('wget  http://www.dfid.gov.uk/r4d/rdf/R4DOutputsData.zip')
+    os.system('mv R4DOutputsData.zip /home/r4d/rdf/')
     #unpack r4d data
-    os.system('cd /home/r4d/rdf')
-    os.system('unzip R4D.zip')
-    os.system('rm -f R4D.zip')
+    os.system('unzip /home/r4d/rdf/R4DOutputsData.zip -d /home/r4d/rdf/')
+    os.system('rm -f /home/r4d/rdf/R4DOutputsData.zip')
     
     #open default conection to isql and run commands in a file
     os.system("service  virtuoso-opensource-6.1 restart")
