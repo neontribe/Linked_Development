@@ -6,9 +6,9 @@ cwd=$(dirname $0)
 source $cwd/functions
 
 # Install packages
-install apache2 openjdk-6-jre openssh-server php5 python2.6 virtuoso-opensource virtuoso-vad-conductor virtuoso-vad-isparql wget python-pip
+install apache2 openjdk-6-jre openssh-server php5 python2.6 virtuoso-opensource virtuoso-vad-conductor virtuoso-vad-isparql wget python-pip postfix
 
 pip install rdflib>3.1
 
 # Report on installation.
-echo 'Added apache2 openjdk openssh-server php python virtuoso wget' >> /etc/issue
+echo 'Added apache2 openjdk openssh-server php python virtuoso wget pip postfix' >> /etc/issue
