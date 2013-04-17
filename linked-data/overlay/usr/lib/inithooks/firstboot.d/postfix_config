@@ -10,7 +10,7 @@
 # /usr/sbin/postconf -e "myhostname = server1.example.com"
 
 # Now add the domain names that your system will handle
-# /usr/sbin/postconf -e "relay_dmonains = example.com, example2.com"
+# /usr/sbin/postconf -e "relay_domains = example.com, example2.com"
 
 # reload postfix
 # /usr/sbin/postfix reload
