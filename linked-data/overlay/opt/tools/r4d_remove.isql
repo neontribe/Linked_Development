@@ -1,0 +1,2 @@
+SPARQL CLEAR GRAPH <http://r4d.graph.iri>;
+exit;
