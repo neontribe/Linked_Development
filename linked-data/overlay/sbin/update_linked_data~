@@ -10,8 +10,6 @@ a simple program to manage which linked data sources are used on this system
 
 from dialog import Dialog
 import os
-import sys
-
 
 
 def main():
@@ -20,7 +18,7 @@ def main():
     #find out what we data sources are in use
     using = {}
     using['eldis'] = 'on' if os.path.exists('/home/eldis/active') else 'off'
-    using['r4d'] = 'on' if os.path.exists('/home/rd4/active') else 'off'
+    using['r4d'] = 'on' if os.path.exists('/home/r4d/active') else 'off'
     
     text = """choose which data sources to use on this server
     """
@@ -29,10 +27,10 @@ def main():
     data_sources_to_use = dialog.checklist(text, choices=choices)
     
     #add eldis data
-    if not os.path.exists('/home/eldis/active') and 'eldis' in data_sources_to_use:
+    if not os.path.exists('/home/eldis/active') and 'eldis' in data_sources_to_use[1]:
         os.system('python /usr/lib/inithooks/bin/use_eldis.py')
     #remove eldis
-    if os.path.exists('/home/eldis/active') and 'eldis' not in data_sources_to_use:
+    if os.path.exists('/home/eldis/active') and 'eldis' not in data_sources_to_use[1]:
         os.system('rm -rf /home/eldis')
         #get virtuoso password
         fh = open('/etc/virtuoso-opensource-6.1/password', 'r')
@@ -41,10 +39,10 @@ def main():
         os.system("isql-vt 1111 dba " + password + " /opt/tools/eldis_remove.isql")
         os.system('rm -f /etc/cron.d/eldis')
     #add r4d data
-    if not os.path.exists('/home/r4d/active') and 'r4d' in data_sources_to_use:
+    if not os.path.exists('/home/r4d/active') and 'r4d' in data_sources_to_use[1]:
         os.system('python /usr/lib/inithooks/bin/use_r4d.py')
     #remove r4d
-    if os.path.exists('/home/r4d/active') and 'r4d' not in data_sources_to_use:
+    if os.path.exists('/home/r4d/active') and 'r4d' not in data_sources_to_use[1]:
         os.system('rm -rf /home/r4d')
         #get virtuoso password
         fh = open('/etc/virtuoso-opensource-6.1/password', 'r')

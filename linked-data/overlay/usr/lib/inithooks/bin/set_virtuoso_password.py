@@ -42,7 +42,8 @@ def main():
 
     f = open('/usr/lib/inithooks/firstboot.d/setpass', 'w')
     isql = """set password "dba" \"""" + password + """\";
-update DB.DBA.SYS_USERS set U_PASSWORD='""" + password + """' where U_NAME='dav';"""
+update DB.DBA.SYS_USERS set U_PASSWORD='""" + password + """' where U_NAME='dav';
+exit;"""
     f.write(isql)
     f.close()
     
