@@ -18,6 +18,7 @@ def main():
     os.system('mkdir -p /home/eldis/rdf')
     os.system('echo http://eldis.graph.iri > /home/eldis/rdf/global.graph')
     os.system('touch /home/eldis/active')
+    
     #start import of eldis data
     loop = 1
     os.system('python /opt/tools/eldis_crawl.py "http://api.ids.ac.uk/openapi/eldis/get_all/documents/full?num_results=1000" 1 /home/eldis/')
@@ -36,8 +37,11 @@ def main():
         if loop > 500:
             break
     #open default conection to isql and run commands in a file
-    #os.system("service  virtuoso-opensource-6.1 restart")
-    os.system("isql-vt 1111 dba dba /opt/tools/eldis_load.isql")
+    #get virtuoso password
+    fh = open('/etc/virtuoso-opensource-6.1/password', 'r')
+    password = fh.read()
+    fh.close()
+    os.system("isql-vt 1111 dba " + password + " /opt/tools/eldis_load.isql")
     
     #so now look at add file to cron tab
     fh = open('/etc/cron.d/eldis', 'w')

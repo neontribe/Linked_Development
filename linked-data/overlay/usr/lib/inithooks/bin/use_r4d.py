@@ -26,8 +26,11 @@ def main():
     os.system('rm -f /home/r4d/rdf/R4DOutputsData.zip')
     
     #open default conection to isql and run commands in a file
-    #os.system("service  virtuoso-opensource-6.1 restart")
-    os.system("isql-vt 1111 dba dba /opt/tools/r4d_load.isql")
+    #get virtuoso password
+    fh = open('/etc/virtuoso-opensource-6.1/password', 'r')
+    password = fh.read()
+    fh.close()
+    os.system("isql-vt 1111 dba " + password + " /opt/tools/r4d_load.isql")
     
     #so now look at add file to cron tab
     fh = open('/etc/cron.d/r4d', 'w')
