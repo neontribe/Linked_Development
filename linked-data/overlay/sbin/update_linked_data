@@ -13,7 +13,7 @@ import os
 
 
 def main():
-    dialog = Dialog('config Linked-data')
+    dialog = Dialog()
     
     #find out what we data sources are in use
     using = {}

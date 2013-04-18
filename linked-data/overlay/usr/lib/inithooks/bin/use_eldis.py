@@ -18,8 +18,6 @@ def main():
     os.system('mkdir -p /home/eldis/rdf')
     os.system('echo http://eldis.graph.iri > /home/eldis/rdf/global.graph')
     os.system('touch /home/eldis/active')
-    #launch the python crawler
-    os.system('ln -s /opt/tools/eldis_crawl.py /usr/lib/inithooks/bin/')
     #start import of eldis data
     loop = 1
     os.system('python /opt/tools/eldis_crawl.py "http://api.ids.ac.uk/openapi/eldis/get_all/documents/full?num_results=1000" 1 /home/eldis/')
