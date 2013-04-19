@@ -1,0 +1,28 @@
+#!/bin/sh
+DIALOG=${DIALOG=dialog}
+tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+trap "rm -f $tempfile" 0 1 2 5 15
+
+$DIALOG --title "Hostname" --clear \
+        --inputbox "Please enter a hostname for this system:" 16 51 2> $tempfile
+
+hstname=`cat $tempfile`
+
+retval=$?
+
+case $retval in
+  0)
+    sed -i "s/core/$hstname/g" /etc/hostname
+    sed -i "s/core/$hstname/g" /etc/hosts
+    echo $hstname
+    ;;
+  1)
+    echo "Cancel pressed.";;
+  255)
+    if test -s $hostname ; then
+      cat $hostname
+    else
+      echo "ESC pressed."
+    fi
+    ;;
+esac
