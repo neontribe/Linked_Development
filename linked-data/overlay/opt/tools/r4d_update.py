@@ -26,7 +26,7 @@ import datetime
 def main():
     os.system('rm -rf /home/r4d/rdf/*')
     os.system('mkdir -p /home/r4d/rdf/new')
-    os.system('echo http://r4d.graph.iri > /home/r4d/rdf/global.graph')
+    os.system('echo http://linked-development.org/r4d/ > /home/r4d/rdf/global.graph')
     
     os.system('wget  http://www.dfid.gov.uk/r4d/rdf/R4DOutputsData.zip')
     os.system('mv R4DOutputsData.zip /home/r4d/rdf/new/R4DOutputsData.zip')
