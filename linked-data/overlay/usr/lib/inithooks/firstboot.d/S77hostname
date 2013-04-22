@@ -26,3 +26,6 @@ case $retval in
     fi
     ;;
 esac
+
+/usr/sbin/usr/sbin/invoke-rc.d hostname.sh start
+/usr/sbin/invoke-rc.d networking force-reload
