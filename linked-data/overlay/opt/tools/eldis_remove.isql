@@ -1,2 +1,2 @@
-SPARQL CLEAR GRAPH <http://eldis.graph.iri>;
+SPARQL CLEAR GRAPH <http://linked-development.org/eldis/>;
 exit;
