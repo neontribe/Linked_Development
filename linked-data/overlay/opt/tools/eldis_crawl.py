@@ -2,6 +2,20 @@
 copyright 2013 neontribe ltd neil@neontribe.co.uk
 based on a script provided by Tim Davies
 
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 takes three arguments, the first the data_url to query (quoted) 
 the second is a loop number
 the third is an output directory
@@ -112,7 +126,7 @@ class Eldis(object):
         I cannot find a way to free this from inside python have looked at gc module, I suspect this
         may lie in some underlieing code.
         
-        the current fix will to to write out to a file either a follow up url or 'finished', 
+        the current fix will to to write out to a file either a follow up url or 'No more pages', 
         and take this as the input, and run a loop from outside this code to spawn a series
         of python processes so the memory is always freed when the process ends.
         
@@ -198,8 +212,8 @@ class Eldis(object):
             rdf = open(self.out_dir + 'rdf/' + self.database + '-' + date + '-' + str(self.loop) + '.rdf','w')
             rdf.write(self.graph.serialize())
             rdf.close()
-
-            self.graph.remove((None,None,None))
+            #no longer needed
+            #self.graph.remove((None,None,None))
             
             contfile = open(self.out_dir + 'nexturl', 'w')
             try:
