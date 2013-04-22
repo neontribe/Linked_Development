@@ -56,6 +56,8 @@ exit;"""
     fh = open('/etc/virtuoso-opensource-6.1/password', 'w')
     fh.write(password)
     fh.close()
+    
+    os.system("/opt/tools/call_isql /opt/tools/activate_vad.isql")
 
 if __name__ == "__main__":
     main()

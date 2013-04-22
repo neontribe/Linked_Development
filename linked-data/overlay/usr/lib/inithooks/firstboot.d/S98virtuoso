@@ -1,4 +1,4 @@
 #!/bin/bash
-#turn virtuoso on to be able to change passwords
+#will set the virtuoso password and install vad packages
 python /usr/lib/inithooks/bin/set_virtuoso_password.py 
 exit
