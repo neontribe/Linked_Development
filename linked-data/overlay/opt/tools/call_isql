@@ -1,0 +1,74 @@
+#!/usr/bin/env python
+
+"""
+a simple program to manage how data is loaded into  triple store
+copyright 2013 neontribe ltd neil@neontribe.co.uk
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+expects a comand line with two args
+a filename and optional database name
+if no database name is given the default is used from /etc/linked_data/database
+eg call_isql virtuoso /opt/tools/eldis_load.isql
+
+"""
+
+import getopt
+import os
+import sys
+
+
+
+def usage(e=None):
+    if e:
+        print >> sys.stderr, "Error:", e
+    print >> sys.stderr, "Syntax: %s" % sys.argv[0]
+    print >> sys.stderr, __doc__
+    sys.exit(1)
+
+def virtuoso(filename):
+    """runs the isql in the file filename with isql-vt
+    """
+    fh = open('/etc/virtuoso-opensource-6.1/password', 'r')
+    password = fh.read()
+    fh.close()
+    os.system("/usr/bin/isql-vt 1111 dba " + password + " " + filename)
+    sys.exit(0)
+
+def main():
+    """takes commandline args and runs isql for that triple store
+    currently only supports virtuoso
+    """
+    try:
+        opts, args = getopt.gnu_getopt(sys.argv[1:], "", [])
+    except getopt.GetoptError, e:
+        usage(e):
+    if len(args) == 0:
+        usage()
+    if len(args) > 1:
+        database = args[1]
+    else:
+        fh = open('/etc/linked_data/database', 'r')
+        database = fh.read()
+        fh.close()
+    
+    if database == 'virtuoso':
+        virtuoso(args[0])
+    else:
+        print >> sys.stderr, "unknown database " + database
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
