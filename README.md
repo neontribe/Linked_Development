@@ -18,8 +18,8 @@ patch-name/conf/pre-overlay
 
 Once these patches have been complete they can be applied to the "Turnkey Core" to produce installation media.
 
-# wget http://downloads.sourceforge.net/project/turnkeylinux/iso/turnkey-core-12.0-squeeze-x86.iso
-# git clone https://github.com/neontribe/Linked-Data.git
-# tklpatch turnkey-core-12.0-squeeze-x86.iso Linked-Data/linked-data/
+$ wget http://downloads.sourceforge.net/project/turnkeylinux/iso/turnkey-core-12.0-squeeze-x86.iso  
+$ git clone https://github.com/neontribe/Linked-Data.git  
+$ tklpatch turnkey-core-12.0-squeeze-x86.iso Linked-Data/linked-data/  
 
-Should result in you having a turnkey-core-12.0-squeeze-x86-patched.iso.
+Should result in you having a turnkey-core-12.0-squeeze-x86-patched.iso.  
