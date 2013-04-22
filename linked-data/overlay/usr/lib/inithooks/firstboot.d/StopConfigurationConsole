@@ -1,0 +1,3 @@
+#!/bin/sh
+/etc/init.d/confconsole stop
+/usr/sbin/update-rc.d -f confconsole remove
