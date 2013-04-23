@@ -28,4 +28,6 @@ case $retval in
 esac
 
 /usr/sbin/usr/sbin/invoke-rc.d hostname.sh start
-/usr/sbin/invoke-rc.d networking force-reload
+
+# testing as doesn't look like we need the force-reload on networking
+# /usr/sbin/invoke-rc.d networking force-reload
