@@ -1,0 +1,16 @@
+#!/bin/bash
+# Configure postfix
+# Currently does nothing, it's possible we could prompt for 
+# domain, hostname and relay domains, they may want to be fixed
+
+# Add your domain to the config files, to stop abuse of mailsystem
+/usr/sbin/postconf -e "myorigin = `dnsdomainname`"
+
+# Add your hostname 
+/usr/sbin/postconf -e "myhostname = `hostname`"
+
+# Now add the domain names that your system will handle
+/usr/sbin/postconf -e "relay_domains = `dnsdomainname`"
+
+# reload postfix
+/usr/sbin/postfix reload
