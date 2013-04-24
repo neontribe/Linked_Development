@@ -56,8 +56,11 @@ exit;"""
     fh = open('/etc/virtuoso-opensource-6.1/password', 'w')
     fh.write(password)
     fh.close()
-    
+    #activate vads as this was not done during the patch install
     os.system("/opt/tools/call_isql /opt/tools/activate_vad.isql")
+    #add pathing and virtual hosts for custom endpoints
+    os.system("/opt/tools/call_isql /opt/tools/multi-end-points.isql")
+
 
 if __name__ == "__main__":
     main()

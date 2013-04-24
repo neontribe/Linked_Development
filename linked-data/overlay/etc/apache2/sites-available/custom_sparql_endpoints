@@ -1,0 +1,14 @@
+ProxyRequests Off
+ProxyPreserveHost On
+
+    <Proxy *>
+        Order allow,deny
+        Allow from all
+    </Proxy>
+
+ProxyPass /eldis/sparql http://localhost:8891/eldis/sparql
+ProxyPassReverse /eldis/sparql http://localhost:8891/eldis/sparql
+
+ProxyPass /r4d/sparql http://localhost:8892/r4d/sparql
+ProxyPassReverse /r4d/sparql http://localhost:8892/r4d/sparql
+

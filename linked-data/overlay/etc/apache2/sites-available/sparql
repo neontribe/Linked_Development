@@ -6,7 +6,9 @@ ProxyPreserveHost On
         Allow from all
     </Proxy>
 
-ProxyPass /sparql/ http://localhost:8890/sparql/
-ProxyPassReverse /sparql/ http://localhost:8890/sparql/
-CustomLog /var/log/apache2/sparql.log vhost_combined
-LogLevel warn
+ProxyPass /sparql http://localhost:8890/sparql
+ProxyPassReverse /sparql http://localhost:8890/sparql
+
+
+
+
