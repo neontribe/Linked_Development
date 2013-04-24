@@ -6,9 +6,9 @@ ProxyPreserveHost On
         Allow from all
     </Proxy>
 
-ProxyPass /eldis/sparql http://localhost:8891/eldis/sparql
-ProxyPassReverse /eldis/sparql http://localhost:8891/eldis/sparql
+ProxyPass /eldis/sparql http://localhost:8891/sparql
+ProxyPassReverse /eldis/sparql http://localhost:8891/sparql
 
-ProxyPass /r4d/sparql http://localhost:8892/r4d/sparql
-ProxyPassReverse /r4d/sparql http://localhost:8892/r4d/sparql
+ProxyPass /r4d/sparql http://localhost:8892/sparql
+ProxyPassReverse /r4d/sparql http://localhost:8892/sparql
 
