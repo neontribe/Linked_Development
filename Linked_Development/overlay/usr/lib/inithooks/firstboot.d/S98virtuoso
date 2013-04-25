@@ -1,0 +1,4 @@
+#!/bin/bash
+#will set the virtuoso password and install vad packages
+python /usr/lib/inithooks/bin/setup_virtuoso.py 
+exit
