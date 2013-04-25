@@ -1,1 +1,4 @@
 *.pyc
+
+# Machine specific settings
+laravel/app/config/sparql.php

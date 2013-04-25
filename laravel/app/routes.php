@@ -18,12 +18,13 @@ Route::get('/', function()
 
 Route::get('poc', function()
 {
+    $url = Config::get('sparql.endpoint');
 	$parser = ARC2::getRDFParser();
-	$parser->parse('http://localhost:8890/sparql');
+	$parser->parse($url);
 	$triples = $parser->getTriples();
 	$data = '';
 	foreach ($triples as $triple) {
 		$data .= print_r($triple, true) . "\n";
 	}
-	return "<pre>" . $data . "</pre>";
+	return "<html><body><h1>Hitting $url</h1><pre>" . $data . "</pre></body></html>";
 });

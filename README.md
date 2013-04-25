@@ -29,3 +29,21 @@ once running, the user 'linked-data' is created with ssh access.
 
 look in linked-data/conf/pre-overlay for a list of installed packages.  
 
+## Laravel
+==========
+
+The laravel install sits in the Laravel folder.  To set it up cd into the laravel root folder and run composer:
+
+    curl -sS https://getcomposer.org/installer | php
+    php composer.phar install
+
+Set the permissions:
+
+    sudo chmod -R www-data:www-data app/storage
+
+Create/link the correct enviroment:
+
+    cd app/config
+    ln -s sparql.`hostname`.php sparql.php
+
+And that should be it.  More as I get more foo with laravel
