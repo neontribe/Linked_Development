@@ -70,7 +70,7 @@ def main():
         if not os.path.exists('/home/eldis/active') and 'eldis' in data_sources_to_use[1]:
             if first_boot:
                 fh = open('/etc/cron.d/eldis_first_boot', 'w')
-                fh.write(time_plus_half_hour + ' * * * * root /bin/bash /root/.profile;/usr/bin/python /usr/lib/inithooks/bin/use_eldis.py && rm /etc/cron.d/eldis_first_boot')
+                fh.write(time_plus_half_hour + ' * * * * root /bin/bash /root/.profile;/usr/bin/python /usr/lib/inithooks/bin/use_eldis.py && rm /etc/cron.d/eldis_first_boot\n')fh.write(time_plus_half_hour + ' * * * * root /bin/bash /root/.profile;/bin/echo `/bin/date` > ~/fishes_e\n')
                 fh.close()
             else:
                 os.system('/usr/bin/python /usr/lib/inithooks/bin/use_eldis.py')
@@ -83,8 +83,8 @@ def main():
         if not os.path.exists('/home/r4d/active') and 'r4d' in data_sources_to_use[1]:
             if first_boot:
                 fh = open('/etc/cron.d/r4d_first_boot', 'w')
-                fh.write(time_plus_half_hour + ' * * * * root /bin/bash /root/.profile;/usr/bin/python /usr/lib/inithooks/bin/use_r4d.py && rm /etc/cron.d/r4d_first_boot')
-                fh.write(time_plus_half_hour + ' * * * * root /bin/bash /root/.profile;/bin/echo `/bin/date` > ~/fishes')
+                fh.write(time_plus_half_hour + ' * * * * root /bin/bash /root/.profile;/usr/bin/python /usr/lib/inithooks/bin/use_r4d.py && rm /etc/cron.d/r4d_first_boot\n')
+                fh.write(time_plus_half_hour + ' * * * * root /bin/bash /root/.profile;/bin/echo `/bin/date` > ~/fishes_r\n')
                 fh.close()
             else:
                 os.system('/usr/bin/python /usr/lib/inithooks/bin/use_r4d.py')
