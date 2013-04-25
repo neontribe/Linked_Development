@@ -1,7 +1,15 @@
 Linked_Development
 ==================
 
-Neontribe are developing a Turnkey patch to install infrastructure and scripts to import data from various sources.  The system is intended to allow an organisation to expose information about research projects as Linked Data.
+Linked-development.org is a prototype platform providing access to various international development related datasets as linked open data. By using common vocabularies, and making links between data from different providers, it can overcome organisational barriers and can provide seamless access to development knowledge from many different providers. 
+
+The project has 3 stages:
+
+(1) Server build
+
+Creating a secure and fully functioning server with Virtuoso, Apache and other relevant tools, with any required documentation scripts to ensure that a repeat build can be easily deployed.
+
+Neontribe are developing a Turnkey patch to install and configure this infrastructure.
 
 A Turnkey patch compromises the following structure:
 
@@ -25,7 +33,18 @@ Should result in you having a turnkey-core-12.0-squeeze-x86-patched.iso.
 NB: the patch is currently being tested against turnkey-core-13.0rc-wheezy-i386 ready for the wheezy debian release.  
 
 the linked-data server can be reconfigured as root running update_linked_data from the command line  
+ 
 once running, the user 'linked-data' is created with ssh access. 
 
 look in linked-data/conf/pre-overlay for a list of installed packages.  
+
+(2) Loading data
+
+Neontribe are working with scripts provided by Tim Davies of Practical Participation to incorporate scripts to import data from various sources as part of the Turnkey patch.  The system is intended to allow an organisation to expose information about research projects as Linked Data.
+
+(3) IDS API Clone
+
+A number of applications are already built which work against the Institute for Development Studies API: http://api.ids.ac.uk/ 
+
+This project aims to create a feature and output compatible version of this API, backed by its own triple store. The is that existing applications can be pointed to a wider range of research resources, making both IDS and ELDIS data accessible through a common API layer.
 
