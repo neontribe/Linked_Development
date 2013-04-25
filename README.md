@@ -1,7 +1,7 @@
 Linked_Development
 ==================
 
-Linked-development.org is a prototype platform providing access to various international development related datasets as linked open data. By using common vocabularies, and making links between data from different providers, it can overcome organisational barriers and can provide seamless access to development knowledge from many different providers. 
+Linked_Development will deliver a prototype platform providing access to various international development related datasets as linked open data. By using common vocabularies, and making links between data from different providers, it can overcome organisational barriers and can provide seamless access to development knowledge from many different providers. 
 
 The project has 3 stages:
 
