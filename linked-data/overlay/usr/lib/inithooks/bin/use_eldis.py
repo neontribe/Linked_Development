@@ -50,7 +50,7 @@ def main():
     
     #so now look at add file to cron tab
     fh = open('/etc/cron.d/eldis', 'w')
-    fh.write('0 0 * * 0 root /usr/bin/python /opt/tools/eldis_update.py')
+    fh.write('0 0 * * 0 root /bin/bash /root/.profile;/usr/bin/python /opt/tools/eldis_update.py')
     fh.close()
 
 
