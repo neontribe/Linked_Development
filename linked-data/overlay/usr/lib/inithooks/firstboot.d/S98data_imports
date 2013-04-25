@@ -1,4 +1,0 @@
-#!/bin/bash
-#python /usr/lib/inithooks/bin/data_imports.py
-/sbin/update_linked_data first_boot
-exit

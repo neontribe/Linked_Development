@@ -1,3 +1,0 @@
-#!/bin/bash
-virtuoso-t +wait -c /etc/virtuoso-opensource-6.1/virtuoso.ini
-#service virtuoso-opensource-6.1 start
