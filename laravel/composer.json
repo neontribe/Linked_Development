@@ -1,7 +1,8 @@
 {
 	"require": {
 		"laravel/framework": "4.0.*",
-		"semsol/arc2": "*"
+		"semsol/arc2": "*",
+        "graphite-graph/graphite-graph": "dev-master"
 	},
 	"autoload": {
 		"classmap": [
