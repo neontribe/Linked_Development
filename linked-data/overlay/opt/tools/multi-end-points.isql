@@ -1,0 +1,5 @@
+Insert INTO "DB"."DBA"."SYS_SPARQL_HOST" (DB.DBA.SYS_SPARQL_HOST.SH_HOST,DB.DBA.SYS_SPARQL_HOST.SH_GRAPH_URI) VALUES ('localhost:8891','http://linked-development.org/eldis/');
+Insert INTO "DB"."DBA"."SYS_SPARQL_HOST" (DB.DBA.SYS_SPARQL_HOST.SH_HOST,DB.DBA.SYS_SPARQL_HOST.SH_GRAPH_URI) VALUES ('localhost:8892','http://linked-development.org/r4d/');
+
+VHOST_DEFINE (vhost=>'localhost',   lhost=>':8891',   lpath=>'/sparql',   ppath=>'/!sparql/',   is_dav=>1,   vsp_user=>'dba', ses_vars=>0, opts=>vector('noinherit', 1), is_default_host=>1);
+VHOST_DEFINE (vhost=>'localhost',   lhost=>':8892',   lpath=>'/sparql',   ppath=>'/!sparql/',   is_dav=>1,   vsp_user=>'dba', ses_vars=>0, opts=>vector('noinherit', 1), is_default_host=>1);
