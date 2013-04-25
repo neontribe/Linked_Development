@@ -1,11 +1,9 @@
 Linked-Data
 ===========
 
-Neontribe intend to develop a Turnkey patches for Linked Data.
+Neontribe are developing a Turnkey patch to install infrastructure and scripts to import data from various sources.  The system is intended to allow an organisation to expose information about research projects as Linked Data.
 
-1) A patch to install the infrastructure and the open-data.  
-
-A Turnkey patch compromisses the following structure:
+A Turnkey patch compromises the following structure:
 
 patch-name/  
 patch-name/debs/  
@@ -22,10 +20,12 @@ $ wget http://downloads.sourceforge.net/project/turnkeylinux/iso/turnkey-core-12
 $ git clone https://github.com/neontribe/Linked-Data.git  
 $ tklpatch turnkey-core-12.0-squeeze-x86.iso Linked-Data/linked-data/  
 
-note the patch is currently being tested against turnkey-core-13.0rc-wheezy-i386 ready for the wheezy debian release.  
-
 Should result in you having a turnkey-core-12.0-squeeze-x86-patched.iso.  
 
-look in linked-data/conf/pre-overlay for a list of installed packages.  
+NB: the patch is currently being tested against turnkey-core-13.0rc-wheezy-i386 ready for the wheezy debian release.  
+
 the linked-data server can be reconfigured as root running update_linked_data from the command line  
-once running a user 'linked-data' is created and has ssh access. 
+once running, the user 'linked-data' is created with ssh access. 
+
+look in linked-data/conf/pre-overlay for a list of installed packages.  
+
