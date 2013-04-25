@@ -82,7 +82,7 @@ def main():
         #add r4d data
         if not os.path.exists('/home/r4d/active') and 'r4d' in data_sources_to_use[1]:
             if first_boot:
-                fh = open('/etc/cron.d/eldis_first_boot', 'w')
+                fh = open('/etc/cron.d/r4d_first_boot', 'w')
                 fh.write(time_plus_half_hour + ' * * * * root /bin/bash /root/.profile;/usr/bin/python /usr/lib/inithooks/bin/use_r4d.py && rm /etc/cron.d/r4d_first_boot')
                 fh.close()
             else:
