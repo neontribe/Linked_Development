@@ -17,13 +17,42 @@ copyright 2013 neontribe ltd neil@neontribe.co.uk
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+takes one optional argument of first_boot
+this will add additonal one off cron job for loading data in 1/2 an hours time 
+
+
 """
+import datetime
+import getopt
+import os
+import sys
 
 from dialog import Dialog
-import os
+
+def usage(e=None):
+    if e:
+        print >> sys.stderr, "Error:", e
+    print >> sys.stderr, "Syntax: %s" % sys.argv[0]
+    print >> sys.stderr, __doc__
+    sys.exit(1)
 
 
 def main():
+    
+    try:
+        opts, args = getopt.gnu_getopt(sys.argv[1:], "", [])
+    except getopt.GetoptError, e:
+        usage(e)
+    if len(args) > 1 :
+        usage()
+    first_boot = False
+    if len(args) == 1:
+        if args[0] == 'first_boot':
+            first_boot = True
+            time_plus_half_hour =  str((datetime.datetime.now().minute + 30) % 60)
+        else:
+            usage()
+    
     dialog = Dialog()
     
     #find out what we data sources are in use
@@ -39,7 +68,12 @@ def main():
     if data_sources_to_use[0] == 0:
         #add eldis data
         if not os.path.exists('/home/eldis/active') and 'eldis' in data_sources_to_use[1]:
-            os.system('/usr/bin/python /usr/lib/inithooks/bin/use_eldis.py')
+            if first_boot:
+                fh = open('/etc/cron.d/eldis_first_boot', 'w')
+                fh.write(time_plus_half_hour + ' * * * * root /usr/bin/python /usr/lib/inithooks/bin/use_eldis.py && rm /etc/cron.d/eldis_first_boot')
+                fh.close()
+            else:
+                os.system('/usr/bin/python /usr/lib/inithooks/bin/use_eldis.py')
         #remove eldis
         if os.path.exists('/home/eldis/active') and 'eldis' not in data_sources_to_use[1]:
             os.system('/bin/rm -rf /home/eldis')
@@ -47,12 +81,20 @@ def main():
             os.system('/bin/rm -f /etc/cron.d/eldis')
         #add r4d data
         if not os.path.exists('/home/r4d/active') and 'r4d' in data_sources_to_use[1]:
-            os.system('/usr/bin/python /usr/lib/inithooks/bin/use_r4d.py')
+            
+            if first_boot:
+                fh = open('/etc/cron.d/eldis_first_boot', 'w')
+                fh.write(time_plus_half_hour + ' * * * * root /usr/bin/python /usr/lib/inithooks/bin/use_r4d.py && rm /etc/cron.d/eldis_first_boot')
+                fh.close()
+            else:
+                os.system('/usr/bin/python /usr/lib/inithooks/bin/use_r4d.py')
         #remove r4d
         if os.path.exists('/home/r4d/active') and 'r4d' not in data_sources_to_use[1]:
             os.system('/bin/rm -rf /home/r4d')
             os.system("/opt/tools/call_isql /opt/tools/r4d_remove.isql")
             os.system('/bin/rm -f /etc/cron.d/r4d')
+        
+        
         
 if __name__ == "__main__":
     main()
