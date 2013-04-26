@@ -60,10 +60,10 @@ done
 #echo $host_name.$domain_name
 
 # set the hostname
-/bin/sed -i "s/core/$host_name/g" hostname
+/bin/sed -i "s/core/$host_name/g" /etc/hostname
 
 # set the fqdn 
-/bin/sed -i "s/core/$host_name.$domain_name/g" hosts
+/bin/sed -i "s/core/$host_name.$domain_name/g" /etc/hosts
 
 # Add your domain to the config files, to stop abuse of mailsystem
 /usr/sbin/postconf -e "myorigin = $domain_name"
