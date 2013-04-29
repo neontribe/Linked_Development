@@ -11,4 +11,4 @@ install apache2 openjdk-6-jre openssh-server php5 postfix python2.6 selinux-basi
 pip install rdflib>3.1
 
 # Report on installation.
-echo 'Added apache2 openjdk openssh-server php python virtuoso wget' >> /etc/issue
+echo 'Added apache2 openjdk-6-jre openssh-server php5 postfix python2.6 selinux-basics selinux-policy-default virtuoso-opensource virtuoso-vad-conductor virtuoso-vad-isparql wget python-pip' >> /etc/issue
