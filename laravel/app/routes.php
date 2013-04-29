@@ -16,17 +16,35 @@ Route::get('/', function()
 	return View::make('hello');
 });
 
-Route::get('/openapi/eldis/search/{object?}/{parameter?}/{query?}',       'LDController@showSearch');
+Route::get(
+    '/openapi/eldis/search/{object?}/{parameter?}/{query?}',
+    'LDController@showSearch'
+);
 
-Route::get('/openapi/eldis/count/{object?}/{parameter?}/{query?}',        'LDController@showEcho');
+Route::get(
+    '/openapi/eldis/count/{object?}/{parameter?}/{query?}',
+    'LDController@showEcho'
+);
 
-Route::get('/openapi/eldis/get/{object?}/{parameter?}/{query?}',          'LDController@showEcho');
+Route::get(
+    '/openapi/eldis/get/{object?}/{parameter?}/{query?}',
+    'LDController@showEcho'
+);
 
-Route::get('/openapi/eldis/get_all/{object?}/{parameter?}/{query?}',      'LDController@showEcho');
+Route::get(
+    '/openapi/eldis/get_all/{object?}/{parameter?}/{query?}',
+    'LDController@showEcho'
+);
 
-Route::get('/openapi/eldis/get_children/{object?}/{parameter?}/{query?}', 'LDController@showEcho');
+Route::get(
+    '/openapi/eldis/get_children/{object?}/{parameter?}/{query?}',
+    'LDController@showEcho'
+);
 
-Route::get('/openapi/eldis/fieldlist/{object?}/{parameter?}/{query?}',    'LDController@showEcho');
+Route::get(
+    '/openapi/eldis/fieldlist/{object?}/{parameter?}/{query?}',
+    'LDController@showEcho'
+);
 
 ///////////////////////////////////////////////////////////////
 
