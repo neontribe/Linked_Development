@@ -6,7 +6,7 @@ cwd=$(dirname $0)
 source $cwd/functions
 
 # Install packages
-install apache2 openjdk-6-jre openssh-server php5 postfix python2.6 virtuoso-opensource virtuoso-vad-conductor virtuoso-vad-isparql wget python-pip
+install apache2 openjdk-6-jre openssh-server php5 postfix python2.6 selinux-basics selinux-policy-default virtuoso-opensource virtuoso-vad-conductor virtuoso-vad-isparql wget python-pip
 
 pip install rdflib>3.1
 
