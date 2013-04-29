@@ -10,8 +10,9 @@ I'm assuming you have a bash prompt on an ubuntu box (12.04 LTS or higher).  Fir
 
 When that's done install the PEAR:
 
-    pear install pear.phpunit.de/PHPUnit
+    pear install --alldeps pear.phpunit.de/PHPUnit
     pear install --alldeps phpdocs
+    pear install --alldeps XML_Serializer-0.20.2
 
 Checkout the codebase to a suitable location:
 

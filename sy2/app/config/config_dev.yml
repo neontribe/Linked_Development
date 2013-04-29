@@ -15,6 +15,27 @@ monolog:
             type:  stream
             path:  %kernel.logs_dir%/%kernel.environment%.log
             level: debug
+            channels:
+                - !doctrine
+                - !security
+                - !request
+                - !event
+        doctrine:
+            type: stream
+            path: %kernel.logs_dir%/%kernel.environment%_doctrine.log
+            channels: doctrine
+        security:
+            type: stream
+            path: %kernel.logs_dir%/%kernel.environment%_security.log
+            channels: security
+        request:
+            type: stream
+            path: %kernel.logs_dir%/%kernel.environment%_request.log
+            channels: request
+        event:
+            type: stream
+            path: %kernel.logs_dir%/%kernel.environment%_event.log
+            channels: event
         firephp:
             type:  firephp
             level: info

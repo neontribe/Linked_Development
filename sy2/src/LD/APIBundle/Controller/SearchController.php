@@ -7,7 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Templating\TemplateReference;
 
 /**
  * Top level API controller
@@ -34,11 +34,9 @@ class SearchController extends APIController
         }
         $this->get('logger')->debug($obj);
 
+        $data = $this->getData();
 
-        $response = new Response(json_encode($this->getData()));
-        $response->headers->set('Content-type', 'application/json');
-
-        return $response;
+        return $this->response($data);
     }
 
     /**
@@ -52,11 +50,11 @@ class SearchController extends APIController
      * @Template()
      *
      * @return array()
-     */
     public function searchWithParamAction($obj, $param)
     {
         return array('obj' => $obj, 'param' => $param);
     }
+     */
 
     /**
      * Search for a set of objects
@@ -70,9 +68,9 @@ class SearchController extends APIController
      * @Template()     *
      *
      * @return array()
-     */
     public function searchWithQueryAction($obj, $param, $query)
     {
         return array('obj' => $obj, 'param' => $param, 'query' => $query);
     }
+     */
 }
