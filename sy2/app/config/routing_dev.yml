@@ -1,16 +1,8 @@
-_welcome:
-    pattern:  /
-    defaults: { _controller: AcmeDemoBundle:Welcome:index }
-
-_demo_secured:
-    resource: "@AcmeDemoBundle/Controller/SecuredController.php"
+ld_dev:
+    resource: "@LDDevBundle/Controller/"
     type:     annotation
-
-_demo:
-    resource: "@AcmeDemoBundle/Controller/DemoController.php"
-    type:     annotation
-    prefix:   /demo
-
+    prefix:   /
+    
 _wdt:
     resource: "@WebProfilerBundle/Resources/config/routing/wdt.xml"
     prefix:   /_wdt
