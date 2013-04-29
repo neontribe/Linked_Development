@@ -1,0 +1,5 @@
+#!/bin/sh
+# several of the configuration changes don't take effect
+# until after the first reboot, eg. hostname.
+# commenting out as it slows down testing.
+#/sbin/reboot

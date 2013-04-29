@@ -22,4 +22,4 @@ rm /var/www/index.html
 
 
 # tell the world what we've done!
-echo 'Hello world - I just patched TurnKey!' >> /etc/issue
+echo 'Welcome to the Linked-Development appliance' >> /etc/issue
