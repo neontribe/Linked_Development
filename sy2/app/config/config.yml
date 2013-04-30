@@ -63,3 +63,13 @@ swiftmailer:
     username:  %mailer_user%
     password:  %mailer_password%
     spool:     { type: memory }
+
+parameters:
+    # This translates the Accepts header into supported mime types
+    # Note that when multiple types are supplied the first one match will used.
+    # The headers will be matched in the order listed here
+    mimetypes:
+      json:  ["application/json"]
+      html:  ["text/html"]
+      xhtml: ["application/xhtml+xml", "application/xhtmlxml"]
+      xml:   ["application/xml"]

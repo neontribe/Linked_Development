@@ -15,6 +15,11 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class APIController extends Controller
 {
+    protected function logger($msg, $lvl = 'debug')
+    {
+        $this->get('logger')->$lvl($msg);
+    }
+
     /**
      * Get data for current route
      *
@@ -43,24 +48,22 @@ class APIController extends Controller
         // In the existing API format can be specified by the accepts header
         // but that can be trumped by the format parameter
         $format = $this->getRequest()->query->get('format', false);
-        if (!$format) {
-            $_format = $this->getRequest()->headers->get('Accepts', false);
+        if ($format) {
+            $this->logger('Format detected via parameter: ' . $format);
+        } else {
+            $_format = $this->getRequest()->headers->get('Accept', false);
             if ($_format) {
-                $this->get('logger')->debug('2');
-                // strip the application/ off the front and we may have xhtml+xml, clean out the '+'
-                $format = str_replace(
-                    'application/',
-                    '',
-                    str_replace('+', '', $_format)
-                );
+                $format = $this->_getContentType($_format);
+                $this->logger('Format detected via header: ' . $format);
             }
         }
-        if (!$format) {
-            // fail over to json
-            $format = 'json';
-        }
+//        if (!$format) {
+//            // fail over to json
+//            $format = 'json';
+//            $this->logger('Format not specified failing over: ' . $format);
+//        }
 
-        $func = 'encode' . ucfirst($format);
+        $func = '_encode' . ucfirst($format);
 
         if (!method_exists($this, $func)) {
             $response = $this->render('LDAPIBundle::unsupportedFormat.json.twig');
@@ -79,9 +82,9 @@ class APIController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    protected function encodeJson($data)
+    protected function _encodeJson($data)
     {
-        $response = new Response($this->_encodeJson($data));
+        $response = new Response($this->_toJson($data));
         $response->headers->set('Content-type', 'application/json');
 
         return $response;
@@ -94,14 +97,10 @@ class APIController extends Controller
      *
      * @return string
      */
-    protected function _encodeJson($data)
+    protected function _toJson($data)
     {
-        if ($this->get('kernel')->getEnvironment() == 'dev' && defined('JSON_PRETTY_PRINT')) {
-            $json = json_encode($data, JSON_PRETTY_PRINT);
-        } else {
-            $json = json_encode($data);
-        }
-
+        $json = defined('JSON_PRETTY_PRINT') ? json_encode($data, JSON_PRETTY_PRINT) : json_encode($data);
+        
         return $json;
     }
 
@@ -112,29 +111,17 @@ class APIController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    protected function encodeHtml($data)
+    protected function _encodeHtml($data)
     {
         $response = $this->render(
             'LDAPIBundle:API:response.html.twig',
             array(
-                'json' => $this->_encodeJson($data),
+                'json' => $this->_toJson($data),
             )
         );
         $response->headers->set('Content-type', 'text/html');
 
         return $response;
-    }
-
-    /**
-     * Wrapper for encodeXhtmlxml
-     *
-     * @param array $data The data to encode
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    protected function encodeXhtml($data)
-    {
-        return $this->encodeXhtmlxml($data);
     }
 
     /**
@@ -144,12 +131,12 @@ class APIController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    protected function encodeXhtmlxml($data)
+    protected function _encodeXhtml($data)
     {
         $response = $this->render(
             'LDAPIBundle:API:response.xhtml.twig',
             array(
-                'json' => $this->_encodeJson($data),
+                'json' => $this->_toJson($data),
             )
         );
         $response->headers->set('Content-type', 'application/xhtml+xml');
@@ -164,7 +151,7 @@ class APIController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    protected function encodeXml($data)
+    protected function _encodeXml($data)
     {
         // TODO - this does not produce xml the same as http://api.ids.ac.uk/openapi/bridge/search/documents/?country=Angola&format=xml
         $serializer = $this->container->get('jms_serializer');
@@ -174,5 +161,28 @@ class APIController extends Controller
         $response->headers->set('Content-type', 'application/xml');
 
         return $response;
+    }
+
+    /**
+     * Get Mimetype from Accepts header
+     *
+     * @param string $accepts The Accepts string
+     *
+     * @return string
+     */
+    protected function _getContentType($accepts)
+    {
+        $_accepts = explode(',', $accepts);
+        $mimetypes = $this->container->getParameter('mimetypes');
+        foreach ($_accepts as $type) {
+            foreach ($mimetypes as $key => $mimelist) {
+                if (in_array($type, $mimelist)) {
+
+                    return $key;
+                }
+            }
+        }
+
+        return false;
     }
 }

@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Bundle\FrameworkBundle\Templating\TemplateReference;
 
 /**
@@ -30,11 +30,10 @@ class SearchController extends APIController
     {
         $query = $this->getRequest()->query->all();
         if (!count($query)) {
-            throw new NotFoundHttpException('object search must have some query string, eg /objects/search/short?q=undp');
+            throw new BadRequestHttpException('object search must have some query string, eg /objects/search/short?q=undp');
         }
-        $this->get('logger')->debug($obj);
 
-        $data = $this->getData();
+        $data = $this->getData($obj);
 
         return $this->response($data);
     }
@@ -50,11 +49,18 @@ class SearchController extends APIController
      * @Template()
      *
      * @return array()
+     */
     public function searchWithParamAction($obj, $param)
     {
-        return array('obj' => $obj, 'param' => $param);
+        $query = $this->getRequest()->query->all();
+        if (!count($query)) {
+            throw new BadRequestHttpException('object search must have some query string, eg /objects/search/short?q=undp');
+        }
+
+        $data = $this->getData($obj, $param);
+
+        return $this->response($data);
     }
-     */
 
     /**
      * Search for a set of objects
@@ -68,9 +74,16 @@ class SearchController extends APIController
      * @Template()     *
      *
      * @return array()
+     */
     public function searchWithQueryAction($obj, $param, $query)
     {
-        return array('obj' => $obj, 'param' => $param, 'query' => $query);
+        $query = $this->getRequest()->query->all();
+        if (!count($query)) {
+            throw new BadRequestHttpException('object search must have some query string, eg /objects/search/short?q=undp');
+        }
+
+        $data = $this->getData($obj, $param, $query);
+
+        return $this->response($data);
     }
-     */
 }
