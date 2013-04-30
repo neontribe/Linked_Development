@@ -94,8 +94,9 @@ Vagrant::Config.run do |config|
   #
   #   chef.validation_client_name = "ORGNAME-validator"
   
-  config.ssh.private_key_path = File.expand_path('~') + "/.ssh/id_rsa"
-  config.ssh.forward_agent = true
+  # config.ssh.private_key_path = File.expand_path('~') + "/.ssh/id_rsa"
+  # config.ssh.forward_agent = true
+  # config.ssh.username = "tobias"
 
   config.vm.provision :shell, :path => "bootstrap.sh"
 end

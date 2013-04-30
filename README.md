@@ -52,7 +52,10 @@ This project aims to create a feature and output compatible version of this API,
 ## Laravel
 ==========
 
-The laravel install sits in the Laravel folder.  To set it up cd into the laravel root folder and run composer:
+Laravel is depricated.  Sorry.  The sparql/virtuoso is giving me a headache so I've gone back to symfony for this project.
+
+
+<del>The laravel install sits in the Laravel folder.  To set it up cd into the laravel root folder and run composer:
 
     curl -sS https://getcomposer.org/installer | php
     php composer.phar install
@@ -66,4 +69,25 @@ Create/link the correct enviroment:
     cd app/config
     ln -s sparql.`hostname`.php sparql.php
 
-And that should be it.  More as I get more foo with laravel
+And that should be it.  More as I get more foo with laravel</del>
+
+## Vagrant
+==========
+
+Add this to your ~/.ssh/config (and change the user name of course):
+
+    Host localhost
+        ForwardAgent yes
+        User tobias
+
+    Host 127.0.0.1
+        ForwardAgent yes
+        User tobias
+
+Install vagrant and then get start the vm:
+
+    sudo apt-get install vagrant
+    vagrant up
+    vagrant ssh
+
+This folder is mounted on /vagrant and the server should be available on port 2080
