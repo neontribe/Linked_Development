@@ -1,5 +1,5 @@
-/build/
-/composer.phar
+build/
+composer.phar
 
 # Bootstrap
 #app/bootstrap*

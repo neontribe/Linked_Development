@@ -11,6 +11,24 @@ class SearchControllerObjectTest extends WebTestCase
 {
     protected $searchStubNQ = '/search/documents';
     protected $searchStub = '/search/documents?country=Angola';
+    protected $searchResponse = '/search/documents/{type}?country=Angola';
+
+    /**
+     * Test json as query parameter
+     */
+    public function testShortResponse()
+    {
+        $client = static::createClient();
+
+        $client->request('GET', str_replace('{type}', 'short', $this->searchResponse) . '&format=json');
+        $this->checkArray(json_decode($client->getResponse()->getContent(), true));
+
+        $client->request('GET', str_replace('{type}', 'full', $this->searchResponse) . '&format=json');
+        $this->checkArray(json_decode($client->getResponse()->getContent(), true));
+
+        $client->request('GET', str_replace('{type}', 'id', $this->searchResponse) . '&format=json');
+        $this->checkArray(json_decode($client->getResponse()->getContent(), true));
+    }
 
     /**
      * Test the not including a query string fails
@@ -21,6 +39,7 @@ class SearchControllerObjectTest extends WebTestCase
         $client->request('GET', $this->searchStubNQ);
         $this->assertTrue($client->getResponse()->getStatusCode() == 400);
     }
+
     /**
      * Test json as query parameter
      */

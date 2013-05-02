@@ -1,0 +1,69 @@
+{
+    "metadata": {
+        "next_page": "http://api.ids.ac.uk/openapi/eldis/get_all/documents?num_results=10&start_offset=10",
+        "start_offset": 0,
+        "total_results": 36743
+    },
+    "results": [
+        {
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/documents/A65095/full/comparative-analysis-of-climate-change-vulnerability-assessments-lessons-from-tunisia-and-indonesia/",
+            "object_id": "A65095",
+            "object_type": "Document",
+            "title": "Comparative analysis of climate change vulnerability assessments: Lessons from Tunisia and Indonesia"
+        },
+        {
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/documents/A65094/full/forests-and-climate-change-after-doha-an-asia-pacific-perspective/",
+            "object_id": "A65094",
+            "object_type": "Document",
+            "title": "Forests and climate change after Doha: an Asia-Pacific perspective"
+        },
+        {
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/documents/A65093/full/growing-green-the-economic-benefits-of-climate-action/",
+            "object_id": "A65093",
+            "object_type": "Document",
+            "title": "Growing green: the economic benefits of climate action"
+        },
+        {
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/documents/A65092/full/selection-of-provenances-to-adapt-tropical-pine-forestry-to-climate-change-on-the-basis-of-climate-analogs/",
+            "object_id": "A65092",
+            "object_type": "Document",
+            "title": "Selection of provenances to adapt tropical pine forestry to climate change on the basis of climate analogs"
+        },
+        {
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/documents/A65091/full/farmers-perceptions-of-climate-change-and-adaptation-strategies-in-northern-nigeria-an-empirical-assessment/",
+            "object_id": "A65091",
+            "object_type": "Document",
+            "title": "Farmers' perceptions of climate change and adaptation strategies in northern Nigeria: an empirical assessment"
+        },
+        {
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/documents/A65090/full/adaptation-or-development-exploring-the-distinctions-or-lack-thereof-through-case-studies-in-bangladesh-and-vietnam/",
+            "object_id": "A65090",
+            "object_type": "Document",
+            "title": "Adaptation or development? Exploring the distinctions (or lack thereof) through case studies in Bangladesh and Vietnam"
+        },
+        {
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/documents/A65087/full/asian-development-outlook-2013-asia-s-energy-challenge/",
+            "object_id": "A65087",
+            "object_type": "Document",
+            "title": "Asian development outlook 2013: Asia\u2019s energy challenge"
+        },
+        {
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/documents/A65086/full/moving-towards-a-common-approach-on-green-growth-indicators/",
+            "object_id": "A65086",
+            "object_type": "Document",
+            "title": "Moving towards a common approach on green growth indicators"
+        },
+        {
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/documents/A65085/full/investigating-climate-information-services-through-a-gendered-lens/",
+            "object_id": "A65085",
+            "object_type": "Document",
+            "title": "Investigating climate information services through a gendered lens"
+        },
+        {
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/documents/A65084/full/tried-and-tested-learning-from-farmers-on-adaptation-to-climate-change/",
+            "object_id": "A65084",
+            "object_type": "Document",
+            "title": "Tried and tested: learning from farmers on adaptation to climate change"
+        }
+    ]
+}

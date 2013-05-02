@@ -84,30 +84,11 @@ Add this to your ~/.ssh/config (and change the user name of course):
         ForwardAgent yes
         User tobias
 
-Add the acl option to the partition for that holds this directory (here the root partition):.  Edit /etc/fstab and change this line:
-
-    UUID=#################################### /               ext4    errors=remount-ro 0       1
-
-to:
-
-    UUID=#################################### /               ext4    errors=remount-ro,acl 0       1
-
-Or run this line of sed:
-
-    sudo sed -i 's/errors=remount-ro/errors=remount-ro,acl/g' /etc/fstab
-
-Then remount the correct file system, in this case root:
-
-    sudo mount -o remount /
-
 Install vagrant and then get start the vm:
 
     sudo apt-get install vagrant
     vagrant up
     vagrant ssh
 
-This folder is mounted on /vagrant and the server should be available on port 2080
+This folder is mounted on /vagrant and the server should be available on <a href='http://localhost:2080'>port 2080</a>
 
-And finally reset permission on your local files (on centos/fedora you may need to change www-data to apache or hhtpd):
-
-    sudo sy2/app/reset-permissions `id -u` `id -g` www-data www-data

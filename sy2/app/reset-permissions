@@ -168,8 +168,8 @@ find . ! -name . -prune -type f -exec chmod 664 {} \;
 sudo mkdir $CWD/web/imagecache
 
 chown -R $syuser:$sygroup $CWD
-chown -R $webuser:$webgroup $CWD/app/{logs,cache}
-chown -R $webuser:$webgroup $CWD/web/imagecache
+# chown -R $webuser:$webgroup $CWD/app/{logs,cache}
+# chown -R $webuser:$webgroup $CWD/web/imagecache
 chmod a+x $CWD/composer.phar
 chmod a+x $CWD/app/console*
 chmod a+x $CWD/app/composer
