@@ -30,7 +30,7 @@ class CountController extends APIController
      */
     public function countAction($obj, $category)
     {
-        $data = $this->getData($obj, $parameter);
+        $data = $this->getData($obj, $category);
         return $this->response($data);
     }
 

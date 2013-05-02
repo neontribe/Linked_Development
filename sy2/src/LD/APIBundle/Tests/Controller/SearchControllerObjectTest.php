@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 /**
  * API Tests
  */
-class SearchControllerObjectTest extends WebTestCase
+class SearchControllerObjectTest extends BaseTestCase
 {
     protected $searchStubNQ = '/search/documents';
     protected $searchStub = '/search/documents?country=Angola';
@@ -113,31 +113,12 @@ class SearchControllerObjectTest extends WebTestCase
     }
 
     /**
-     * Check that the (X)HTML document has valid data within it.
+     * Check the given array is a valid API response.
      *
-     * @param \Symfony\Component\DomCrawler\Crawler $crawler Doc crawler
+     * @param array $data Decoded API response
      */
-    private function checkHTML($crawler)
+    protected function checkData(array $data)
     {
-        $apiresponse = $crawler->filterXpath('//*[@id="api-response"]');
-        $this->assertGreaterThan(0, $apiresponse->count());
-        $data = json_decode($apiresponse->text(), true);
-        $this->checkArray($data);
-    }
-
-    private function checkXML($raw)
-    {
-        $dom = new \DOMDocument();
-        $dom->loadXML($raw);
-        // This should get the children of the root node
-        $children = $dom->firstChild->childNodes;
-        $this->assertGreaterThan(0, $children->length);
-    }
-
-    private function checkArray($data)
-    {
-        $this->assertTrue(count($data) > 0, 'Response was not iterable data.');
-
         $this->assertTrue(
             !array_key_exists('available_types', $data),
             'Response type was not accepted.'

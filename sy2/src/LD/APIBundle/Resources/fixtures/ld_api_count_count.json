@@ -1,0 +1,84 @@
+{
+    "metadata": {
+        "total_results": 33757
+    },
+    "region_count": [
+        {
+            "count": 17037,
+            "metadata_url": "",
+            "object_id": "",
+            "object_name": "",
+            "object_type": ""
+        },
+        {
+            "count": 7951,
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/regions/C21/full/africa/",
+            "object_id": "C21",
+            "object_name": "Africa",
+            "object_type": "region"
+        },
+        {
+            "count": 3497,
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/regions/C30/full/south-asia/",
+            "object_id": "C30",
+            "object_name": "South Asia",
+            "object_type": "region"
+        },
+        {
+            "count": 2976,
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/regions/C22/full/east-asia-and-pacific/",
+            "object_id": "C22",
+            "object_name": "East Asia and Pacific",
+            "object_type": "region"
+        },
+        {
+            "count": 2900,
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/regions/C26/full/latin-america-and-caribbean/",
+            "object_id": "C26",
+            "object_name": "Latin America and Caribbean",
+            "object_type": "region"
+        },
+        {
+            "count": 1992,
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/regions/C24/full/europe/",
+            "object_id": "C24",
+            "object_name": "Europe",
+            "object_type": "region"
+        },
+        {
+            "count": 1098,
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/regions/C27/full/middle-east-and-north-africa/",
+            "object_id": "C27",
+            "object_name": "Middle East and North Africa",
+            "object_type": "region"
+        },
+        {
+            "count": 598,
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/regions/C29/full/russia-and-the-commonwealth-of-independent-states/",
+            "object_id": "C29",
+            "object_name": "Russia and the Commonwealth of Independent States",
+            "object_type": "region"
+        },
+        {
+            "count": 465,
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/regions/C28/full/north-america/",
+            "object_id": "C28",
+            "object_name": "North America",
+            "object_type": "region"
+        },
+        {
+            "count": 430,
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/regions/C23/full/eastern-europe/",
+            "object_id": "C23",
+            "object_name": "Eastern Europe",
+            "object_type": "region"
+        },
+        {
+            "count": 74,
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/regions/C25/full/japan/",
+            "object_id": "C25",
+            "object_name": "Japan",
+            "object_type": "region"
+        }
+    ]
+}

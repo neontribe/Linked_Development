@@ -25,8 +25,7 @@ class APIController extends Controller
      *
      * @return array
      */
-    protected function getData()
-    {
+    protected function getData() {
         $routeName = $this->container->get('request')->get('_route');
         $resource = sprintf(
             '%s/../Resources/fixtures/%s.%s',
@@ -100,7 +99,7 @@ class APIController extends Controller
     protected function _toJson($data)
     {
         $json = defined('JSON_PRETTY_PRINT') ? json_encode($data, JSON_PRETTY_PRINT) : json_encode($data);
-        
+
         return $json;
     }
 
