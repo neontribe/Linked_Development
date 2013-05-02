@@ -1,33 +1,78 @@
 #!/bin/sh
-DIALOG=${DIALOG=dialog}
-tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
-trap "rm -f $tempfile" 0 1 2 5 15
 
-$DIALOG --title "Hostname" --clear \
-        --inputbox "Please enter a hostname for this system:" 16 51 2> $tempfile
+until [ "$host_name" != "" ]; do
+  DIALOG=${DIALOG=dialog}
+  hostname_file=`tempfile 2>/dev/null` || hostname_file=/tmp/test$$
+  trap "rm -f $hostname_file" 0 1 2 5 15
 
-hstname=`cat $tempfile`
+  $DIALOG --title "Hostname" --clear \
+          --inputbox "Please enter the hostname. You must set a hostname to continue, however it can be changed post installation." 16 51 2> $hostname_file
+  host_name=`cat $hostname_file`
 
-retval=$?
+  retval=$?
 
-case $retval in
-  0)
-    sed -i "s/core/$hstname/g" /etc/hostname
-    sed -i "s/core/$hstname/g" /etc/hosts
-    echo $hstname
-    ;;
-  1)
-    echo "Cancel pressed.";;
-  255)
-    if test -s $hostname ; then
-      cat $hostname
-    else
-      echo "ESC pressed."
-    fi
-    ;;
-esac
+  case $retval in
+    0)
+      #echo "Input string is `cat $hostname_file`";;
+      ;;
+    1)
+      #echo "Cancel pressed.";;
+      ;;
+    255)
+      #if test -s $hostname_file ; then
+      #  cat $hostname_file
+      #else
+      #  echo "ESC pressed."
+      #fi
+      ;;
+  esac
+done
 
-/usr/sbin/usr/sbin/invoke-rc.d hostname.sh start
+until [ "$domain_name" != "" ]; do
+  DIALOG=${DIALOG=dialog}
+  domainname_file=`tempfile 2>/dev/null` || domainname_file=/tmp/test$$
+  trap "rm -f $domainname_file" 0 1 2 5 15
 
-# testing as doesn't look like we need the force-reload on networking
-# /usr/sbin/invoke-rc.d networking force-reload
+  $DIALOG --title "Domain Name" --clear \
+        --inputbox "Please enter the domain name. You must set a domain name to continue, however it can be changed post installation." 16 51 2> $domainname_file
+  domain_name=`cat $domainname_file`
+  retval2=$?
+
+  case $retval2 in
+    0)
+      #echo "Input string is `cat $domainname_file`";;
+      ;;
+    1)
+      #echo "Cancel pressed.";;
+      ;;
+    255)
+      #if test -s $domainname_file ; then
+      #  cat $domainname_file
+      #else
+      #  echo "ESC pressed."
+      #fi
+      ;;
+  esac
+done
+
+#echo $host_name
+#echo $domain_name
+#echo $host_name.$domain_name
+
+# set the hostname
+/bin/sed -i "s/core/$host_name/g" /etc/hostname
+
+# set the fqdn 
+/bin/sed -i "s/core/$host_name.$domain_name $host_name/g" /etc/hosts
+
+# Add your domain to the config files, to stop abuse of mailsystem
+/usr/sbin/postconf -e "myorigin = $domain_name"
+
+# Add your hostname 
+/usr/sbin/postconf -e "myhostname = $host_name"
+
+# Now add the domain names that your system will handle
+/usr/sbin/postconf -e "relay_domains = $domain_name"
+
+# reload postfix
+#/usr/sbin/postfix reload
