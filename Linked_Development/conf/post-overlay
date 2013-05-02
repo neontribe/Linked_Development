@@ -19,7 +19,8 @@ rm /var/www/index.html
 #so we should do it on first boot
 #isql-vt -H localhost -S 1111 -U dba -P dba < /opt/tools/eldis_load.isql
 
-
+# activate selinux - requires reboot so doing it now
+selinux-activate
 
 # tell the world what we've done!
 echo 'Welcome to the Linked-Development appliance' >> /etc/issue
