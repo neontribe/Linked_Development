@@ -1,14 +1,21 @@
 ProxyRequests Off
-ProxyPreserveHost On
+ProxyPreserveHost Off
 
-    <Proxy *>
+    <Proxy localhost:*>
         Order allow,deny
         Allow from all
     </Proxy>
 
-ProxyPass /eldis/sparql http://localhost:8891/sparql
-ProxyPassReverse /eldis/sparql http://localhost:8891/sparql
+<Location /eldis/sparql>
+        #SetEnv headerHost localhost:8891
+        ProxyPass http://localhost:8891/sparql
+        ProxyPassReverse http://localhost:8891/sparql
+</Location>
+<Location /r4d/sparql>
+        #SetEnv headerHost localhost:8892
+        ProxyPass http://localhost:8892/sparql
+        ProxyPassReverse http://localhost:8892/sparql
+</Location>
 
-ProxyPass /r4d/sparql http://localhost:8892/sparql
-ProxyPassReverse /r4d/sparql http://localhost:8892/sparql
+#RequestHeader set Host %{REDIRECT_headerHost}e env=REDIRECT_headerHost
 

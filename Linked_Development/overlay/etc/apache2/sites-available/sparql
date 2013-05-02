@@ -1,7 +1,7 @@
 ProxyRequests Off
-ProxyPreserveHost On
+ProxyPreserveHost Off
     
-    <Proxy *>
+    <Proxy localhost:*>
         Order allow,deny
         Allow from all
     </Proxy>
