@@ -1,2 +1,3 @@
 #!/bin/sh
 selinux-activate
+/bin/sed -i "s/FSCKFIX=no/FSCKFIX=yes/g" /etc/default/rcS
