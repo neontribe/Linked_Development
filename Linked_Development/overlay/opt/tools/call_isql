@@ -21,7 +21,7 @@ copyright 2013 neontribe ltd neil@neontribe.co.uk
 expects a comand line with two args
 a filename and optional database name
 if no database name is given the default is used from /etc/linked_data/database
-eg call_isql virtuoso /opt/tools/eldis_load.isql
+eg call_isql /opt/tools/eldis_load.isql virtuoso 
 
 """
 
