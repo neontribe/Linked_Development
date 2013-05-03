@@ -45,7 +45,7 @@ def main():
     os.system('/usr/bin/wget  http://www.dfid.gov.uk/r4d/rdf/R4DOutputsData.zip')
     os.system('/bin/mv R4DOutputsData.zip /home/r4d/rdf/new/R4DOutputsData.zip')
     #unpack r4d data
-    os.system('/usr/bin/unzip /home/r4d/rdf/R4DOutputsData.zip -d /home/r4d/rdf/new')
+    os.system('/usr/bin/unzip /home/r4d/rdf/new/R4DOutputsData.zip -d /home/r4d/rdf/new')
     os.system('/bin/rm -f /home/r4d/rdf/new/R4DOutputsData.zip')
     
     #now copy to rdf folder with todays datestamp. The reason being
@@ -53,7 +53,7 @@ def main():
     #data files names have not changed they are not by default imported
     #leaving an empty graph. 
     date = datetime.date.today().isoformat()
-    os.system('/bin/cd /home/r4d/rdf/new/; for f in *.rdf; do /bin/mv /home/r4d/rdf/new/"$f" /home/r4d/rdf/' +
+    os.system('cd /home/r4d/rdf/new/; for f in *.rdf; do /bin/mv /home/r4d/rdf/new/"$f" /home/r4d/rdf/' +
                  date + '"$f"; done')
     os.system('/bin/rmdir /home/r4d/rdf/new')   
     #open default conection to isql and run commands in a file
