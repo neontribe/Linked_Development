@@ -38,8 +38,8 @@ class Sparql
 
     public function getAllThemes($offset = 0, $limit = 10)
     {
-        $spql array(
-            'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>; ',
+        $spql = array(
+            'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>',
             'PREFIX SKOS: <http://www.w3.org/2004/02/skos/core#>',
             'select * where {?a ?b <http://www.w3.org/2004/02/skos/core#Concept>}',
             'ORDER BY DESC(?a) LIMIT 10 OFFSET 10',
@@ -52,9 +52,9 @@ class Sparql
         );
 
         $curl = curl_init(); 
-        curl_setopt($curl, CURLOPT_URL, $this->endpoint . '?' . http_build_query($params);
+        curl_setopt($curl, CURLOPT_URL, $this->endpoint . '?' . http_build_query($params));
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
-        return curl_exec($curl);
+        return json_decode(curl_exec($curl), TRUE);
     }
 }
