@@ -64,6 +64,10 @@ swiftmailer:
     password:  %mailer_password%
     spool:     { type: memory }
 
+services:
+    sparql:
+        class: LD\APIBundle\Services\ids\Sparql
+
 parameters:
     # This translates the Accepts header into supported mime types
     # Note that when multiple types are supplied the first one match will used.

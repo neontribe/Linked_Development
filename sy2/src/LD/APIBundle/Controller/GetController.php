@@ -44,7 +44,11 @@ class GetController extends APIController
      */
     public function getAllAction($parameter)
     {
-        $data = $this->getData($parameter);
+        // $data = $this->getData($parameter);
+
+        $sparql = $this->get('sparql');
+        $data = $sparql->getAllThemes();
+        
         return $this->response($data);
     }
 
