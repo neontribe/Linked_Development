@@ -72,7 +72,7 @@ select distinct ?country ?countrycode count(distinct ?publisher)
                                 ?article <http://purl.org/dc/terms/coverage> ?country .
                                 }
                                 
-organisations with publications in no countries
+organisations with publication a publication assigned to no country -- not all that helpful
 prefix DCTERMS: <http://purl.org/dc/terms/> 
 select distinct count(distinct ?publisher) where {
                                 ?publisher a <http://dbpedia.org/ontology/Organisation> .
@@ -82,6 +82,19 @@ select distinct count(distinct ?publisher) where {
                                           FILTER (?c = ?country) .
                                          }
                                 FILTER (!BOUND(?c)) .
+                                }
+I think best way is to query how many unique Organisation, and how many have a publication in at least one country then take the difference. two queries 
+Note this includes organisations that have works in regions but not a country
+select  count(distinct ?organisation) where {?organisation a <http://dbpedia.org/ontology/Organisation>}
+and
+prefix DCTERMS: <http://purl.org/dc/terms/> 
+select distinct count(distinct ?publisher) 
+                        where {
+                                ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
+                                ?publisher a <http://dbpedia.org/ontology/Organisation> .
+                                ?article DCTERMS:publisher ?publisher .
+                                ?article a <http://purl.org/ontology/bibo/Article> .
+                                ?article <http://purl.org/dc/terms/coverage> ?country .
                                 }
 
 
