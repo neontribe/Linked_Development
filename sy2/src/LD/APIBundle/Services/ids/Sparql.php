@@ -3,58 +3,75 @@ namespace LD\APIBundle\Services\ids;
 
 class Sparql
 {
-    protected $endpoint = 'http://public5.neontribe.co.uk/ld/eldis/sparql';
     /*
-     * PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-     *
-     * select distinct * where {?a rdf:type <http://purl.org/ontology/bibo/Article>} limit 10
-     *
-     * Works
+    SELECT DISTINCT ?class
+    WHERE {
+      ?s a ?class .
+    }
+    LIMIT 25
+    OFFSET 0 
      */
 
-    /*
-     * PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-     * PREFIX SKOS: <http://www.w3.org/2004/02/skos/core#>
-     * 
-     * select * where {?a SKOS:Concept ?c} limit 10
-     *
-     * Fails (0 results)
-     */
+    protected $logger = null;
+    protected $endpoint = null;
 
-    /*
-     * PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-     * PREFIX SKOS: <http://www.w3.org/2004/02/skos/core#>
-     * select * where {?a ?b <http://www.w3.org/2004/02/skos/core#Concept>}
-     *
-     * Return (all?) themes
-     *
-     * PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-     * PREFIX SKOS: <http://www.w3.org/2004/02/skos/core#>
-     * select * where {?a ?b <http://www.w3.org/2004/02/skos/core#Concept>}
-     * ORDER BY DESC(?a)
-     * LIMIT 10
-     * OFFSET 10
-     */
-
-    public function getAllThemes($offset = 0, $limit = 10)
+    public function __construct($endpoint, $logger)
     {
-        $spql = array(
-            'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>',
-            'PREFIX SKOS: <http://www.w3.org/2004/02/skos/core#>',
-            'select * where {?a ?b <http://www.w3.org/2004/02/skos/core#Concept>}',
-            'ORDER BY DESC(?a) LIMIT 10 OFFSET 10',
-        );
+        $this->endpoint = $endpoint;
+        $this->logger = $logger;
+    }
 
+    protected function curl($spql)
+    {
         $params = array(
             'default-graph-uri' => '',
             'query' => implode("\n", $spql),
             'format' => 'application/sparql-results+json',
         );
 
-        $curl = curl_init(); 
-        curl_setopt($curl, CURLOPT_URL, $this->endpoint . '?' . http_build_query($params));
+        $url = $this->endpoint . '?' . http_build_query($params);
+        $this->logger->info('Hitting Virtuoso: ' . $url);
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
-        return json_decode(curl_exec($curl), TRUE);
+        $response = curl_exec($curl);
+        $this->logger->debug($response);
+
+        return $response;
+    }
+
+    public function getAllThemes($limit = 10, $offset = 0)
+    {
+        $spql = array(
+            'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>',
+            'PREFIX SKOS: <http://www.w3.org/2004/02/skos/core#>',
+            'select * where {?a ?b <http://www.w3.org/2004/02/skos/core#Concept>}',
+            sprintf('ORDER BY DESC(?a) LIMIT %d OFFSET %d', $limit, $offset),
+        );
+
+        return json_decode($this->curl($spql), TRUE);
+    }
+
+    public function getAllDocuments($limit = 10, $offset = 0)
+    {
+        $spql = array(
+            'PREFIX BIBO: <http://purl.org/ontology/bibo/>',
+            'select * where {?a ?b BIBO:Article}',
+            sprintf('ORDER BY DESC(?a) LIMIT %d OFFSET %d', $limit, $offset),
+        );
+
+        return json_decode($this->curl($spql), TRUE);
+    }
+
+    public function getAllCountries($limit = 10, $offset = 0)
+    {
+        $spql = array(
+            'select distinct ?country ?countrycode where {?a <http://purl.org/dc/terms/coverage> ?country .',
+            '?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .',
+            '}',
+        );
+
+        return json_decode($this->curl($spql), TRUE);
     }
 }

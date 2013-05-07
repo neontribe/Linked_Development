@@ -67,6 +67,7 @@ swiftmailer:
 services:
     sparql:
         class: LD\APIBundle\Services\ids\Sparql
+        arguments: [%sparql_endpoint%, @logger]
 
 parameters:
     # This translates the Accepts header into supported mime types

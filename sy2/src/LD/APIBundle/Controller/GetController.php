@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Bundle\FrameworkBundle\Templating\TemplateReference;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Top level API controller
@@ -47,8 +48,14 @@ class GetController extends APIController
         // $data = $this->getData($parameter);
 
         $sparql = $this->get('sparql');
-        $data = $sparql->getAllThemes();
-        
+        $func = sprintf('getAll%s', ucfirst($parameter));
+        if (!method_exists($sparql, $func)) {
+            throw new NotFoundHttpException(
+                sprintf('%s not found.', ucfirst($parameter))
+            );
+        }
+        $data = $sparql->$func();
+
         return $this->response($data);
     }
 
