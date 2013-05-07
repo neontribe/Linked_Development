@@ -1,0 +1,87 @@
+This is a work in progress to help map search routes to eldis sparql queries
+
+
+ld_api_count_count               GET|HEAD|OPTIONS ANY    ANY  /count/{obj}/{category}
+
+where:
+{obj} = Documents,Organisations,Items    
+<http://purl.org/ontology/bibo/Article>, <http://dbpedia.org/ontology/Organisation>, ???
+{category} = Theme, Region, Keyword, Country
+
+          
+/count/Documents
+select  count(distinct ?article) where {?article a <http://purl.org/ontology/bibo/Article>}
+/count/Organisations
+select  count(distinct ?organisation) where {?organisation a <http://dbpedia.org/ontology/Organisation>}
+
+/count/Documents/Region
+select distinct ?region ?regionlabel count(distinct ?article) where {
+                               ?article a <http://purl.org/ontology/bibo/Article> .
+                               ?article <http://purl.org/dc/terms/coverage> ?region .
+                               OPTIONAL {?r <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?c . 
+                                         FILTER ( ?region = ?r ) . 
+                                        }
+                               FILTER ( !BOUND(?r) ) .
+                               ?region <http://www.w3.org/2000/01/rdf-schema#label> ?regionlabel .
+                              }
+ 
+/count/Documents/Country
+prefix DCTERMS: <http://purl.org/dc/terms/> 
+select distinct ?countrycode ?countrylabel count(distinct ?article) 
+                          where {
+                                ?a <http://purl.org/dc/terms/coverage> ?country .
+                                ?publisher a <http://dbpedia.org/ontology/Organisation> .
+                                ?article DCTERMS:publisher ?publisher .
+                                ?article a <http://purl.org/ontology/bibo/Article> .
+                                ?article <http://purl.org/dc/terms/coverage> ?country .
+                                ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
+                                ?country <http://www.w3.org/2000/01/rdf-schema#label> ?countrylabel .
+                                }
+
+
+/count/Documents/Themes
+select distinct ?theme ?themelabel count(distinct ?article) 
+                         where {?b <http://purl.org/dc/terms/subject> ?theme . 
+                                ?theme <http://www.w3.org/2000/01/rdf-schema#label> ?themelabel .
+                                ?article a <http://purl.org/ontology/bibo/Article> .
+                                ?article <http://purl.org/dc/terms/subject> ?theme .
+                                }
+
+/count/Organisation/Region
+this will count the number of organisations that have published work about a region
+prefix DCTERMS: <http://purl.org/dc/terms/> 
+select distinct ?region ?regionlabel count(distinct ?publisher)
+                where { ?article <http://purl.org/dc/terms/coverage> ?region .
+                        OPTIONAL {?r <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?c . 
+                                FILTER ( ?region = ?r ) . 
+                                }
+                        FILTER ( !BOUND(?r) ) .
+                        ?region <http://www.w3.org/2000/01/rdf-schema#label> ?regionlabel .
+                        ?publisher a <http://dbpedia.org/ontology/Organisation> .
+                        ?article DCTERMS:publisher ?publisher .
+                        ?article a <http://purl.org/ontology/bibo/Article> .
+                        }
+
+/count/Organisation/Country
+select distinct ?country ?countrycode where {?a <http://purl.org/dc/terms/coverage> ?country .
+          ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
+          }
+count number or organisations in each country code
+prefix DCTERMS: <http://purl.org/dc/terms/> 
+select distinct count(*) where {?publisher a <http://dbpedia.org/ontology/Organisation> .
+                                ?article DCTERMS:publisher ?publisher .
+                                ?article a <http://purl.org/ontology/bibo/Article> .
+                                ?article <http://purl.org/dc/terms/coverage> ?country .
+                                ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> "COUNTRY CODE" .
+                                }
+
+
+
+
+
+ld_api_get_get                   GET|HEAD|OPTIONS ANY    ANY  /get/{obj}/{parameter}
+ld_api_get_getall                GET|HEAD|OPTIONS ANY    ANY  /get_all/{parameter}
+ld_api_get_getchildren           GET|HEAD|OPTIONS ANY    ANY  /get_children/{obj}/{parameter}
+ld_api_get_fieldlist             GET|HEAD|OPTIONS ANY    ANY  /fieldlist
+ld_api_search_searchwithobject   GET|HEAD|OPTIONS ANY    ANY  /search/{obj}
+ld_api_search_searchwithobject_1 GET|HEAD|OPTIONS ANY    ANY  /search/{obj}/{param}

@@ -34,11 +34,11 @@ def main():
     os.system('/usr/bin/unzip /home/r4d/rdf/R4DOutputsData.zip -d /home/r4d/rdf/')
     os.system('/bin/rm -f /home/r4d/rdf/R4DOutputsData.zip')
     #add data to triple store
-    os.system("/opt/tools/call_isql virtuoso /opt/tools/r4d_load.isql")
+    os.system("/opt/tools/call_isql /opt/tools/r4d_load.isql")
     
     #so now look at add file to cron tab
     fh = open('/etc/cron.d/r4d', 'w')
-    fh.write('0 0 * * 0 root /bin/bash /root/.profile;/usr/bin/python /opt/tools/r4d_update.py\n')
+    fh.write('0 1 * * 0 root /bin/bash /root/.profile;/usr/bin/python /opt/tools/r4d_update.py\n')
     fh.close()
 
 

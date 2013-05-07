@@ -49,6 +49,7 @@ def main():
     if len(args) == 1:
         if args[0] == 'first_boot':
             first_boot = True
+            time_plus_quarter_hour =  str((datetime.datetime.now().minute + 15) % 60)
             time_plus_half_hour =  str((datetime.datetime.now().minute + 30) % 60)
         else:
             usage()
@@ -83,7 +84,7 @@ def main():
         if not os.path.exists('/home/r4d/active') and 'r4d' in data_sources_to_use[1]:
             if first_boot:
                 fh = open('/etc/cron.d/r4d_first_boot', 'w')
-                fh.write(time_plus_half_hour + ' * * * * root /bin/bash /root/.profile;/usr/bin/python /usr/lib/inithooks/bin/use_r4d.py && rm /etc/cron.d/r4d_first_boot\n')
+                fh.write(time_plus_quarter_hour + ' * * * * root /bin/bash /root/.profile;/usr/bin/python /usr/lib/inithooks/bin/use_r4d.py && rm /etc/cron.d/r4d_first_boot\n')
                 fh.close()
             else:
                 os.system('/usr/bin/python /usr/lib/inithooks/bin/use_r4d.py')
