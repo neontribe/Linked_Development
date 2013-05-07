@@ -19,7 +19,7 @@ select distinct ?region ?regionlabel count(distinct ?article) where {
                                ?article a <http://purl.org/ontology/bibo/Article> .
                                ?article <http://purl.org/dc/terms/coverage> ?region .
                                OPTIONAL {?r <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?c . 
-                                         FILTER ( ?region = ?r ) . 
+                                         FILTER ( ?r = ?region ) . 
                                         }
                                FILTER ( !BOUND(?r) ) .
                                ?region <http://www.w3.org/2000/01/rdf-schema#label> ?regionlabel .
@@ -34,7 +34,6 @@ select distinct ?countrycode ?countrylabel count(distinct ?article)
                                 ?article DCTERMS:publisher ?publisher .
                                 ?article a <http://purl.org/ontology/bibo/Article> .
                                 ?article <http://purl.org/dc/terms/coverage> ?country .
-                                ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
                                 ?country <http://www.w3.org/2000/01/rdf-schema#label> ?countrylabel .
                                 }
 
@@ -53,7 +52,7 @@ prefix DCTERMS: <http://purl.org/dc/terms/>
 select distinct ?region ?regionlabel count(distinct ?publisher)
                 where { ?article <http://purl.org/dc/terms/coverage> ?region .
                         OPTIONAL {?r <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?c . 
-                                FILTER ( ?region = ?r ) . 
+                                FILTER ( ?r = ?region ) . 
                                 }
                         FILTER ( !BOUND(?r) ) .
                         ?region <http://www.w3.org/2000/01/rdf-schema#label> ?regionlabel .
@@ -63,19 +62,40 @@ select distinct ?region ?regionlabel count(distinct ?publisher)
                         }
 
 /count/Organisation/Country
-select distinct ?country ?countrycode where {?a <http://purl.org/dc/terms/coverage> ?country .
-          ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
-          }
-count number or organisations in each country code
 prefix DCTERMS: <http://purl.org/dc/terms/> 
-select distinct count(*) where {?publisher a <http://dbpedia.org/ontology/Organisation> .
+select distinct ?country ?countrycode count(distinct ?publisher) 
+                        where {
+                                ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
+                                ?publisher a <http://dbpedia.org/ontology/Organisation> .
                                 ?article DCTERMS:publisher ?publisher .
                                 ?article a <http://purl.org/ontology/bibo/Article> .
                                 ?article <http://purl.org/dc/terms/coverage> ?country .
-                                ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> "COUNTRY CODE" .
+                                }
+                                
+organisations with publications in no countries
+prefix DCTERMS: <http://purl.org/dc/terms/> 
+select distinct count(distinct ?publisher) where {
+                                ?publisher a <http://dbpedia.org/ontology/Organisation> .
+                                ?article DCTERMS:publisher ?publisher .
+                                ?article a <http://purl.org/ontology/bibo/Article> .
+                                OPTIONAL {?article <http://purl.org/dc/terms/coverage> ?c .
+                                          FILTER (?c = ?country) .
+                                         }
+                                FILTER (!BOUND(?c)) .
                                 }
 
 
+
+/count/Organisation/Themes
+prefix DCTERMS: <http://purl.org/dc/terms/> 
+select distinct ?theme ?themelabel count(distinct ?publisher) 
+                        where {?b <http://purl.org/dc/terms/subject> ?theme . 
+                                ?theme <http://www.w3.org/2000/01/rdf-schema#label> ?themelabel .
+                                ?article a <http://purl.org/ontology/bibo/Article> .
+                                ?article <http://purl.org/dc/terms/subject> ?theme .
+                                ?article DCTERMS:publisher ?publisher .
+                                ?publisher a <http://dbpedia.org/ontology/Organisation> .
+                                }
 
 
 
@@ -85,3 +105,13 @@ ld_api_get_getchildren           GET|HEAD|OPTIONS ANY    ANY  /get_children/{obj
 ld_api_get_fieldlist             GET|HEAD|OPTIONS ANY    ANY  /fieldlist
 ld_api_search_searchwithobject   GET|HEAD|OPTIONS ANY    ANY  /search/{obj}
 ld_api_search_searchwithobject_1 GET|HEAD|OPTIONS ANY    ANY  /search/{obj}/{param}
+
+
+
+
+
+
+
+
+
+
