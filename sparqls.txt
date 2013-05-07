@@ -102,8 +102,7 @@ select distinct count(distinct ?publisher)
 /count/Organisation/Themes
 prefix DCTERMS: <http://purl.org/dc/terms/> 
 select distinct ?theme ?themelabel count(distinct ?publisher) 
-                        where {?b <http://purl.org/dc/terms/subject> ?theme . 
-                                ?theme <http://www.w3.org/2000/01/rdf-schema#label> ?themelabel .
+                        where {?theme <http://www.w3.org/2000/01/rdf-schema#label> ?themelabel .
                                 ?article a <http://purl.org/ontology/bibo/Article> .
                                 ?article <http://purl.org/dc/terms/subject> ?theme .
                                 ?article DCTERMS:publisher ?publisher .
@@ -113,7 +112,83 @@ select distinct ?theme ?themelabel count(distinct ?publisher)
 
 
 ld_api_get_get                   GET|HEAD|OPTIONS ANY    ANY  /get/{obj}/{parameter}
+
+/get/assets/<ID>
+this is getting a document http://linked-development.org/eldis/output/<ID>/
+select distinct  ?a ?b
+                        where {
+                                <http://linked-development.org/eldis/output/A65066/> ?a ?b .
+                                }
+
+/get/countries/<ID>
+this is getting country http://linked-development.org/eldis/countries/<ID>/
+select distinct  ?a ?b
+                        where {
+                                <http://linked-development.org/eldis/countries/A1018/> <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
+                                <http://linked-development.org/eldis/countries/A1018/> ?a ?b .
+                                }
+
+/get/themes/<ID>
+this is getting theme http://linked-development.org/eldis/themes/<ID>/
+select distinct  ?a ?b
+                        where {<http://linked-development.org/eldis/themes/C1310/> ?a ?b .
+                                }
+
+get/organsiation/<ID>
+this is getting an organisation http://linked-development.org/eldis/organisation/<ID>/
+select ?a ?b 
+                        where {<http://linked-development.org/eldis/organisation/A64953/> ?a ?b .
+                                }
+
+get/region/<ID>
+this is getting http://linked-development.org/eldis/regions/<ID>/
+select ?a ?b 
+                        where {<http://linked-development.org/eldis/regions/C30/> ?a ?b .
+                                }
+
+
+
+
+
+
 ld_api_get_getall                GET|HEAD|OPTIONS ANY    ANY  /get_all/{parameter}
+
+get_all/documents
+Note server may need longer time out for these.
+limit/offset is important for this, note each object has around 14 lines each
+select distinct ?article ?a ?b 
+                        where {
+                            ?article a <http://purl.org/ontology/bibo/Article> .
+                            ?article ?a ?b .
+                        }
+ORDER BY ?article  limit 100 offset 100
+maybe this would be better like this but i think not, duplicates are and issue, and performance. leaving for reference only
+select distinct ?article ?also ?dcidentifier ?dctype ?dctitle ?dcdate ?dcabstract ?dccreator ?dccoverage ?dcpublisher  ?dclanguage 
+                        where {
+                            ?article a <http://purl.org/ontology/bibo/Article> .
+                            ?article <http://www.w3.org/2000/01/rdf-schema#seeAlso> ?also .
+                            ?article <http://purl.org/dc/terms/identifier> ?dcidentifier .
+                            ?article <http://purl.org/dc/terms/type> ?dctype .
+                            ?article <http://purl.org/dc/terms/title> ?dctitle  .
+                            ?article <http://purl.org/dc/terms/date> ?dcdate .
+                            ?article <http://purl.org/dc/terms/abstract> ?dcabstract .
+                            ?article <http://purl.org/dc/terms/creator> ?dccreator .
+                            ?article <http://purl.org/dc/terms/coverage> ?dccoverage .
+                            ?article <http://purl.org/dc/terms/publisher> ?dcpublisher .
+                            ?article <http://purl.org/dc/terms/language> ?dclanguage .
+                            }
+limit 100 offset 100
+
+/get_all/themes
+selects all used themes, don't know how to find any others, if any currently exist.
+
+select distinct ?theme ?a ?b 
+                        where {?article <http://purl.org/dc/terms/subject> ?theme .
+                                ?theme ?a ?b }
+order by ?theme 
+
+
+
 ld_api_get_getchildren           GET|HEAD|OPTIONS ANY    ANY  /get_children/{obj}/{parameter}
 ld_api_get_fieldlist             GET|HEAD|OPTIONS ANY    ANY  /fieldlist
 ld_api_search_searchwithobject   GET|HEAD|OPTIONS ANY    ANY  /search/{obj}
