@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Bundle\FrameworkBundle\Templating\TemplateReference;
+use LD\APIBundle\Entity\Region;
 
 /**
  * Top level API controller
@@ -46,7 +47,31 @@ class CountController extends APIController
             )
         );
 
-        return $this->response($data);
+        $total = 0;
+        $router = $this->get('router');
+        $response = array();
+        foreach ($data['results']['bindings'] as $binding) {
+            $region = Region::createFromBinding($binding, $router)->toArray();
+            if (!isset($binding['callret-2']['value'])) {
+                throw new \RuntimeException(
+                    '$binding["callret-2"]["value"]" not set'
+                );
+            }
+            $count = $binding['callret-2']['value'];
+            $region['count'] = $count;
+            $total += $count;
+            $response[] = $region;
+
+        }
+
+        $_response = array(
+            'metadata' => array(
+                'total_results' => $total,
+            ),
+            'region_count' => $response,
+        );
+
+        return $this->response($_response);
     }
 
 }

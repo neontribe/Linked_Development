@@ -22,12 +22,13 @@ class GetController extends APIController
      *
      * This can be a document, organisation, theme, country or  region
      *
-     * @Route("/get/{obj}/{parameter}")
+     * @Route("/get/{obj}/{parameter}/{format}")
+     * @Route("/get/{obj}/{parameter}",  defaults={"format" = "short"})
      * @Method({"GET", "HEAD", "OPTIONS"})
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function getAction($obj, $parameter)
+    public function getAction($obj, $parameter, $format)
     {
         $data = $this->getData($obj, $parameter);
         return $this->response($data);
