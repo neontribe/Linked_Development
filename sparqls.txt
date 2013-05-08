@@ -163,7 +163,7 @@ select distinct ?article ?a ?b
                         }
 ORDER BY ?article  limit 100 offset 100
 maybe this would be better like this but i think not, duplicates are and issue, and performance. leaving for reference only
-select distinct ?article ?also ?dcidentifier ?dctype ?dctitle ?dcdate ?dcabstract ?dccreator ?dccoverage ?dcpublisher  ?dclanguage 
+select distinct ?article ?also ?dcidentifier ?dctype ?dctitle ?dcdate ?dcabstract ?dccreator ?dccoverage ?dcpublisher  ?dclanguage ?theme
                         where {
                             ?article a <http://purl.org/ontology/bibo/Article> .
                             ?article <http://www.w3.org/2000/01/rdf-schema#seeAlso> ?also .
@@ -176,6 +176,7 @@ select distinct ?article ?also ?dcidentifier ?dctype ?dctitle ?dcdate ?dcabstrac
                             ?article <http://purl.org/dc/terms/coverage> ?dccoverage .
                             ?article <http://purl.org/dc/terms/publisher> ?dcpublisher .
                             ?article <http://purl.org/dc/terms/language> ?dclanguage .
+                            ?article <http://purl.org/dc/terms/subject> ?theme .
                             }
 limit 100 offset 100
 
@@ -184,8 +185,16 @@ selects all used themes, don't know how to find any others, if any currently exi
 
 select distinct ?theme ?a ?b 
                         where {?article <http://purl.org/dc/terms/subject> ?theme .
-                                ?theme ?a ?b }
+                                ?theme ?a ?b .
+                                }
 order by ?theme 
+
+/get_children/themes/<ID>
+gets all documents in a theme
+select distinct ?article ?a ?b 
+                        where {?article <http://purl.org/dc/terms/subject> <http://linked-development.org/eldis/themes/<ID>/> .
+                                ?article ?a ?b .
+                                }
 
 
 
