@@ -9,8 +9,10 @@ class Sparql
       ?s a ?class .
     }
     LIMIT 25
-    OFFSET 0 
+    OFFSET 0
      */
+
+    // http://stackoverflow.com/questions/2930246/exploratory-sparql-queries
 
     protected $logger = null;
     protected $endpoint = null;
@@ -21,11 +23,11 @@ class Sparql
         $this->logger = $logger;
     }
 
-    protected function curl($spql)
+    public function curl($spql)
     {
         $params = array(
             'default-graph-uri' => '',
-            'query' => implode("\n", $spql),
+            'query' => $spql,
             'format' => 'application/sparql-results+json',
         );
 
@@ -38,9 +40,9 @@ class Sparql
         $response = curl_exec($curl);
         $this->logger->debug($response);
 
-        return $response;
+        return json_decode($response, TRUE);
     }
-
+/*
     public function getAllThemes($limit = 10, $offset = 0)
     {
         $spql = array(
@@ -74,4 +76,5 @@ class Sparql
 
         return json_decode($this->curl($spql), TRUE);
     }
+ */
 }

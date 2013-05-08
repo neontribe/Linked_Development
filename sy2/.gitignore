@@ -1,3 +1,5 @@
+app/config/apikey
+
 build/
 composer.phar
 

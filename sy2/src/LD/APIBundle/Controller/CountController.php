@@ -23,14 +23,29 @@ class CountController extends APIController
      * categories  (theme, country, region, keywords). A count shows the number
      * of hits within the search that match that category.
      *
-     * @Route("/count/{obj}/{category}")
+     * @Route("/count/documents/region")
      * @Method({"GET", "HEAD", "OPTIONS"})
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function countAction($obj, $category)
+    public function countDocumentRegion()
     {
-        $data = $this->getData($obj, $category);
+        $spql = $this->get('sparql');
+        $data = $spql->curl(
+            implode(
+                "\n",
+                array(
+                    'select distinct ?region ?regionlabel count(distinct ?article) where {',
+                    '  ?article a <http://purl.org/ontology/bibo/Article> .',
+                    '  ?article <http://purl.org/dc/terms/coverage> ?region .',
+                    '  OPTIONAL {?r <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?c .',
+                            '    FILTER ( ?region = ?r ) .',
+                             '  }',
+                      'FILTER ( !BOUND(?r) ) .',
+                      '?region <http://www.w3.org/2000/01/rdf-schema#label> ?regionlabel .',
+                     '}',
+                )
+            )
+        );
+
         return $this->response($data);
     }
 
