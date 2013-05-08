@@ -17,10 +17,11 @@ class Sparql
     protected $logger = null;
     protected $endpoint = null;
 
-    public function __construct($endpoint, $logger)
+    public function __construct($endpoint, $container)
     {
         $this->endpoint = $endpoint;
-        $this->logger = $logger;
+        $this->container = $container;
+        $this->logger = $container->get('logger');
     }
 
     public function curl($spql)
