@@ -16,25 +16,20 @@ namespace LD\APIBundle\Entity;
 
 use Symfony\Component\Routing\RouterInterface;
 
+/**
+ * Region entity
+ */
 class Region extends AbstractBaseEntity
 {
     /**
-     * Constructor
+     * Take a binding entry from virtuoso and return a new Region object
      *
-     * @param string $metadataUrl metadataUrl
-     * @param string $objectId    objectId
-     * @param string $objectName  objectName
-     * @param string $objectType  objectType
+     * @param array                                      $binding The array of data from virtuoso
+     * @param \Symfony\Component\Routing\RouterInterface $router  The router object used to generate the metadata url
+     *
+     * @return \LD\APIBundle\Entity\Region
+     * @throws \RuntimeException
      */
-    public function __construct(
-        $metadataUrl, $objectId, $objectName, $objectType
-    ) {
-        $this->setMetadataUrl($metadataUrl);
-        $this->setObjectId($objectId);
-        $this->setObjectName($objectName);
-        $this->setObjectType($objectType);
-    }
-
     public static function createFromBinding(array $binding, RouterInterface $router)
     {
         if (!isset($binding['region']['value'])) {
@@ -45,11 +40,6 @@ class Region extends AbstractBaseEntity
         if (!isset($binding['regionlabel']['value'])) {
             throw new \RuntimeException(
                 '$binding["regionlabel"]["value"]" not set'
-            );
-        }
-        if (!isset($binding['callret-2']['value'])) {
-            throw new \RuntimeException(
-                '$binding["callret-2"]["value"]" not set'
             );
         }
 
@@ -71,28 +61,5 @@ class Region extends AbstractBaseEntity
         );
 
         return new Region($metadataUrl, $objectId, $objectName, $objectType);
-        /*
-        {
-            "count": 8658,
-            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/regions/C21/full/africa-south-of-sahara/",
-            "object_id": "C21",
-            "object_name": "Africa South of Sahara",
-            "object_type": "region"
-        },
-         *
-                "region": {
-                    "type": "uri",
-                    "value": "http:\/\/linked-development.org\/eldis\/regions\/C28\/"
-                },
-                "regionlabel": {
-                    "type": "literal",
-                    "value": "North America"
-                },
-                "callret-2": {
-                    "type": "typed-literal",
-                    "datatype": "http:\/\/www.w3.org\/2001\/XMLSchema#integer",
-                    "value": "478"
-                }
-            */
     }
 }

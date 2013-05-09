@@ -14,13 +14,16 @@
 
 namespace LD\APIBundle\Entity;
 
+/**
+ * Country entity
+ */
 class Country extends AbstractBaseEntity
 {
     private $isoTwoLetterCode;
-    
+
     /**
      * Constructor
-     * 
+     *
      * @param string $isoTwoLetterCode isoTwoLetterCode
      * @param string $metadataUrl      metadataUrl
      * @param string $objectId         objectId
@@ -33,47 +36,45 @@ class Country extends AbstractBaseEntity
         $objectId,
         $objectName,
         $objectType
-    ) {
+    )
+    {
+        parent::__construct($metadataUrl, $objectId, $objectName, $objectType);
         $this->setIsoTwoLetterCode($isoTwoLetterCode);
-        $this->setMetadataUrl($metadataUrl);
-        $this->setObjectId($objectId);
-        $this->setObjectName($objectName);
-        $this->setObjectType($objectType);
     }
-    
+
     /**
      * Return an array representation of this object
-     * 
+     *
      * @return array
      */
     public function toArray()
     {
         $data = parent::toArray();
         $data['iso_two_letter_code'] = $this->getIsoTwoLetterCode();
-        
+
         return $data;
     }
-    
+
     /**
      * Set two letter iso code
-     * 
+     *
      * @param string $val
-     * 
+     *
      * @return void;
      */
     public function setIsoTwoLetterCode($val)
     {
         $this->isoTwoLetterCode = $val;
     }
-    
+
     /**
      * Get two letter iso code
-     * 
+     *
      * @return string
      */
     public function getIsoTwoLetterCode()
     {
         return $this->isoTwoLetterCode;
     }
-    
+
 }

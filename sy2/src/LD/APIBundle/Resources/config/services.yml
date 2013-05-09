@@ -1,0 +1,20 @@
+services:
+    sparql:
+        class: LD\APIBundle\Services\ids\Sparql
+        arguments: [%sparql_endpoint%, @service_container]
+
+parameters:
+    # This translates the Accepts header into supported mime types
+    # Note that when multiple types are supplied the first one match will used.
+    # The headers will be matched in the order listed here
+    mimetypes:
+      json:  ["application/json"]
+      html:  ["text/html"]
+      xhtml: ["application/xhtml+xml", "application/xhtmlxml"]
+      xml:   ["application/xml"]
+
+    sparqls:
+      count:
+        documents:
+          region: "select distinct ?region ?regionlabel count(distinct ?article) where { ?article a <http://purl.org/ontology/bibo/Article> . ?article <http://purl.org/dc/terms/coverage> ?region . OPTIONAL {?r <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?c .  FILTER ( ?r = ?region ) .  } FILTER ( !BOUND(?r) ) . ?region <http://www.w3.org/2000/01/rdf-schema#label> ?regionlabel . }"
+          theme: "select distinct ?theme ?themelabel count(distinct ?article) where {?b <http://purl.org/dc/terms/subject> ?theme .  ?theme <http://www.w3.org/2000/01/rdf-schema#label> ?themelabel .  ?article a <http://purl.org/ontology/bibo/Article> .  ?article <http://purl.org/dc/terms/subject> ?theme . }"

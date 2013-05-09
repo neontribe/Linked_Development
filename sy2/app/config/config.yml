@@ -64,17 +64,4 @@ swiftmailer:
     password:  %mailer_password%
     spool:     { type: memory }
 
-services:
-    sparql:
-        class: LD\APIBundle\Services\ids\Sparql
-        arguments: [%sparql_endpoint%, @service_container]
-
-parameters:
-    # This translates the Accepts header into supported mime types
-    # Note that when multiple types are supplied the first one match will used.
-    # The headers will be matched in the order listed here
-    mimetypes:
-      json:  ["application/json"]
-      html:  ["text/html"]
-      xhtml: ["application/xhtml+xml", "application/xhtmlxml"]
-      xml:   ["application/xml"]
+# Also see src/LD/APIBundle/Resources/config/services.yml

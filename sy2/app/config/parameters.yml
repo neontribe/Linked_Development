@@ -13,5 +13,6 @@ parameters:
     secret: 4c56519106918998192c9558f3bb8ab50
     database_path: null
 
-    sparql_endpoint: http://public5.neontribe.co.uk/ld/eldis/sparql
+    # sparql_endpoint: http://public5.neontribe.co.uk/ld/eldis/sparql
     # sparql_endpoint: http://localhost:8890/sparql
+    sparql_endpoint: http://ld.neontribe.org/sparql

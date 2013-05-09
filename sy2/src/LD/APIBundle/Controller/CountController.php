@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Bundle\FrameworkBundle\Templating\TemplateReference;
 use LD\APIBundle\Entity\Region;
+use LD\APIBundle\Entity\Theme;
 
 /**
  * Top level API controller
@@ -24,43 +25,89 @@ class CountController extends APIController
      * categories  (theme, country, region, keywords). A count shows the number
      * of hits within the search that match that category.
      *
-     * @Route("/count/documents/region")
+     * @param string $object    document|region|item
+     * @param string $parameter theme|country|region|keyword
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @Route(
+     *      "/count/{object}/{parameter}",
+     *      requirements={
+     *          "object" = "documents|organisations|items",
+     *          "parameter" = "country|theme|region|keyword"
+     *      }
+     * )
      * @Method({"GET", "HEAD", "OPTIONS"})
      */
-    public function countDocumentRegion()
+    public function countAction($object, $parameter)
     {
-        $spql = $this->get('sparql');
-        $data = $spql->curl(
-            implode(
-                "\n",
-                array(
-                    'select distinct ?region ?regionlabel count(distinct ?article) where {',
-                    '  ?article a <http://purl.org/ontology/bibo/Article> .',
-                    '  ?article <http://purl.org/dc/terms/coverage> ?region .',
-                    '  OPTIONAL {?r <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?c .',
-                            '    FILTER ( ?region = ?r ) .',
-                             '  }',
-                      'FILTER ( !BOUND(?r) ) .',
-                      '?region <http://www.w3.org/2000/01/rdf-schema#label> ?regionlabel .',
-                     '}',
-                )
-            )
+        $func = '_count' . ucfirst($object) . ucfirst($parameter);
+
+        return call_user_func(array($this, $func));
+    }
+
+    /**
+     * Count documents by country
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \RuntimeException
+     */
+    protected function _countDocumentsCountry()
+    {
+        $spqlsrvc = $this->get('sparql');
+        $spqls = $this->container->getParameter('sparqls');
+        $spql = $spqls['count']['documents']['country'];
+        $data = $spqlsrvc->curl($spql);
+
+        return $this->response($data);
+    }
+
+    protected function _countDocumentsRegion()
+    {
+        $spqlsrvc = $this->get('sparql');
+        $spqls = $this->container->getParameter('sparqls');
+        $spql = $spqls['count']['documents']['region'];
+        $data = $spqlsrvc->curl($spql);
+
+        $_response = $this->_parseBindings(
+            $data['results']['bindings'],
+            '\LD\APIBundle\Entity\Region'
         );
 
+        return $this->response($_response);
+    }
+
+    protected function _countDocumentsTheme()
+    {
+        $spqlsrvc = $this->get('sparql');
+        $spqls = $this->container->getParameter('sparqls');
+        $spql = $spqls['count']['documents']['theme'];
+        $data = $spqlsrvc->curl($spql);
+
+        $_response = $this->_parseBindings(
+            $data['results']['bindings'],
+            '\LD\APIBundle\Entity\Theme'
+        );
+
+        return $this->response($_response);
+    }
+
+    protected function _parseBindings($bindings, $entity)
+    {
         $total = 0;
         $router = $this->get('router');
         $response = array();
-        foreach ($data['results']['bindings'] as $binding) {
-            $region = Region::createFromBinding($binding, $router)->toArray();
+        foreach ($bindings as $binding) {
+            $theme = $entity::createFromBinding($binding, $router)->toArray();
             if (!isset($binding['callret-2']['value'])) {
                 throw new \RuntimeException(
                     '$binding["callret-2"]["value"]" not set'
                 );
             }
             $count = $binding['callret-2']['value'];
-            $region['count'] = $count;
+            $theme['count'] = $count;
             $total += $count;
-            $response[] = $region;
+            $response[] = $theme;
 
         }
 
@@ -68,10 +115,9 @@ class CountController extends APIController
             'metadata' => array(
                 'total_results' => $total,
             ),
-            'region_count' => $response,
+            'theme_count' => $response,
         );
 
-        return $this->response($_response);
+        return $_response;
     }
-
 }

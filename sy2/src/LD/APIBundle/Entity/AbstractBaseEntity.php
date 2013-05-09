@@ -12,6 +12,24 @@ abstract class AbstractBaseEntity
     private $objectType;
 
     /**
+     * Constructor
+     *
+     * @param string $metadataUrl metadataUrl
+     * @param string $objectId    objectId
+     * @param string $objectName  objectName
+     * @param string $objectType  objectType
+     */
+    public function __construct(
+        $metadataUrl, $objectId, $objectName, $objectType
+    )
+    {
+        $this->setMetadataUrl($metadataUrl);
+        $this->setObjectId($objectId);
+        $this->setObjectName($objectName);
+        $this->setObjectType($objectType);
+    }
+
+    /**
      * Set metatdata url
      *
      * @param string $val
