@@ -80,7 +80,7 @@ class Theme extends AbstractBaseEntity
     }
 
     /**
-     * Take a binding entry from virtuoso and return a new Region object
+     * Take a binding entry from virtuoso and return a new Theme object
      *
      * @param array                                      $binding The array of data from virtuoso
      * @param \Symfony\Component\Routing\RouterInterface $router  The router object used to generate the metadata url
@@ -112,7 +112,7 @@ class Theme extends AbstractBaseEntity
         $objectId = array_pop($parts);
 
         $metadataUrl = $router->generate(
-            'ld_api_get_get',
+            'ld_api_get_get_1',
             array(
                 'obj' => 'theme',
                 'parameter' => $objectId,

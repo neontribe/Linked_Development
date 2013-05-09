@@ -3,8 +3,10 @@
 namespace LD\APIBundle\Entity;
 
 use Symfony\Component\HttpFoundation\Request;
-
-abstract class AbstractBaseEntity
+/**
+ * Top level entity
+ */
+abstract class AbstractBaseEntity implements CreateFromBinding
 {
     private $metadataUrl;
     private $objectId;

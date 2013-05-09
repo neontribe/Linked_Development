@@ -10,62 +10,86 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class CountControllerObjectTest extends BaseTestCase
 {
     private $checkOldApi = true;
+    private $apikey = null;
+
+    public function setUp()
+    {
+        if (null == static::$kernel) {
+            static::$kernel = static::createKernel();
+            static::$kernel->boot();
+        }
+        $apikeyfile = static::$kernel->getRootDir() . '/config/apikey';
+        $this->apikey = file_get_contents($apikeyfile);
+    }
 
     /**
      * Test json as query parameter
      */
-    public function testCountDocumentRegion()
+    public function testCount()
     {
         $client = static::createClient();
 
-//        $client->request('GET', '/count/assets/A12345?format=json');
-//        $this->checkArray(json_decode($client->getResponse()->getContent(), true));
+        $objects = array(
+            'documents',
+            'organisations',
+            // 'item',
+        );
+        echo "\n** count items skipped **\n";
+        $params = array(
+            'theme',
+            'country',
+            'region',
+            // 'keyword',
+        );
+        echo "** count keywords skipped **\n";
 
-        $kernel = static::createKernel();
-        $kernel->boot();
-        $apikeyfile = $kernel->getRootDir() . '/config/apikey';
-        $apikey = file_get_contents($apikeyfile);
+        foreach ($objects as $object) {
+            foreach ($params as $param) {
+                $url = '/count/' . $object . '/' . $param . '?format=json';
+                $client->request('GET', $url);
+                $response1 = json_decode(
+                    $client->getResponse()->getContent(), true
+                );
+                $this->checkData($response1, $param);
+                if ($this->checkOldApi) {
+                    $response2 = $this->fetchData('http://api.ids.ac.uk/openapi/eldis/count/' . $object . '/' . $param);
 
-        if ($this->checkOldApi) {
-            $curl = curl_init();
-            curl_setopt($curl, CURLOPT_URL, 'http://api.ids.ac.uk/openapi/eldis/count/documents/region');
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt(
-                $curl,
-                CURLOPT_HTTPHEADER,
-                array(
-                    'Accept: application/json',
-                    'Token-Guid: ' . $apikey,
-                )
-            );
-
-            $client->request('GET', '/count/documents/region?format=json');
-
-            $response1 = json_decode(curl_exec($curl), true);
-            $response2 = json_decode(
-                $client->getResponse()->getContent(), true
-            );
-
-            // check that the top level keys exist
-            foreach (array_keys($response1) as $key) {
-                $this->assertTrue(array_key_exists($key, $response2));
+                    $this->compareData($response1, $response2);
+                    $this->compareData($response1['metadata'], $response2['metadata']);
+                    // use the second array elelment, the first will be missing type specific additons, e.g. {"count":20260,"metadata_url":"","object_name":"","object_type":"","object_id":""}
+                    $this->compareData($response1[$param . '_count'][1], $response2[$param . '_count'][1]);
+                }
             }
+        }
+    }
 
-            // check that the array keys for the first results of the region_count match
-            $rc1 = $response1['region_count'][0];
-            $rc2 = $response2['region_count'][0];
+    protected function fetchData($url)
+    {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt(
+            $curl,
+            CURLOPT_HTTPHEADER,
+            array(
+                'Accept: application/json',
+                'Token-Guid: ' . $this->apikey,
+            )
+        );
 
-            foreach (array_keys($rc1) as $key) {
-                $this->assertTrue(array_key_exists($key, $rc2));
-            }
+        return json_decode(curl_exec($curl), true);
+    }
 
-            // check metadats holds matchng keys
-            $md1 = $response1['metadata'];
-            $md2 = $response2['metadata'];
-
-            foreach (array_keys($md1) as $key) {
-                $this->assertTrue(array_key_exists($key, $md2));
-            }
+    /**
+     * Take two arrays and make sure they have the same top level keys
+     *
+     * @param array $new First array
+     * @param array $old Second array
+     */
+    protected function compareData(array $new, array $old)
+    {
+        foreach (array_keys($new) as $key) {
+            $this->assertTrue(array_key_exists($key, $old), 'Array key ' . $key . ' not found, ' . json_encode($new) . "\n" . json_encode($old));
         }
     }
 
@@ -74,7 +98,7 @@ class CountControllerObjectTest extends BaseTestCase
      *
      * @param array $data Decoded API response
      */
-    protected function checkData(array $data)
+    protected function checkData(array $data, $param = null)
     {
         $this->assertTrue(
             !array_key_exists('available_types', $data),
@@ -87,7 +111,7 @@ class CountControllerObjectTest extends BaseTestCase
         );
 
         $this->assertTrue(
-            array_key_exists('region_count', $data),
+            array_key_exists($param . '_count', $data),
             'Results not.'
         );
     }

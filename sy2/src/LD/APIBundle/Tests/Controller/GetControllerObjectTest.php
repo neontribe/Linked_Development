@@ -82,7 +82,7 @@ class GetControllerObjectTest extends BaseTestCase
      *
      * @param array $data Decoded API response
      */
-    protected function checkData(array $data)
+    protected function checkData(array $data, $param = null)
     {
         $this->assertTrue(
             array_key_exists('results', $data),

@@ -22,13 +22,14 @@ class GetController extends APIController
      *
      * This can be a document, organisation, theme, country or  region
      *
-     * @Route("/get/{obj}/{parameter}/{format}")
-     * @Route("/get/{obj}/{parameter}",  defaults={"format" = "short"})
+     * @Route("/get/{obj}/{parameter}/{format}/{query}")
+     * @Route("/get/{obj}/{parameter}/{format}",  defaults={"query" = "null"})
+     * @Route("/get/{obj}/{parameter}",  defaults={"format" = "short", "query" = "null"})
      * @Method({"GET", "HEAD", "OPTIONS"})
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function getAction($obj, $parameter, $format)
+    public function getAction($obj, $parameter, $format, $query)
     {
         $data = $this->getData($obj, $parameter);
         return $this->response($data);
@@ -46,16 +47,7 @@ class GetController extends APIController
      */
     public function getAllAction($parameter)
     {
-        // $data = $this->getData($parameter);
-
-        $sparql = $this->get('sparql');
-        $func = sprintf('getAll%s', ucfirst($parameter));
-        if (!method_exists($sparql, $func)) {
-            throw new NotFoundHttpException(
-                sprintf('%s not found.', ucfirst($parameter))
-            );
-        }
-        $data = $sparql->$func();
+        $data = $this->getData($parameter);
 
         return $this->response($data);
     }

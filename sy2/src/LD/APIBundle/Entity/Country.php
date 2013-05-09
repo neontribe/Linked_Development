@@ -14,6 +14,8 @@
 
 namespace LD\APIBundle\Entity;
 
+use Symfony\Component\Routing\RouterInterface;
+
 /**
  * Country entity
  */
@@ -77,4 +79,70 @@ class Country extends AbstractBaseEntity
         return $this->isoTwoLetterCode;
     }
 
+    /**
+     * Take a binding entry from virtuoso and return a new Country object
+     *
+     * @param array                                      $binding The array of data from virtuoso
+     * @param \Symfony\Component\Routing\RouterInterface $router  The router object used to generate the metadata url
+     *
+     * @return \LD\APIBundle\Entity\Region
+     * @throws \RuntimeException
+     */
+    public static function createFromBinding(array $binding, RouterInterface $router)
+    {
+        if (!isset($binding['countrycode']['value'])) {
+            throw new \RuntimeException(
+                '$binding["countrycode"]["value"]" not set'
+            );
+        }
+        if (!isset($binding['countrylabel']['value'])) {
+            throw new \RuntimeException(
+                '$binding["countrylabel"]["value"]" not set'
+            );
+        }
+
+        $objectName = $binding['countrylabel']['value'];
+        $objectType = 'Country';
+        $objectId = 'Not present in sparql';
+        $isoTwoLetterCode = $binding['countrycode']['value'];
+
+        $metadataUrl = $router->generate(
+            'ld_api_get_get_1',
+            array(
+                'obj' => 'countries',
+                'parameter' => $objectId,
+                'format' => 'full',
+                'query' => $objectName,
+            )
+        );
+
+        return new Country(
+            $isoTwoLetterCode, $metadataUrl, $objectId, $objectName, $objectType
+        );
+    }
 }
+/*
+        {
+            "count": 2151,
+            "iso_two_letter_code": "IN",
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/countries/A1100/full/india/",
+            "object_id": "A1100",
+            "object_name": "India",
+            "object_type": "Country"
+        },
+            {
+                "countrycode": {
+                    "type": "literal",
+                    "value": "NL"
+                },
+                "countrylabel": {
+                    "type": "literal",
+                    "value": "Netherlands"
+                },
+                "callret-2": {
+                    "type": "typed-literal",
+                    "datatype": "http:\/\/www.w3.org\/2001\/XMLSchema#integer",
+                    "value": "52"
+                }
+            },
+ */

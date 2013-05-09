@@ -52,7 +52,7 @@ class Region extends AbstractBaseEntity
         $objectId = array_pop($parts);
 
         $metadataUrl = $router->generate(
-            'ld_api_get_get',
+            'ld_api_get_get_1',
             array(
                 'obj' => 'region',
                 'parameter' => $objectId,

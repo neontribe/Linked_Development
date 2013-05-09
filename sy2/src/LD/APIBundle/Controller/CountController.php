@@ -25,7 +25,7 @@ class CountController extends APIController
      * categories  (theme, country, region, keywords). A count shows the number
      * of hits within the search that match that category.
      *
-     * @param string $object    document|region|item
+     * @param string $object    document|organisations|item
      * @param string $parameter theme|country|region|keyword
      *
      * @return \Symfony\Component\HttpFoundation\Response
@@ -41,59 +41,22 @@ class CountController extends APIController
      */
     public function countAction($object, $parameter)
     {
-        $func = '_count' . ucfirst($object) . ucfirst($parameter);
-
-        return call_user_func(array($this, $func));
-    }
-
-    /**
-     * Count documents by country
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     * @throws \RuntimeException
-     */
-    protected function _countDocumentsCountry()
-    {
         $spqlsrvc = $this->get('sparql');
         $spqls = $this->container->getParameter('sparqls');
-        $spql = $spqls['count']['documents']['country'];
+        $spql = $spqls['count'][$object][$parameter];
         $data = $spqlsrvc->curl($spql);
-
-        return $this->response($data);
-    }
-
-    protected function _countDocumentsRegion()
-    {
-        $spqlsrvc = $this->get('sparql');
-        $spqls = $this->container->getParameter('sparqls');
-        $spql = $spqls['count']['documents']['region'];
-        $data = $spqlsrvc->curl($spql);
+        //return $this->response($data);
 
         $_response = $this->_parseBindings(
-            $data['results']['bindings'],
-            '\LD\APIBundle\Entity\Region'
+            $data['results']['bindings'], $parameter
         );
 
         return $this->response($_response);
     }
 
-    protected function _countDocumentsTheme()
+    protected function _parseBindings($bindings, $type)
     {
-        $spqlsrvc = $this->get('sparql');
-        $spqls = $this->container->getParameter('sparqls');
-        $spql = $spqls['count']['documents']['theme'];
-        $data = $spqlsrvc->curl($spql);
-
-        $_response = $this->_parseBindings(
-            $data['results']['bindings'],
-            '\LD\APIBundle\Entity\Theme'
-        );
-
-        return $this->response($_response);
-    }
-
-    protected function _parseBindings($bindings, $entity)
-    {
+        $entity = '\\LD\\APIBundle\\Entity\\' . ucfirst($type);
         $total = 0;
         $router = $this->get('router');
         $response = array();
@@ -115,7 +78,7 @@ class CountController extends APIController
             'metadata' => array(
                 'total_results' => $total,
             ),
-            'theme_count' => $response,
+            $type . '_count' => $response,
         );
 
         return $_response;

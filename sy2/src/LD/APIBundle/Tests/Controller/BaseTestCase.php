@@ -58,5 +58,5 @@ abstract class BaseTestCase extends WebTestCase
      *
      * @param array $data Decoded API response
      */
-    abstract protected function checkData(array $data);
+    abstract protected function checkData(array $data, $param = null);
 }
