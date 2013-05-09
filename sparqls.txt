@@ -29,7 +29,7 @@ select distinct ?region ?regionlabel count(distinct ?article) where {
 prefix DCTERMS: <http://purl.org/dc/terms/> 
 select distinct ?countrycode ?countrylabel count(distinct ?article) 
                           where {
-                                ?a <http://purl.org/dc/terms/coverage> ?country .
+                                ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
                                 ?publisher a <http://dbpedia.org/ontology/Organisation> .
                                 ?article DCTERMS:publisher ?publisher .
                                 ?article a <http://purl.org/ontology/bibo/Article> .
