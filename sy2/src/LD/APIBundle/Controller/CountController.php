@@ -62,12 +62,12 @@ class CountController extends APIController
         $response = array();
         foreach ($bindings as $binding) {
             $theme = $entity::createFromBinding($binding, $router)->toArray();
-            if (!isset($binding['callret-2']['value'])) {
+            if (!isset($binding['count']['value'])) {
                 throw new \RuntimeException(
-                    '$binding["callret-2"]["value"]" not set'
+                    '$binding["count"]["value"]" not set'
                 );
             }
-            $count = $binding['callret-2']['value'];
+            $count = $binding['count']['value'];
             $theme['count'] = $count;
             $total += $count;
             $response[] = $theme;

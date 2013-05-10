@@ -16,8 +16,12 @@ parameters:
     sparqls:
       count:
         documents:
+          # /app_dev.php/count/documents/region
+          #_region:
+          #  select:
+          #  where:
           region: >
-            select distinct ?region ?regionlabel count(distinct ?article)
+            select distinct ?region ?regionlabel count(distinct ?article) as ?count
             where {
               ?article a <http://purl.org/ontology/bibo/Article> .
               ?article <http://purl.org/dc/terms/coverage>
@@ -30,6 +34,7 @@ parameters:
               ?region <http://www.w3.org/2000/01/rdf-schema#label>
               ?regionlabel .
             }
+          # /app_dev.php/count/documents/theme
           theme: >
             select distinct ?theme ?themelabel count(distinct ?article)
             where {
@@ -40,6 +45,7 @@ parameters:
               ?article a <http://purl.org/ontology/bibo/Article> .
               ?article <http://purl.org/dc/terms/subject> ?theme .
             }
+          # /app_dev.php/count/documents/country
           country: >
             prefix DCTERMS: <http://purl.org/dc/terms/>
             select distinct ?countrycode ?countrylabel count(distinct ?article)
@@ -52,6 +58,7 @@ parameters:
               ?country <http://www.w3.org/2000/01/rdf-schema#label> ?countrylabel .
             }
         organisations:
+          # /app_dev.php/count/organisations/region
           region: >
             prefix DCTERMS: <http://purl.org/dc/terms/>
             select distinct ?region ?regionlabel count(distinct ?publisher)
@@ -67,6 +74,7 @@ parameters:
               ?article DCTERMS:publisher ?publisher .
               ?article a <http://purl.org/ontology/bibo/Article> .
               }
+          # /app_dev.php/count/organisations/country
           country: >
             prefix DCTERMS: <http://purl.org/dc/terms/>
             select distinct ?countrycode ?countrylabel count(distinct ?publisher)
@@ -77,6 +85,7 @@ parameters:
               ?article <http://purl.org/dc/terms/coverage> ?country .
               ?country <http://www.w3.org/2000/01/rdf-schema#label> ?countrylabel .
             }
+          # /app_dev.php/count/organisations/theme
           theme: >
             prefix DCTERMS: <http://purl.org/dc/terms/>
             select distinct ?theme ?themelabel count(distinct ?publisher)
