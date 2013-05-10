@@ -92,3 +92,32 @@ parameters:
           select distinct ?a ?b where {
             <http://linked-development.org/eldis/output/__ID__/> ?a ?b .
           }
+        countries: >
+          select distinct  ?a ?b
+          where {
+            <http://linked-development.org/eldis/countries/__ID__/> <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
+            <http://linked-development.org/eldis/countries/__ID__/> ?a ?b .
+          }
+        themes: >
+          select distinct  ?a ?b
+          where {
+            <http://linked-development.org/eldis/themes/C1310/> ?a ?b .
+          }
+        organisations: >
+          select ?a ?b
+            where {<http://linked-development.org/eldis/organisation/A64953/> ?a ?b .
+          }
+        region: >
+          select ?a ?b
+            where {<http://linked-development.org/eldis/regions/C30/> ?a ?b .
+          }
+      get_all:
+        documents: >
+          select ?a ?b
+            where {<http://linked-development.org/eldis/regions/C30/> ?a ?b .
+          }
+        themes: >
+          select distinct ?article ?a ?b
+            where {?article <http://purl.org/dc/terms/subject> <http://linked-development.org/eldis/themes/<ID>/> .
+            ?article ?a ?b .
+          }

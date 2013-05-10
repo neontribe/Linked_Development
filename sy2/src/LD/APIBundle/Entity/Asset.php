@@ -21,9 +21,260 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class Asset extends AbstractBaseEntity
 {
-    private $author = array();
-    private $title;
+    public function getAuthor()
+    {
+        return $this->author;
+    }
 
+    public function setAuthor($author)
+    {
+        $this->author = $author;
+        return $this;
+    }
+
+    public function getCategoryRegion()
+    {
+        return $this->categoryRegion;
+    }
+
+    public function setCategoryRegion($categoryRegion)
+    {
+        $this->categoryRegion = $categoryRegion;
+        return $this;
+    }
+
+    public function getCategorySubject_array()
+    {
+        return $this->categorySubject_array;
+    }
+
+    public function setCategorySubject_array($categorySubject_array)
+    {
+        $this->categorySubject_array = $categorySubject_array;
+        return $this;
+    }
+
+    public function getCategoryTheme_array()
+    {
+        return $this->categoryTheme_array;
+    }
+
+    public function setCategoryTheme_array($categoryTheme_array)
+    {
+        $this->categoryTheme_array = $categoryTheme_array;
+        return $this;
+    }
+
+    public function getCorporateAuthor()
+    {
+        return $this->corporateAuthor;
+    }
+
+    public function setCorporateAuthor($corporateAuthor)
+    {
+        $this->corporateAuthor = $corporateAuthor;
+        return $this;
+    }
+
+    public function getCountryFocus()
+    {
+        return $this->countryFocus;
+    }
+
+    public function setCountryFocus($countryFocus)
+    {
+        $this->countryFocus = $countryFocus;
+        return $this;
+    }
+
+    public function getDateCreated()
+    {
+        return $this->dateCreated;
+    }
+
+    public function setDateCreated($dateCreated)
+    {
+        $this->dateCreated = $dateCreated;
+        return $this;
+    }
+
+    public function getDateUpdated()
+    {
+        return $this->dateUpdated;
+    }
+
+    public function setDateUpdated($dateUpdated)
+    {
+        $this->dateUpdated = $dateUpdated;
+        return $this;
+    }
+
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    public function setDescription($description)
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    public function getEtal()
+    {
+        return $this->etal;
+    }
+
+    public function setEtal($etal)
+    {
+        $this->etal = $etal;
+        return $this;
+    }
+
+    public function getHeadline()
+    {
+        return $this->headline;
+    }
+
+    public function setHeadline($headline)
+    {
+        $this->headline = $headline;
+        return $this;
+    }
+
+    public function getKeyword()
+    {
+        return $this->keyword;
+    }
+
+    public function setKeyword($keyword)
+    {
+        $this->keyword = $keyword;
+        return $this;
+    }
+
+    public function getLanguageId()
+    {
+        return $this->languageId;
+    }
+
+    public function setLanguageId($languageId)
+    {
+        $this->languageId = $languageId;
+        return $this;
+    }
+
+    public function getLanguageName()
+    {
+        return $this->languageName;
+    }
+
+    public function setLanguageName($languageName)
+    {
+        $this->languageName = $languageName;
+        return $this;
+    }
+
+    public function getLicenseType()
+    {
+        return $this->licenseType;
+    }
+
+    public function setLicenseType($licenseType)
+    {
+        $this->licenseType = $licenseType;
+        return $this;
+    }
+
+    public function getPublicationDate()
+    {
+        return $this->publicationDate;
+    }
+
+    public function setPublicationDate($publicationDate)
+    {
+        $this->publicationDate = $publicationDate;
+        return $this;
+    }
+
+    public function getPublicationYear()
+    {
+        return $this->publicationYear;
+    }
+
+    public function setPublicationYear($publicationYear)
+    {
+        $this->publicationYear = $publicationYear;
+        return $this;
+    }
+
+    public function getPublisherArray()
+    {
+        return $this->publisherArray;
+    }
+
+    public function setPublisherArray($publisherArray)
+    {
+        $this->publisherArray = $publisherArray;
+        return $this;
+    }
+
+    public function getSite()
+    {
+        return $this->site;
+    }
+
+    public function setSite($site)
+    {
+        $this->site = $site;
+        return $this;
+    }
+
+    public function getTimestamp()
+    {
+        return $this->timestamp;
+    }
+
+    public function setTimestamp($timestamp)
+    {
+        $this->timestamp = $timestamp;
+        return $this;
+    }
+
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    public function setTitle($title)
+    {
+        $this->title = $title;
+        return $this;
+    }
+
+    public function getUrls()
+    {
+        return $this->urls;
+    }
+
+    public function setUrls($urls)
+    {
+        $this->urls = $urls;
+        return $this;
+    }
+
+    public function getWebsiteUrl()
+    {
+        return $this->websiteUrl;
+    }
+
+    public function setWebsiteUrl($websiteUrl)
+    {
+        $this->websiteUrl = $websiteUrl;
+        return $this;
+    }
+
+    
     /**
      * Constructor
      *
@@ -56,28 +307,6 @@ class Asset extends AbstractBaseEntity
         $data['title'] = $this->getTitle();
 
         return $data;
-    }
-
-    /**
-     * Set two letter iso code
-     *
-     * @param string $val
-     *
-     * @return void;
-     */
-    public function setTitle($val)
-    {
-        $this->title = $val;
-    }
-
-    /**
-     * Get two letter iso code
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
     }
 
     /**
