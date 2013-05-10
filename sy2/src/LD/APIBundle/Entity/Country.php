@@ -121,28 +121,3 @@ class Country extends AbstractBaseEntity
         );
     }
 }
-/*
-        {
-            "count": 2151,
-            "iso_two_letter_code": "IN",
-            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/countries/A1100/full/india/",
-            "object_id": "A1100",
-            "object_name": "India",
-            "object_type": "Country"
-        },
-            {
-                "countrycode": {
-                    "type": "literal",
-                    "value": "NL"
-                },
-                "countrylabel": {
-                    "type": "literal",
-                    "value": "Netherlands"
-                },
-                "callret-2": {
-                    "type": "typed-literal",
-                    "datatype": "http:\/\/www.w3.org\/2001\/XMLSchema#integer",
-                    "value": "52"
-                }
-            },
- */
