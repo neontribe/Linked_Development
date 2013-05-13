@@ -47,9 +47,11 @@ class Theme extends AbstractBaseEntity
     /**
      * Return an array representation of this object
      *
+     * @param int $format self::SHORT | self:: FULL
+     *
      * @return array
      */
-    public function toArray()
+    public function toArray($format = AbstractBaseEntity::SHORT)
     {
         $data = parent::toArray();
         $data['level'] = $this->getLevel();
@@ -80,32 +82,21 @@ class Theme extends AbstractBaseEntity
     }
 
     /**
-     * Take a binding entry from virtuoso and return a new Theme object
+     * Take a binding entry from virtuoso and return a new Region object
      *
-     * @param array                                      $binding The array of data from virtuoso
-     * @param \Symfony\Component\Routing\RouterInterface $router  The router object used to generate the metadata url
+     * @param mixed                                      $row    The array of data from virtuoso
+     * @param \Symfony\Component\Routing\RouterInterface $router The router object used to generate the metadata url
      *
      * @return \LD\APIBundle\Entity\Region
      * @throws \RuntimeException
      */
-    public static function createFromBinding(array $binding, RouterInterface $router)
+    public static function createFromRow($row, RouterInterface $router)
     {
-        if (!isset($binding['theme']['value'])) {
-            throw new \RuntimeException(
-                '$binding["theme"]["value"]" not set'
-            );
-        }
-        if (!isset($binding['themelabel']['value'])) {
-            throw new \RuntimeException(
-                '$binding["themelabel"]["value"]" not set'
-            );
-        }
-
         $level = 'Missing in sparql';
 
-        $url = $binding['theme']['value'];
+        $url = $row->theme;
 
-        $objectName = $binding['themelabel']['value'];
+        $objectName = $row->themelabel->getValue();
         $objectType = 'theme';
 
         $parts = explode('/', trim($url, ' /'));
@@ -121,5 +112,17 @@ class Theme extends AbstractBaseEntity
         );
 
         return new Theme($level, $metadataUrl, $objectId, $objectName, $objectType);
+    }
+
+    /**
+     * Return a short format array representation of this entity
+     *
+     * A wrapper for toArray(SHORT)
+     *
+     * @return array
+     */
+    public function short()
+    {
+        return $this->toArray(AbstractBaseEntity::SHORT);
     }
 }

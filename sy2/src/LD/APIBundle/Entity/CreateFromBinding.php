@@ -7,13 +7,13 @@ use Symfony\Component\Routing\RouterInterface;
 interface CreateFromBinding
 {
     /**
-     * Take a binding entry from virtuoso and return a new object
+     * Take a binding entry from virtuoso and return a new Region object
      *
-     * @param array                                      $binding The array of data from virtuoso
-     * @param \Symfony\Component\Routing\RouterInterface $router  The router object used to generate the metadata url
+     * @param mixed                                      $row    The array of data from virtuoso
+     * @param \Symfony\Component\Routing\RouterInterface $router The router object used to generate the metadata url
      *
      * @return \LD\APIBundle\Entity\Region
      * @throws \RuntimeException
      */
-    public static function createFromBinding(array $binding, RouterInterface $router);
+    public static function createFromRow($row, RouterInterface $router);
 }

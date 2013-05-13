@@ -24,28 +24,17 @@ class Region extends AbstractBaseEntity
     /**
      * Take a binding entry from virtuoso and return a new Region object
      *
-     * @param array                                      $binding The array of data from virtuoso
-     * @param \Symfony\Component\Routing\RouterInterface $router  The router object used to generate the metadata url
+     * @param mixed                                      $row    The array of data from virtuoso
+     * @param \Symfony\Component\Routing\RouterInterface $router The router object used to generate the metadata url
      *
      * @return \LD\APIBundle\Entity\Region
      * @throws \RuntimeException
      */
-    public static function createFromBinding(array $binding, RouterInterface $router)
+    public static function createFromRow($row, RouterInterface $router)
     {
-        if (!isset($binding['region']['value'])) {
-            throw new \RuntimeException(
-                '$binding["region"]["value"]" not set'
-            );
-        }
-        if (!isset($binding['regionlabel']['value'])) {
-            throw new \RuntimeException(
-                '$binding["regionlabel"]["value"]" not set'
-            );
-        }
+        $url = $row->region;
 
-        $url = $binding['region']['value'];
-
-        $objectName = $binding['regionlabel']['value'];
+        $objectName = $row->regionlabel->getValue();
         $objectType = 'region';
 
         $parts = explode('/', trim($url, ' /'));
@@ -61,5 +50,17 @@ class Region extends AbstractBaseEntity
         );
 
         return new Region($metadataUrl, $objectId, $objectName, $objectType);
+    }
+
+    /**
+     * Return a short format array representation of this entity
+     *
+     * A wrapper for toArray(SHORT)
+     *
+     * @return array
+     */
+    public function short()
+    {
+        return $this->toArray(AbstractBaseEntity::SHORT);
     }
 }

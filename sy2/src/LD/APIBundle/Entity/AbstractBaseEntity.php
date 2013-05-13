@@ -8,6 +8,9 @@ use Symfony\Component\HttpFoundation\Request;
  */
 abstract class AbstractBaseEntity implements CreateFromBinding
 {
+    const SHORT = 1;
+    const FULL = 2;
+
     private $metadataUrl;
     private $objectId;
     private $objectName;
@@ -30,6 +33,7 @@ abstract class AbstractBaseEntity implements CreateFromBinding
         $this->setObjectName($objectName);
         $this->setObjectType($objectType);
     }
+
 
     /**
      * Set metatdata url
@@ -139,9 +143,11 @@ abstract class AbstractBaseEntity implements CreateFromBinding
     /**
      * Return an array representation of this object
      *
+     * @param int $format self::SHORT | self:: FULL
+     *
      * @return array
      */
-    public function toArray()
+    public function toArray($format = AbstractBaseEntity::SHORT)
     {
         return array(
             'metadata_url' => $this->getMetadataUrl(),
@@ -150,4 +156,13 @@ abstract class AbstractBaseEntity implements CreateFromBinding
             'object_type' => $this->getObjectType(),
         );
     }
+
+    /**
+     * Return a short format array representation of this entity
+     *
+     * A wrapper for toArray(SHORT)
+     *
+     * @return array
+     */
+    public abstract function short();
 }

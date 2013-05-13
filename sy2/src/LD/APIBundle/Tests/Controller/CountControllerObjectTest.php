@@ -12,6 +12,8 @@ class CountControllerObjectTest extends BaseTestCase
     private $checkOldApi = true;
     private $apikey = null;
 
+    private $activeUrl = false;
+
     public function setUp()
     {
         if (null == static::$kernel) {
@@ -45,8 +47,8 @@ class CountControllerObjectTest extends BaseTestCase
 
         foreach ($objects as $object) {
             foreach ($params as $param) {
-                $url = '/count/' . $object . '/' . $param . '?format=json';
-                $client->request('GET', $url);
+                $this->activeUrl = '/count/' . $object . '/' . $param . '?format=json';
+                $client->request('GET', $this->activeUrl);
                 $response1 = json_decode(
                     $client->getResponse()->getContent(), true
                 );
@@ -102,17 +104,17 @@ class CountControllerObjectTest extends BaseTestCase
     {
         $this->assertTrue(
             !array_key_exists('available_types', $data),
-            'Response type was not accepted.'
+            'Response type was not accepted. [' . $this->activeUrl . ']'
         );
 
         $this->assertTrue(
             array_key_exists('metadata', $data),
-            'Meta data not present.'
+            'Meta data not present. [' . $this->activeUrl . ']' . json_encode(array_keys($data))
         );
 
         $this->assertTrue(
             array_key_exists($param . '_count', $data),
-            'Results not.'
+            'Results not. [' . $this->activeUrl . ']'
         );
     }
 }

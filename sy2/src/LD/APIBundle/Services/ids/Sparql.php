@@ -43,39 +43,21 @@ class Sparql
 
         return json_decode($response, TRUE);
     }
-/*
-    public function getAllThemes($limit = 10, $offset = 0)
+
+    /**
+     * Easy RDF Query of the endpoint
+     *
+     * @param array $elements
+     *
+     * @return EasyRdf_Sparql_Result|EasyRdf_Graph
+     */
+    public function query(array $elements)
     {
-        $spql = array(
-            'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>',
-            'PREFIX SKOS: <http://www.w3.org/2004/02/skos/core#>',
-            'select * where {?a ?b <http://www.w3.org/2004/02/skos/core#Concept>}',
-            sprintf('ORDER BY DESC(?a) LIMIT %d OFFSET %d', $limit, $offset),
-        );
+        $query = implode("\n", $elements);
+        $client = new \EasyRdf_Sparql_Client($this->endpoint);
 
-        return json_decode($this->curl($spql), TRUE);
+        $result = $client->query($query);
+
+        return $result;
     }
-
-    public function getAllDocuments($limit = 10, $offset = 0)
-    {
-        $spql = array(
-            'PREFIX BIBO: <http://purl.org/ontology/bibo/>',
-            'select * where {?a ?b BIBO:Article}',
-            sprintf('ORDER BY DESC(?a) LIMIT %d OFFSET %d', $limit, $offset),
-        );
-
-        return json_decode($this->curl($spql), TRUE);
-    }
-
-    public function getAllCountries($limit = 10, $offset = 0)
-    {
-        $spql = array(
-            'select distinct ?country ?countrycode where {?a <http://purl.org/dc/terms/coverage> ?country .',
-            '?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .',
-            '}',
-        );
-
-        return json_decode($this->curl($spql), TRUE);
-    }
- */
 }
