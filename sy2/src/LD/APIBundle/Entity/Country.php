@@ -47,9 +47,11 @@ class Country extends AbstractBaseEntity
     /**
      * Return an array representation of this object
      *
+     * @param int $format self::SHORT | self:: FULL
+     *
      * @return array
      */
-    public function toArray()
+    public function toArray($format = AbstractBaseEntity::SHORT)
     {
         $data = parent::toArray();
         $data['iso_two_letter_code'] = $this->getIsoTwoLetterCode();
@@ -79,41 +81,38 @@ class Country extends AbstractBaseEntity
         return $this->isoTwoLetterCode;
     }
 
+    public function short()
+    {
+        return $this->toArray();
+    }
+
     /**
-     * Take a binding entry from virtuoso and return a new Country object
+     * Take a binding entry from virtuoso and return a new Region object
      *
-     * @param array                                      $binding The array of data from virtuoso
-     * @param \Symfony\Component\Routing\RouterInterface $router  The router object used to generate the metadata url
+     * @param mixed                                      $row    The array of data from virtuoso
+     * @param \Symfony\Component\Routing\RouterInterface $router The router object used to generate the metadata url
+     * @param string                                     $graph  rd4 | eldis | all
      *
      * @return \LD\APIBundle\Entity\Region
      * @throws \RuntimeException
      */
-    public static function createFromBinding(array $binding, RouterInterface $router)
+    public static function createFromRow($row, RouterInterface $router, $graph = 'all')
     {
-        if (!isset($binding['countrycode']['value'])) {
-            throw new \RuntimeException(
-                '$binding["countrycode"]["value"]" not set'
-            );
-        }
-        if (!isset($binding['countrylabel']['value'])) {
-            throw new \RuntimeException(
-                '$binding["countrylabel"]["value"]" not set'
-            );
-        }
-
-        $objectName = $binding['countrylabel']['value'];
+        $objectName = $row->countrylabel->getValue();
         $objectType = 'Country';
         $objectId = 'Not present in sparql';
-        $isoTwoLetterCode = $binding['countrycode']['value'];
+        $isoTwoLetterCode = $row->countrycode->getValue();
 
         $metadataUrl = $router->generate(
             'ld_api_get_get_1',
             array(
+                'graph' => $graph,
                 'obj' => 'countries',
                 'parameter' => $objectId,
                 'format' => 'full',
                 'query' => $objectName,
-            )
+            ),
+            UrlGeneratorInterface::ABSOLUTE_PATH
         );
 
         return new Country(

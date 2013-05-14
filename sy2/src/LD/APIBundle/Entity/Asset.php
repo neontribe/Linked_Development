@@ -274,7 +274,7 @@ class Asset extends AbstractBaseEntity
         return $this;
     }
 
-    
+
     /**
      * Constructor
      *
@@ -299,9 +299,11 @@ class Asset extends AbstractBaseEntity
     /**
      * Return an array representation of this object
      *
+     * @param int $format self::SHORT | self:: FULL
+     *
      * @return array
      */
-    public function toArray()
+    public function toArray($format = AbstractBaseEntity::SHORT)
     {
         $data = parent::toArray();
         $data['title'] = $this->getTitle();
@@ -310,18 +312,15 @@ class Asset extends AbstractBaseEntity
     }
 
     /**
-     * Take a binding entry from virtuoso and return a new Country object.
+     * Take a binding entry from virtuoso and return a new Region object
      *
-     * I don't think this ever gets called as bindings are part of the count
-     * results ans there is no /count/assets/foo
-     *
-     * @param array                                      $binding The array of data from virtuoso
-     * @param \Symfony\Component\Routing\RouterInterface $router  The router object used to generate the metadata url
+     * @param mixed                                      $row    The array of data from virtuoso
+     * @param \Symfony\Component\Routing\RouterInterface $router The router object used to generate the metadata url
      *
      * @return \LD\APIBundle\Entity\Region
      * @throws \RuntimeException
      */
-    public static function createFromBinding(array $binding, RouterInterface $router)
+    public static function createFromRow($row, RouterInterface $router)
     {
         return false;
     }

@@ -27,11 +27,20 @@ class CountController extends APIController
      *
      * @param string $object    document|organisations|item
      * @param string $parameter theme|country|region|keyword
+     * @param string $format    short|full
      *
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @Route(
-     *      "/count/{object}/{parameter}",
+     *      "/{graph}/count/{object}/{parameter}",
+     *      requirements={
+     *          "object" = "documents|organisations|items",
+     *          "parameter" = "country|theme|region|keyword"
+     *      },
+     *      defaults={"format" = "short"}
+     * )
+     * @Route(
+     *      "/{graph}/count/{object}/{parameter}/{format}",
      *      requirements={
      *          "object" = "documents|organisations|items",
      *          "parameter" = "country|theme|region|keyword"
@@ -39,48 +48,44 @@ class CountController extends APIController
      * )
      * @Method({"GET", "HEAD", "OPTIONS"})
      */
-    public function countAction($object, $parameter)
+    public function countAction($graph, $object, $parameter, $format = 'short')
     {
+        $entity = '\\LD\\APIBundle\\Entity\\' . ucfirst($parameter);
+        $router = $this->get('router');
+
+        $graphs = $this->container->getParameter('graphs');
+        if (isset($graphs[$graph])) {
+            $_graph = $graphs[$graph];
+        } else {
+            $_graph = null;
+        }
+
         $spqlsrvc = $this->get('sparql');
         $spqls = $this->container->getParameter('sparqls');
         $spql = $spqls['count'][$object][$parameter];
-        $data = $spqlsrvc->curl($spql);
-        //return $this->response($data);
+        $data = $spqlsrvc->query($_graph, $spql);
 
-        $_response = $this->_parseBindings(
-            $data['results']['bindings'], $parameter
-        );
-
-        return $this->response($_response);
-    }
-
-    protected function _parseBindings($bindings, $type)
-    {
-        $entity = '\\LD\\APIBundle\\Entity\\' . ucfirst($type);
-        $total = 0;
-        $router = $this->get('router');
         $response = array();
-        foreach ($bindings as $binding) {
-            $theme = $entity::createFromBinding($binding, $router)->toArray();
-            if (!isset($binding['count']['value'])) {
-                throw new \RuntimeException(
-                    '$binding["count"]["value"]" not set'
-                );
+        $total = 0;
+        foreach ($data as $row) {
+            $obj = $entity::createFromRow($row, $router, $graph);
+            if ($format == 'short') {
+                $data = $obj->short();
+            } else {
+                $data = $obj->full();
             }
-            $count = $binding['count']['value'];
-            $theme['count'] = $count;
-            $total += $count;
-            $response[] = $theme;
-
+            $data['count'] = $row->count->getValue();
+            $response[] = $data;
+            $total += $row->count->getValue();
         }
 
         $_response = array(
             'metadata' => array(
                 'total_results' => $total,
             ),
-            $type . '_count' => $response,
+            $parameter . '_count' => $response,
         );
 
-        return $_response;
+        return $this->response($_response);
     }
 }

@@ -3,14 +3,18 @@
 namespace LD\APIBundle\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * API Tests
  */
-class CountControllerObjectTest extends BaseTestCase
+class CountControllerObjectTest extends BaseTestCase implements ContainerAwareInterface
 {
-    private $checkOldApi = true;
+    private $checkOldApi = false;
     private $apikey = null;
+    private $container;
+    private $activeUrl = false;
 
     public function setUp()
     {
@@ -45,8 +49,8 @@ class CountControllerObjectTest extends BaseTestCase
 
         foreach ($objects as $object) {
             foreach ($params as $param) {
-                $url = '/count/' . $object . '/' . $param . '?format=json';
-                $client->request('GET', $url);
+                $this->activeUrl = '/eldis/count/' . $object . '/' . $param . '?format=json';
+                $client->request('GET', $this->activeUrl);
                 $response1 = json_decode(
                     $client->getResponse()->getContent(), true
                 );
@@ -102,17 +106,22 @@ class CountControllerObjectTest extends BaseTestCase
     {
         $this->assertTrue(
             !array_key_exists('available_types', $data),
-            'Response type was not accepted.'
+            'Response type was not accepted. [' . $this->activeUrl . ']'
         );
 
         $this->assertTrue(
             array_key_exists('metadata', $data),
-            'Meta data not present.'
+            'Meta data not present. [' . $this->activeUrl . ']' . json_encode(array_keys($data))
         );
 
         $this->assertTrue(
             array_key_exists($param . '_count', $data),
-            'Results not.'
+            'Results not. [' . $this->activeUrl . ']'
         );
+    }
+
+    public function setContainer(ContainerInterface $container)
+    {
+        $this->container = $container;
     }
 }

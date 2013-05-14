@@ -23,9 +23,9 @@ class GetController extends APIController
      *
      * This can be a document, organisation, theme, country or  region
      *
-     * @Route("/get/assets/{id}", defaults={"format" = "short", "name" = "null"})
-     * @Route("/get/assets/{id}/{format}", defaults={"name" = "null"}, requirements={"format" = "short|full"})
-     * @Route("/get/assets/{id}/{format}/{name}", requirements={"format" = "short|full"})
+     * @Route("/{graph}/get/assets/{id}", defaults={"format" = "short", "name" = "null"})
+     * @Route("/{graph}/get/assets/{id}/{format}", defaults={"name" = "null"}, requirements={"format" = "short|full"})
+     * @Route("/{graph}/get/assets/{id}/{format}/{name}", requirements={"format" = "short|full"})
      * @Method({"GET", "HEAD", "OPTIONS"})
      *
      * @return \Symfony\Component\HttpFoundation\Response
@@ -242,9 +242,9 @@ class GetController extends APIController
      *
      * This can be a document, organisation, theme, country or  region
      *
-     * @Route("/get/{obj}/{parameter}/{format}/{query}")
-     * @Route("/get/{obj}/{parameter}/{format}",  defaults={"query" = "null"})
-     * @Route("/get/{obj}/{parameter}",  defaults={"format" = "short", "query" = "null"})
+     * @Route("/{graph}/get/{obj}/{parameter}/{format}/{query}")
+     * @Route("/{graph}/get/{obj}/{parameter}/{format}",  defaults={"query" = "null"})
+     * @Route("/{graph}/get/{obj}/{parameter}",  defaults={"format" = "short", "query" = "null"})
      * @Method({"GET", "HEAD", "OPTIONS"})
      *
      * @return \Symfony\Component\HttpFoundation\Response
@@ -260,7 +260,7 @@ class GetController extends APIController
      *
      * Currently the first 10 records are displayed (with a link to the next 10)
      *
-     * @Route("/get_all/{parameter}")
+     * @Route("/{graph}/get_all/{parameter}")
      * @Method({"GET", "HEAD", "OPTIONS"})
      *
      * @return \Symfony\Component\HttpFoundation\Response
@@ -277,7 +277,7 @@ class GetController extends APIController
      *
      * This is only currently possible in Theme objects
      *
-     * @Route("/get_children/{obj}/{parameter}")
+     * @Route("/{graph}/get_children/{obj}/{parameter}")
      * @Method({"GET", "HEAD", "OPTIONS"})
      *
      * @return \Symfony\Component\HttpFoundation\Response
