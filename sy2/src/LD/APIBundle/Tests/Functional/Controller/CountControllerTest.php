@@ -27,7 +27,8 @@ class CountControllerTest extends BaseTestCase
      */
     public function testCount()
     {
-        $client = static::createClient();
+        $client = static::createClient()
+        $graphs = array_keys($client->getContainer()->getParameter('graphs'));;
 
         $objects = array(
             'documents',
@@ -43,15 +44,22 @@ class CountControllerTest extends BaseTestCase
         );
         echo "** count keywords skipped **\n";
 
-        foreach ($objects as $object) {
-            foreach ($params as $param) {
-                $this->activeUrl = '/eldis/count/' . $object . '/' . $param . '?format=json';
-                $client->getContainer()->get('logger')->debug('Fetching: ' . $this->activeUrl);
-                $client->request('GET', $this->activeUrl);
-                $response1 = json_decode(
-                    $client->getResponse()->getContent(), true
-                );
-                $this->checkData($response1, $param);
+        foreach ($graphs as $graph) {
+            if ($graph) {
+                foreach ($objects as $object) {
+                    foreach ($params as $param) {
+                        $this->activeUrl = sprintf(
+                            '/%s/count/%s/%s?format=json',
+                            $graph, $object, $param
+                        );
+                        $client->getContainer()->get('logger')->debug('Fetching: ' . $this->activeUrl);
+                        $client->request('GET', $this->activeUrl);
+                        $response1 = json_decode(
+                            $client->getResponse()->getContent(), true
+                        );
+                        $this->checkData($response1, $param);
+                    }
+                }
             }
         }
     }

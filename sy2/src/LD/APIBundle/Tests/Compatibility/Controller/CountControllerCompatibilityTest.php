@@ -64,11 +64,6 @@ class CountControllerObjectTest extends WebTestCase
                         );
                         $client->getContainer()->get('logger')->debug('Remote URL: ' . $remoteurl);
                         $response2 = $this->fetchData($remoteurl);
-                        print "\n\n-----------------------\n\n";
-                        print_r($response1);
-                        print "\n\n-----------------------\n\n";
-                        print_r($response2);
-                        print "\n\n-----------------------\n\n";
                         $diff = $this->arrayDiffAssocRecursive($response1, $response2);
                         $this->assertTrue(
                             count($diff) == 0,
