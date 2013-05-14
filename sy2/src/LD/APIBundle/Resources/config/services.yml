@@ -17,7 +17,7 @@ parameters:
       # define input:default-graph-uri <foo>
       eldis: http://linked-development.org/eldis/
       r4d: http://linked-development.org/r4d/
-      all: ~
+      # all: ~, not used
 
     sparqls:
 

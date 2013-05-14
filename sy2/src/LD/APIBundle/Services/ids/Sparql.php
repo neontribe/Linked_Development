@@ -47,14 +47,26 @@ class Sparql
     /**
      * Easy RDF Query of the endpoint
      *
-     * @param array $elements
+     * @param string $graph
+     * @param array  $elements
      *
      * @return EasyRdf_Sparql_Result|EasyRdf_Graph
      */
-    public function query(array $elements)
+    public function query($graph, array $elements)
     {
-        $query = implode("\n", $elements);
+        // select * from >http://linked-development.org/eldis> where ...
+
+        $query = $elements['select'];
+        if ($graph && $graph != 'all') {
+            $query .= "\nfrom <foooo>";
+        }
+        $query .= "\n";
+        $query .= $elements['where'];
+        
         $client = new \EasyRdf_Sparql_Client($this->endpoint);
+
+//        echo $query;
+//        die();
 
         $result = $client->query($query);
 

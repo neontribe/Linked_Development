@@ -3,15 +3,17 @@
 namespace LD\APIBundle\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * API Tests
  */
-class CountControllerObjectTest extends BaseTestCase
+class CountControllerObjectTest extends BaseTestCase implements ContainerAwareInterface
 {
-    private $checkOldApi = true;
+    private $checkOldApi = false;
     private $apikey = null;
-
+    private $container;
     private $activeUrl = false;
 
     public function setUp()
@@ -47,7 +49,7 @@ class CountControllerObjectTest extends BaseTestCase
 
         foreach ($objects as $object) {
             foreach ($params as $param) {
-                $this->activeUrl = '/count/' . $object . '/' . $param . '?format=json';
+                $this->activeUrl = '/eldis/count/' . $object . '/' . $param . '?format=json';
                 $client->request('GET', $this->activeUrl);
                 $response1 = json_decode(
                     $client->getResponse()->getContent(), true
@@ -116,5 +118,10 @@ class CountControllerObjectTest extends BaseTestCase
             array_key_exists($param . '_count', $data),
             'Results not. [' . $this->activeUrl . ']'
         );
+    }
+
+    public function setContainer(ContainerInterface $container)
+    {
+        $this->container = $container;
     }
 }

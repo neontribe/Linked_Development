@@ -32,30 +32,43 @@ class CountController extends APIController
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @Route(
-     *      "/count/{object}/{parameter}",
+     *      "/{graph}/count/{object}/{parameter}",
      *      requirements={
      *          "object" = "documents|organisations|items",
      *          "parameter" = "country|theme|region|keyword"
      *      },
      *      defaults={"format" = "short"}
      * )
+     * @Route(
+     *      "/{graph}/count/{object}/{parameter}/{format}",
+     *      requirements={
+     *          "object" = "documents|organisations|items",
+     *          "parameter" = "country|theme|region|keyword"
+     *      }
+     * )
      * @Method({"GET", "HEAD", "OPTIONS"})
      */
-    public function countAction($object, $parameter, $format = 'short')
+    public function countAction($graph, $object, $parameter, $format = 'short')
     {
         $entity = '\\LD\\APIBundle\\Entity\\' . ucfirst($parameter);
         $router = $this->get('router');
 
+        $graphs = $this->container->getParameter('graphs');
+        if (isset($graphs[$graph])) {
+            $_graph = $graphs[$graph];
+        } else {
+            $_graph = null;
+        }
+
         $spqlsrvc = $this->get('sparql');
         $spqls = $this->container->getParameter('sparqls');
         $spql = $spqls['count'][$object][$parameter];
-        $data = $spqlsrvc->query($spql);
-        //return $this->response($data);
+        $data = $spqlsrvc->query($_graph, $spql);
 
         $response = array();
         $total = 0;
         foreach ($data as $row) {
-            $obj = $entity::createFromRow($row, $router);
+            $obj = $entity::createFromRow($row, $router, $graph);
             if ($format == 'short') {
                 $data = $obj->short();
             } else {
