@@ -27,7 +27,7 @@ class CountControllerTest extends BaseTestCase
      */
     public function testCount()
     {
-        $client = static::createClient()
+        $client = static::createClient();
         $graphs = array_keys($client->getContainer()->getParameter('graphs'));;
 
         $objects = array(
