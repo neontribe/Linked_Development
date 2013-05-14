@@ -54,19 +54,60 @@ class Sparql
      */
     public function query($graph, array $elements)
     {
-        // select * from >http://linked-development.org/eldis> where ...
 
-        $query = $elements['select'];
-        if ($graph && $graph != 'all') {
-            $query .= "\nfrom <foooo>";
+        if (isset($elements['define'])) {
+            $define = $elements['define'];
+        } else {
+            $define = '';
         }
+
+        $select = $elements['select'];
+
+        if ($graph && $graph != 'all') {
+            $from = " from <" . $graph . '>';
+        } else {
+            $from = '';
+        }
+
+        $where = $elements['where'];
+
+        $query = sprintf(
+            '%s %s %s %s',
+            $define, $select, $from, $where
+        );
+
+        $client = new \EasyRdf_Sparql_Client($this->endpoint);
+        $this->logger->debug('Query: ' . $query);
+
+        $result = $client->query($query);
+
+        return $result;
+
+
+
+
+
+
+
+
+        if (isset($elements['define'])) {
+            $query = $elements['define'];
+        } else {
+            $query = '';
+        }
+
+        $query .= "\n";
+        $query .= $elements['select'];
+
+        if ($graph && $graph != 'all') {
+            $query .= "\nfrom <" . $graph . '>';
+        }
+
         $query .= "\n";
         $query .= $elements['where'];
-        
-        $client = new \EasyRdf_Sparql_Client($this->endpoint);
 
-//        echo $query;
-//        die();
+        $client = new \EasyRdf_Sparql_Client($this->endpoint);
+        $this->logger->debug('Query: ' . $query);
 
         $result = $client->query($query);
 

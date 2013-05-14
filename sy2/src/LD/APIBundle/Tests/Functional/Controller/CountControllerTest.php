@@ -1,19 +1,15 @@
 <?php
 
-namespace LD\APIBundle\Tests\Controller;
+namespace LD\APIBundle\Tests\Functional\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * API Tests
  */
-class CountControllerObjectTest extends BaseTestCase implements ContainerAwareInterface
+class CountControllerTest extends BaseTestCase
 {
-    private $checkOldApi = false;
     private $apikey = null;
-    private $container;
     private $activeUrl = false;
 
     public function setUp()
@@ -50,50 +46,13 @@ class CountControllerObjectTest extends BaseTestCase implements ContainerAwareIn
         foreach ($objects as $object) {
             foreach ($params as $param) {
                 $this->activeUrl = '/eldis/count/' . $object . '/' . $param . '?format=json';
+                $client->getContainer()->get('logger')->debug('Fetching: ' . $this->activeUrl);
                 $client->request('GET', $this->activeUrl);
                 $response1 = json_decode(
                     $client->getResponse()->getContent(), true
                 );
                 $this->checkData($response1, $param);
-                if ($this->checkOldApi) {
-                    $response2 = $this->fetchData('http://api.ids.ac.uk/openapi/eldis/count/' . $object . '/' . $param);
-
-                    $this->compareData($response1, $response2);
-                    $this->compareData($response1['metadata'], $response2['metadata']);
-                    // use the second array elelment, the first will be missing type specific additons, e.g. {"count":20260,"metadata_url":"","object_name":"","object_type":"","object_id":""}
-                    $this->compareData($response1[$param . '_count'][1], $response2[$param . '_count'][1]);
-                }
             }
-        }
-    }
-
-    protected function fetchData($url)
-    {
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt(
-            $curl,
-            CURLOPT_HTTPHEADER,
-            array(
-                'Accept: application/json',
-                'Token-Guid: ' . $this->apikey,
-            )
-        );
-
-        return json_decode(curl_exec($curl), true);
-    }
-
-    /**
-     * Take two arrays and make sure they have the same top level keys
-     *
-     * @param array $new First array
-     * @param array $old Second array
-     */
-    protected function compareData(array $new, array $old)
-    {
-        foreach (array_keys($new) as $key) {
-            $this->assertTrue(array_key_exists($key, $old), 'Array key ' . $key . ' not found, ' . json_encode($new) . "\n" . json_encode($old));
         }
     }
 
@@ -118,10 +77,5 @@ class CountControllerObjectTest extends BaseTestCase implements ContainerAwareIn
             array_key_exists($param . '_count', $data),
             'Results not. [' . $this->activeUrl . ']'
         );
-    }
-
-    public function setContainer(ContainerInterface $container)
-    {
-        $this->container = $container;
     }
 }

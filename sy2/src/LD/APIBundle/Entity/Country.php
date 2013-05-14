@@ -15,6 +15,7 @@
 namespace LD\APIBundle\Entity;
 
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Country entity
