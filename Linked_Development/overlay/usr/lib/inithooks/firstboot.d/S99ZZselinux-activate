@@ -1,3 +1,6 @@
 #!/bin/sh
+# activate selinux
 /usr/sbin/selinux-activate
-/bin/sed -i "s/FSCKFIX=no/FSCKFIX=yes/g" /etc/default/rcS
+
+# fix for "FSCKFIX is not enabled - not serious, but could prevent system from booting..." 
+/bin/sed -i "s/#FSCKFIX=no/FSCKFIX=yes/g" /etc/default/rcS
