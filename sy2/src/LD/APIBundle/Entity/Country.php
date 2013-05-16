@@ -113,7 +113,7 @@ class Country extends AbstractBaseEntity
                 'format' => 'full',
                 'query' => $objectName,
             ),
-            UrlGeneratorInterface::ABSOLUTE_PATH
+            true
         );
 
         return new Country(

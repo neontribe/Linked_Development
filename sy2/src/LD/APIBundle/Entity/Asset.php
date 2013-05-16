@@ -323,13 +323,39 @@ class Asset extends AbstractBaseEntity
      */
     public static function createFromRow($row, RouterInterface $router)
     {
-        return false;
+        $objectName = $row->countrylabel->getValue();
+        $objectType = 'Country';
+        $objectId = 'Not present in sparql';
+        $isoTwoLetterCode = $row->countrycode->getValue();
+
+        $metadataUrl = $router->generate(
+            'ld_api_get_get_1',
+            array(
+                'graph' => $graph,
+                'obj' => 'countries',
+                'parameter' => $objectId,
+                'format' => 'full',
+                'query' => $objectName,
+            ),
+            true
+        );
+
+        return new Country(
+            $isoTwoLetterCode, $metadataUrl, $objectId, $objectName, $objectType
+        );
+    /*
+  {
+    "results": {
+        "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/documents/A12345/full/sharing-knowledge-for-community-development-and-transformation-a-handbook/",
+        "object_id": "A12345",
+        "object_type": "Document",
+        "title": "Sharing knowledge for community development and transformation: a handbook"
+    }
+} */
     }
 
-    public static function createFromUriList(array $uris, RouterInterface $router)
+    public function short()
     {
-        foreach ($uris as $uri) {
-
-        }
+        return $this->toArray();
     }
 }

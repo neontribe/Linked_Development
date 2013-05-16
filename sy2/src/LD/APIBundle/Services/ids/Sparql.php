@@ -45,14 +45,14 @@ class Sparql
     }
 
     /**
-     * Easy RDF Query of the endpoint
+     * Build a query
      *
      * @param string $graph
      * @param array  $elements
      *
-     * @return EasyRdf_Sparql_Result|EasyRdf_Graph
+     * @return string
      */
-    public function query($graph, array $elements)
+    public function createQuery($graph, array $elements)
     {
 
         if (isset($elements['define'])) {
@@ -76,39 +76,24 @@ class Sparql
             $define, $select, $from, $where
         );
 
-        $client = new \EasyRdf_Sparql_Client($this->endpoint);
         $this->logger->debug('Query: ' . $query);
 
-        $result = $client->query($query);
+        return $query;
+    }
 
-        return $result;
-
-
-
-
-
-
-
-
-        if (isset($elements['define'])) {
-            $query = $elements['define'];
-        } else {
-            $query = '';
-        }
-
-        $query .= "\n";
-        $query .= $elements['select'];
-
-        if ($graph && $graph != 'all') {
-            $query .= "\nfrom <" . $graph . '>';
-        }
-
-        $query .= "\n";
-        $query .= $elements['where'];
+    /**
+     * Easy RDF Query of the endpoint
+     *
+     * @param string $graph
+     * @param array  $elements
+     *
+     * @return EasyRdf_Sparql_Result|EasyRdf_Graph
+     */
+    public function query($graph, array $elements)
+    {
+        $query = $this->createQuery($graph, $elements);
 
         $client = new \EasyRdf_Sparql_Client($this->endpoint);
-        $this->logger->debug('Query: ' . $query);
-
         $result = $client->query($query);
 
         return $result;
