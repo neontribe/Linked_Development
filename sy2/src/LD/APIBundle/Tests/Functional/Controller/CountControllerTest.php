@@ -9,18 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 class CountControllerTest extends BaseTestCase
 {
-    private $apikey = null;
     private $activeUrl = false;
-
-    public function setUp()
-    {
-        if (null == static::$kernel) {
-            static::$kernel = static::createKernel();
-            static::$kernel->boot();
-        }
-        $apikeyfile = static::$kernel->getRootDir() . '/config/apikey';
-        $this->apikey = file_get_contents($apikeyfile);
-    }
 
     /**
      * Test json as query parameter

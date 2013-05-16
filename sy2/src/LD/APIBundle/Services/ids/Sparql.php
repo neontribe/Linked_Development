@@ -1,6 +1,8 @@
 <?php
 namespace LD\APIBundle\Services\ids;
 
+use Symfony\Component\HttpFoundation\Request;
+
 class Sparql
 {
     /*
@@ -26,6 +28,8 @@ class Sparql
 
     public function curl($spql)
     {
+        $this->logger->warn('Sparql::curl is depricated.  Use the EasyRDF function instead');
+        
         $params = array(
             'default-graph-uri' => '',
             'query' => $spql,
@@ -70,10 +74,14 @@ class Sparql
         }
 
         $where = $elements['where'];
+        
+        $request = Request::createFromGlobals();
+        $offset = $this->getOffset($request);
+        $limit = $this->getLimit($request);
 
         $query = sprintf(
-            '%s %s %s %s',
-            $define, $select, $from, $where
+            '%s %s %s %s limit %s offset %s',
+            $define, $select, $from, $where, $offset, $limit
         );
 
         $this->logger->debug('Query: ' . $query);
@@ -97,5 +105,27 @@ class Sparql
         $result = $client->query($query);
 
         return $result;
+    }
+
+    protected function getLimit(Request $req = null)
+    {
+        $_req = ($req) ? $req : Request::createFromGlobals();
+        
+        return $_req->query->get(
+            'num_results', 
+            $this->container->getParameter('sparql_default_limit')
+        );
+        // num_results=10&start_offset=10", 
+    }
+
+    protected function getOffset(Request $req = null)
+    {
+        $_req = ($req) ? $req : Request::createFromGlobals();
+        
+        return $_req->query->get(
+            'start_offset', 
+            $this->container->getParameter('sparql_default_offset') // I can't see why this won't always be zero
+        );
+
     }
 }

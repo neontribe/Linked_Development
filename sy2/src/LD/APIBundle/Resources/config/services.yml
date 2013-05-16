@@ -19,6 +19,9 @@ parameters:
       r4d: http://linked-development.org/r4d/
       # all: ~, not used
 
+    sparql_default_offset: 0
+    sparql_default_limit: 10
+
     sparqls:
 
       count:
