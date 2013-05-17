@@ -23,9 +23,7 @@ the third is an output directory
 eg python eldis_crawl.py "http://www.getdata.com" 0 /home/neil/getdata
 """
 
-
-#Crawler for Bridge / ELDIS
-#Currently works in one big batch - but may be better to rework so that it outputs a file for every 100 records, and then to merge and upload those later...
+#Crawler for Bridge / ELDIS category data
 
 import datetime
 import getopt
@@ -138,68 +136,53 @@ class Eldis(object):
         print "Reading "+self.data_url
         content = self.fetch_data(self.data_url)
         try:
-            for document in content['results']:
-                uri = self.BASE['output/' + document['object_id'] +'/']
-                self.graph.add((uri,self.DCTERMS['title'],Literal(document['title'])))
+            scheme_uri = self.BASE['geography/']
+            self.graph.add((scheme_uri,self.RDF['type'],self.SKOS['ConceptScheme']))
+            self.graph.add((scheme_uri,self.RDFS['label'],Literal('IDS Country Taxonomy')))
+            
+            for country in content['results']:
+                                
+                uri = self.BASE['geography/' + country['object_id'] +'/']
+                self.graph.add((uri,self.RDF['type'],self.SKOS['Concept']))
+                self.graph.add((uri,self.SKOS['inScheme'],scheme_uri))
+                
+                self.graph.add((uri,self.RDFS['label'],Literal(country['country_name'],lang="en"))) 
+                self.graph.add((uri,self.SKOS['prefLabel'],Literal(country['country_name'],lang="en"))) 
+                self.graph.add((uri,self.SKOS['altLabel'],Literal(country['alternative_name'],lang="en"))) 
+                
+                self.graph.add((uri,self.FAO['codeISO2'],Literal(country['iso_two_letter_code']))) 
+                self.graph.add((uri,self.FAO['codeISO3'],Literal(country['iso_three_letter_code']))) 
+
+                self.graph.add((uri,self.RDFS['seeAlso'],URIRef(country['metadata_url'])))
+                self.graph.add((uri,self.OWL['sameAs'],self.DBRES[self.dbpedia_url(country['country_name'])]))
+                self.graph.add((uri,self.OWL['sameAs'],self.FAO[self.dbpedia_url(country['country_name'])]))
+                
+                self.graph.add((uri,self.DCTERMS['identifier'],Literal(org['object_id'])))
+                
+                
                 try:
-                    self.graph.add((uri,self.DCTERMS['abstract'],Literal(document['description'])))
-                except:
-                    pass
-                self.graph.add((uri,self.DCTERMS['type'],self.DCTERMS['Text']))
-                self.graph.add((uri,self.RDF['type'],self.BIBO['Article']))
-                self.graph.add((uri,self.DCTERMS['identifier'],Literal(document['object_id'])))
-                self.graph.add((uri,self.DCTERMS['date'],Literal(document['publication_date'].replace(' ','T'))))
-                self.graph.add((uri,self.DCTERMS['language'],Literal(document['language_name'])))
-                self.graph.add((uri,self.RDFS['seeAlso'],URIRef(document['website_url'].replace('display&','display?'))))
-        
-                for author in document['author']:
-                    self.graph.add((uri,self.DCTERMS['creator'],Literal(author)))
-    
-                try:
-                    for publisher in document['publisher_array']['Publisher']:
-                        puburi = self.BASE['organisation/' + publisher['object_id'] +'/']
-                        self.graph.add((uri,self.DCTERMS['publisher'],puburi))
-                        self.graph.add((puburi,self.DCTERMS['title'],Literal(publisher['object_name'])))
-                        self.graph.add((puburi,self.FOAF['name'],Literal(publisher['object_name'])))
-                        self.graph.add((puburi,self.RDF['type'],self.DBPEDIA['Organisation']))
-                        self.graph.add((puburi,self.RDF['type'],self.FAO['organization']))
-                        self.graph.add((puburi,self.RDF['type'],self.FOAF['organization']))
-                        # We could follow this URL to get more information on the organisation...
-                        self.graph.add((puburi,self.RDFS['seeAlso'],publisher['metadata_url']))         
-                except:
-                    #This could be improved. Bridge and Eldis appear to differ on publisher values
-                    self.graph.add((uri,self.DCTERMS['publisher'],Literal(document['publisher']))) 
-    
-                #ELDIS / BRIDGE Regions do not map onto FAO regions effectively. We could model containments in future...
-                try:
-                    for region in document['category_region_array']['Region']:
-                        regionuri = self.BASE['geography/' + region['object_id'] +'/']
-                        self.graph.add((uri,self.DCTERMS['coverage'],regionuri))
-        
-                except:
-                    pass
-    
-    
-                try:
-                    for country in document['country_focus_array']['Country']:
-                        countryuri = self.BASE['geography/' + country['object_id'] +'/']
-                        self.graph.add((uri,self.DCTERMS['coverage'],countryuri))
-                except:
-                    pass
-        
-    
-                try:
-                    for category in document['category_theme_array']['theme']:
-                        themeuri = self.BASE['themes/' + category['object_id'] +'/']
-                except:
-                    pass
-    
-                try:
-                    for document_url in document['urls']:
-                        self.graph.add((uri,self.BIBO['uri'],fix_iri(document_url)))
-                except:
-                    pass
-            rdf = open(self.out_dir + 'rdf/' + self.database + '-' + date + '-' + str(self.loop) + '.rdf','w')
+                    for region in country['category_region_array']['Region']:
+                        region_uri = self.BASE['geography/' + region['object_id'] +'/']
+                        self.graph.add((region_uri,self.RDF['type'],self.SKOS['Concept']))
+                        self.graph.add((region_uri,self.SKOS['inScheme'],scheme_uri))
+                        self.graph.add((region_uri,self.SKOS['topConceptOf'],scheme_uri))
+                        self.graph.add((scheme_uri,self.SKOS['hasTopConcept'],region_uri))
+                                                
+                        self.graph.add((region_uri,self.SKOS['prefLabel'],Literal(region['object_name'])))
+                        self.graph.add((region_uri,self.RDFS['label'],Literal(region['object_name'])))
+                        
+                        self.graph.add((region_uri,self.SKOS['narrower'],uri))
+                        self.graph.add((uri,self.SKOS['broader'],region_uri))
+                        
+                        self.graph.add((region_uri,self.DCTERMS['identifier'],Literal(region['object_id'])))
+                        
+                        self.graph.add((region_uri,self.RDFS['seeAlso'],URIRef(region['metadata_url'])))
+                        
+                except Exception as e:
+                    pass 
+
+
+            rdf = open(self.out_dir + 'rdf/' + self.database + '-country-' + date + '-' + str(self.loop) + '.rdf','w')
             rdf.write(self.graph.serialize())
             rdf.close()
             #no longer needed
@@ -233,7 +216,7 @@ def main():
         opts, args = getopt.gnu_getopt(sys.argv[1:], "", [])
     except getopt.GetoptError, e:
         usage(e)
-    data_url = "http://api.ids.ac.uk/openapi/"+'eldis'+"/get_all/documents/full?num_results=1000"
+    data_url = "http://api.ids.ac.uk/openapi/"+'eldis'+"/get_all/countries/full?num_results=1000"
     loop = 0
     out_dir='/home/neil/eldis/'
         

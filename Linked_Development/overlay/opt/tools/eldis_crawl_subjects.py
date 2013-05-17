@@ -135,26 +135,26 @@ class Eldis(object):
         date = datetime.date.today().isoformat()
         print "Reading "+self.data_url
         content = self.fetch_data(self.data_url)
-        try:
-            scheme_uri = self.BASE['themes/']
-            self.graph.add((scheme_uri,self.RDF['type'],self.SKOS['ConceptScheme']))
-            
-            
+        try:            
             for theme in content['results']:
-                scheme_uri = self.BASE['themes/' + theme['parent_object_id'] + '/']
+                scheme_uri = self.BASE['themes/' + theme['superparent_object_id'] + '/']
                 self.graph.add((scheme_uri,self.RDF['type'],self.SKOS['ConceptScheme']))
+                self.graph.add((scheme_uri,self.RDFS['label'],Literal('IDS Taxonomy')))
                 
                 uri = self.BASE['themes/' + theme['object_id'] +'/']
                 self.graph.add((uri,self.RDF['type'],self.SKOS['Concept']))
                 self.graph.add((uri,self.SKOS['inScheme'],scheme_uri))
-                self.graph.add((uri,self.SKOS['topConceptOf'],scheme_uri))
-                self.graph.add((scheme_uri,self.SKOS['hasTopConcept'],uri))
+
+                if theme['cat_level'] == '1': 
+                    self.graph.add((uri,self.SKOS['topConceptOf'],scheme_uri))
+                    self.graph.add((scheme_uri,self.SKOS['hasTopConcept'],uri))
 
                 self.graph.add((uri,self.RDFS['label'],Literal(theme['title'],lang="en")))
                 self.graph.add((uri,self.SKOS['prefLabel'],Literal(theme['title'],lang="en")))
                 self.graph.add((uri,self.SKOS['notation'],Literal(theme['object_id'])))
                 
                 
+                self.graph.add((uri,self.DCTERMS['identifier'],Literal(theme['object_id'])))
                 #Link back to the original meta-data
                 self.graph.add((uri,self.RDFS['seeAlso'],URIRef(theme['metadata_url'])))
                 
@@ -166,15 +166,16 @@ class Eldis(object):
                         
                         self.graph.add((child_uri,self.RDFS['label'],Literal(child['object_name'],lang="en")))
                         self.graph.add((child_uri,self.SKOS['prefLabel'],Literal(child['object_name'],lang="en")))
-                        self.graph.add((child_uri,self.SKOS['notation'],Literal(theme['object_id'])))
+                        self.graph.add((child_uri,self.SKOS['notation'],Literal(child['object_id'])))
                         
-                        self.graph.add((child_uri,self.RDFS['seeAlso'],URIRef(theme['metadata_url'])))
+                        self.graph.add((child_uri,self.DCTERMS['identifier'],Literal(child['object_id'])))
+                        self.graph.add((child_uri,self.RDFS['seeAlso'],URIRef(child['metadata_url'])))
                         
                         self.graph.add((child_uri,self.SKOS['broader'],uri))
                         self.graph.add((uri,self.SKOS['narrower'],child_uri))
                         
                 except Exception as e:
-                    pass
+                    pass 
 
 
             rdf = open(self.out_dir + 'rdf/' + self.database + '-themes-' + date + '-' + str(self.loop) + '.rdf','w')
@@ -211,7 +212,7 @@ def main():
         opts, args = getopt.gnu_getopt(sys.argv[1:], "", [])
     except getopt.GetoptError, e:
         usage(e)
-    data_url = "http://api.ids.ac.uk/openapi/"+'eldis'+"/search/themes/full?level=1&num_results=100"
+    data_url = "http://api.ids.ac.uk/openapi/"+'eldis'+"/get_all/themes/full?num_results=2000"
     loop = 0
     out_dir='/home/neil/eldis/'
         
