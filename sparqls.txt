@@ -120,6 +120,45 @@ select distinct  ?a ?b
                                 <http://linked-development.org/eldis/output/A65066/> ?a ?b .
                                 }
 
+Or, using construct:
+
+   PREFIX dcterms: <http://purl.org/dc/terms/>
+   PREFIX bibo:    <http://purl.org/ontology/bibo/>
+   CONSTRUCT {
+       ?resource a bibo:Article.
+       ?resource dcterms:title ?title.
+       ?resource dcterms:abstract ?abstract.
+       ?resource dcterms:creator ?creator.
+       ?resource dcterms:subject ?subject.
+       ?subject rdfs:label ?subjectTitle.
+       ?resource dcterms:coverage ?coverage.
+       ?coverage rdfs:label ?coverageTitle.
+       ?resource dcterms:language ?language.
+       ?resource dcterms:identifier ?identifier.
+       ?resource rdfs:seeAlso ?document.
+       ?resource dcterms:date ?date. 
+       ?resource dcterms:publisher ?publisher.
+   }
+       WHERE {
+       ?resource a bibo:Article.
+       ?resource dcterms:title ?title.
+       ?resource dcterms:abstract ?abstract.
+       ?resource dcterms:creator ?creator.
+       ?resource dcterms:subject ?subject.
+       ?subject rdfs:label ?subjectTitle.
+       ?resource dcterms:coverage ?coverage.
+       ?coverage rdfs:label ?coverageTitle.
+       ?resource dcterms:language ?language.
+       ?resource dcterms:identifier ?identifier.
+       ?resource rdfs:seeAlso ?document.
+       ?resource dcterms:date ?date. 
+       ?resource dcterms:publisher ?publisher.
+
+       FILTER(?resource = <http://linked-development.org/eldis/output/A65066/>)
+   }
+
+
+
 /get/countries/<ID>
 this is getting country http://linked-development.org/eldis/countries/<ID>/
 select distinct  ?a ?b
@@ -206,6 +245,78 @@ ld_api_search_searchwithobject_1 GET|HEAD|OPTIONS ANY    ANY  /search/{obj}/{par
 
 
 
+/search/document/
+Searches for resources. Note that this may need more OPTIONAL clauses added to handle for where certain fields are not present...
+
+    PREFIX dcterms: <http://purl.org/dc/terms/>
+    PREFIX bibo:    <http://purl.org/ontology/bibo/>
+    SELECT * WHERE {
+        ?resource a bibo:Article.
+        ?resource dcterms:title ?title.
+        ?resource dcterms:abstract ?abstract.
+        ?resource dcterms:creator ?creator.
+        ?resource dcterms:subject ?subject.
+        ?subject rdfs:label ?subjectTitle.
+        ?resource dcterms:coverage ?coverage.
+        ?coverage rdfs:label ?coverageTitle.
+        ?resource dcterms:language ?language.
+        ?resource dcterms:identifier ?identifier.
+        ?resource rdfs:seeAlso ?document.
+        ?resource dcterms:date ?date. 
+        ?resource dcterms:publisher ?publisher.
+    }
+    limit 10
+
+
+
+Alternatively, by using a construct query we can get a graph to work with.
+
+PREFIX dcterms: <http://purl.org/dc/terms/>
+   PREFIX bibo:    <http://purl.org/ontology/bibo/>
+   CONSTRUCT {
+       ?resource a bibo:Article.
+       ?resource dcterms:title ?title.
+       ?resource dcterms:abstract ?abstract.
+       ?resource dcterms:creator ?creator.
+       ?resource dcterms:subject ?subject.
+       ?subject rdfs:label ?subjectTitle.
+       ?resource dcterms:coverage ?coverage.
+       ?coverage rdfs:label ?coverageTitle.
+       ?resource dcterms:language ?language.
+       ?resource dcterms:identifier ?identifier.
+       ?resource rdfs:seeAlso ?document.
+       ?resource dcterms:date ?date. 
+       ?resource dcterms:publisher ?publisher.
+   }
+       WHERE {
+       ?resource a bibo:Article.
+       ?resource dcterms:title ?title.
+       ?resource dcterms:abstract ?abstract.
+       ?resource dcterms:creator ?creator.
+       ?resource dcterms:subject ?subject.
+       ?subject rdfs:label ?subjectTitle.
+       ?resource dcterms:coverage ?coverage.
+       ?coverage rdfs:label ?coverageTitle.
+       ?resource dcterms:language ?language.
+       ?resource dcterms:identifier ?identifier.
+       ?resource rdfs:seeAlso ?document.
+       ?resource dcterms:date ?date. 
+       ?resource dcterms:publisher ?publisher.
+   }
+   limit 100
+   
+
+
+/search/organisation/
+Searches for organisations
+
+    PREFIX fao: <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/>
+    PREFIX dcterms: <http://purl.org/dc/terms/>
+    PREFIX bibo:    <http://purl.org/ontology/bibo/>
+    SELECT * WHERE {
+        ?resource a fao:Organisation.
+    }
+    limit 10
 
 
 
