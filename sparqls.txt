@@ -121,6 +121,7 @@ select distinct  ?a ?b
                                 }
 
 Or, using construct:
+# Note - this version of the query is not currently working on Virtuoso 6.1.3 - probably due to the bug reported here: 
 
    PREFIX dcterms: <http://purl.org/dc/terms/>
    PREFIX bibo:    <http://purl.org/ontology/bibo/>
@@ -147,19 +148,23 @@ Or, using construct:
        ?resource dcterms:title ?title.
        ?resource dcterms:abstract ?abstract.
        ?resource dcterms:creator ?creator.
-       OPTIONAL { ?resource dcterms:subject ?subject. }
-       ?subject rdfs:label ?subjectTitle.
-       ?resource dcterms:coverage ?coverage.
-       ?coverage rdfs:label ?coverageTitle.
-       ?resource dcterms:language ?language.
-       ?resource dcterms:identifier ?identifier.
-       ?resource rdfs:seeAlso ?document.
-       ?resource dcterms:date ?date. 
-       OPTIONAL { ?resource dcterms:publisher ?publisher. 
-                  OPTIONAL { ?publisher foaf:name ?publisherName. }
+       OPTIONAL { ?resource dcterms:subject ?subject. 
+            OPTIONAL {?subject rdfs:label ?subjectTitle.}
+       }
+       OPTIONAL { ?resource dcterms:coverage ?coverage.
+            OPTIONAL { ?coverage rdfs:label ?coverageTitle. }
+       }
+       OPTIONAL { ?resource dcterms:language ?language. }
+       OPTIONAL { ?resource dcterms:identifier ?identifier. }
+       OPTIONAL { ?resource rdfs:seeAlso ?document. }
+
+        OPTIONAL { ?resource dcterms:publisher ?publisher. 
+                   OPTIONAL { ?publisher foaf:name ?publisherName. }
+         }
+
         }
         
-       FILTER(?resource = <http://linked-development.org/eldis/output/A64898/>)
+       FILTER(?resource = <http://r4d.dfid.gov.uk/Output/10004/>)
    }
 
 
