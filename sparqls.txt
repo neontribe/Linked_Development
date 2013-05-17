@@ -124,6 +124,8 @@ Or, using construct:
 
    PREFIX dcterms: <http://purl.org/dc/terms/>
    PREFIX bibo:    <http://purl.org/ontology/bibo/>
+   PREFIX foaf:    <http://xmlns.com/foaf/0.1/>
+   
    CONSTRUCT {
        ?resource a bibo:Article.
        ?resource dcterms:title ?title.
@@ -138,13 +140,14 @@ Or, using construct:
        ?resource rdfs:seeAlso ?document.
        ?resource dcterms:date ?date. 
        ?resource dcterms:publisher ?publisher.
+       ?publisher foaf:name ?publisherName.
    }
        WHERE {
        ?resource a bibo:Article.
        ?resource dcterms:title ?title.
        ?resource dcterms:abstract ?abstract.
        ?resource dcterms:creator ?creator.
-       ?resource dcterms:subject ?subject.
+       OPTIONAL { ?resource dcterms:subject ?subject. }
        ?subject rdfs:label ?subjectTitle.
        ?resource dcterms:coverage ?coverage.
        ?coverage rdfs:label ?coverageTitle.
@@ -152,9 +155,11 @@ Or, using construct:
        ?resource dcterms:identifier ?identifier.
        ?resource rdfs:seeAlso ?document.
        ?resource dcterms:date ?date. 
-       ?resource dcterms:publisher ?publisher.
-
-       FILTER(?resource = <http://linked-development.org/eldis/output/A65066/>)
+       OPTIONAL { ?resource dcterms:publisher ?publisher. 
+                  OPTIONAL { ?publisher foaf:name ?publisherName. }
+        }
+        
+       FILTER(?resource = <http://linked-development.org/eldis/output/A64898/>)
    }
 
 
