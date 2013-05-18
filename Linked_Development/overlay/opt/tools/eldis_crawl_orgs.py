@@ -165,6 +165,8 @@ class Eldis(object):
                 self.graph.add((org_uri,self.FOAF['name'],Literal(org['name'])))
                 self.graph.add((org_uri,self.RDFS['label'],Literal(org['name'])))
                 
+                self.graph.add((org_uri,self.DCTERMS['created'],Literal(document['date_created'].replace(' ','T'))))
+                
                 try:
                     self.graph.add((org_uri,self.FOAF['nick'],Literal(org['acronym'])))
                 except:

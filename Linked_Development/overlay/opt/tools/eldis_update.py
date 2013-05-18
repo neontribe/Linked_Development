@@ -55,7 +55,7 @@ def main():
         next_url_fh.close()
         #safety
         if loop > 500:
-            break
+
    #open default conection to isql and run commands in a file
    os.system("/opt/tools/call_isql /opt/tools/eldis_update2.isql")
 
