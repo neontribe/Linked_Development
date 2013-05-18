@@ -35,6 +35,7 @@ import json
 import os
 import sys
 import urllib2
+import gc
 from eldis import Eldis
 
 from rdflib.graph import Graph
@@ -142,8 +143,7 @@ class Eldis_Orgs(Eldis):
                 
                 try:
                     self.graph.add((org_uri,self.FOAF['homepage'],URIRef(self.fix_iri(org['organisation_url']))))
-                except Exception as e:
-                    print 
+                except Exception as e: 
                     pass
 
 
@@ -157,18 +157,15 @@ class Eldis_Orgs(Eldis):
             #no longer needed
             #self.graph.remove((None,None,None))
             
-            contfile = open(self.out_dir + 'nexturl', 'w')
             try:
                 if(content['metadata']['next_page']):
-                    contfile.write(content['metadata']['next_page'])
-                    print str(int(content['metadata']['total_results']) - int(content['metadata']['start_offset'])) + " records remaining"
-                    #self.build_graph(content['metadata']['next_page'],n+1)
+                    return content['metadata']['next_page']
                 else:
                     print "Build complete"
             except:
-                contfile.write("No more pages")
-                print "No more pages"
-            contfile.close()
+                print "Build Complete"
+
+
         except Exception as inst:
             print inst
             print "Failed to read "+ self.data_url
@@ -180,14 +177,12 @@ def usage(e=None):
     print >> sys.stderr, __doc__
     sys.exit(1)
 
-def main():
+@profile
+def main(data_url = "http://api.ids.ac.uk/openapi/"+'eldis'+"/get_all/organisations/full?num_results=100", out_dir='/Users/timdavies/Documents/Business/Projects/CABI/Linked Development/data',loop=0):
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], "", [])
     except getopt.GetoptError, e:
         usage(e)
-    data_url = "http://api.ids.ac.uk/openapi/"+'eldis'+"/get_all/organisations/full?num_results=100"
-    loop = 0
-    out_dir='/Users/timdavies/Documents/Business/Projects/CABI/Linked Development/data'
         
     if len(args) > 0:
         data_url = args[0]
@@ -197,10 +192,17 @@ def main():
         out_dir = args[2]
     if not out_dir[-1:] == os.sep:
         out_dir = out_dir + os.sep
+
     crawler = Eldis_Orgs(out_dir,
                   data_url,
                   loop)
-    crawler.build_graph()
+    next_page = crawler.build_graph()
+    print next_page
+    del crawler
+    gc.collect 
+    if(next_page and loop < 5):
+        loop = loop + 1
+        main(next_page,out_dir,loop)
 
 if __name__ == "__main__":
     main()
