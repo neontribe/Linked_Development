@@ -132,6 +132,7 @@ class Eldis(object):
         file twice. So without this updates will not be read.
         
         """
+                
         date = datetime.date.today().isoformat()
         print "Reading "+self.data_url
         content = self.fetch_data(self.data_url)
@@ -155,15 +156,19 @@ class Eldis(object):
 
                 self.graph.add((uri,self.RDFS['seeAlso'],URIRef(country['metadata_url'])))
                 self.graph.add((uri,self.OWL['sameAs'],self.DBRES[self.dbpedia_url(country['country_name'])]))
-                self.graph.add((uri,self.OWL['sameAs'],self.FAO[self.dbpedia_url(country['country_name'])]))
                 
-                self.graph.add((uri,self.DCTERMS['identifier'],Literal(org['object_id'])))
+                # This mapping is imperfect so we should add a mapping later based on ISO code lookup
+                # self.graph.add((uri,self.OWL['sameAs'],self.FAO[self.dbpedia_url(country['country_name'])]))
+                
+                self.graph.add((uri,self.DCTERMS['identifier'],Literal(country['object_id'])))
                 
                 
                 try:
                     for region in country['category_region_array']['Region']:
                         region_uri = self.BASE['geography/' + region['object_id'] +'/']
                         self.graph.add((region_uri,self.RDF['type'],self.SKOS['Concept']))
+                        self.graph.add((region_uri,self.RDF['type'],self.FAO['geographical_region']))
+                        
                         self.graph.add((region_uri,self.SKOS['inScheme'],scheme_uri))
                         self.graph.add((region_uri,self.SKOS['topConceptOf'],scheme_uri))
                         self.graph.add((scheme_uri,self.SKOS['hasTopConcept'],region_uri))
@@ -172,7 +177,9 @@ class Eldis(object):
                         self.graph.add((region_uri,self.RDFS['label'],Literal(region['object_name'])))
                         
                         self.graph.add((region_uri,self.SKOS['narrower'],uri))
+                        
                         self.graph.add((uri,self.SKOS['broader'],region_uri))
+                        self.graph.add((uri,self.FAO['isInGroup'],region_uri))
                         
                         self.graph.add((region_uri,self.DCTERMS['identifier'],Literal(region['object_id'])))
                         

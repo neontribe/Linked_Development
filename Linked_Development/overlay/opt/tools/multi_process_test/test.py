@@ -1,9 +1,13 @@
-import multiprocessing
+# See http://pastebin.com/zf3ndUiT
+
+from multiprocessing import Process, Queue
 import json
 import urllib2
 
 
-def worker(data_url):
+def worker(data_url,queue):
+    data_url = queue.get()
+
     req = urllib2.Request(data_url)
     req.add_header('Accept', 'application/json')
     req.add_header('Token-Guid', "c2ee7827-83de-4c99-b336-dbe73d340874")
@@ -17,9 +21,7 @@ def worker(data_url):
     
     if(content['metadata']['next_page']):
         print content['metadata']['next_page']
-        p = multiprocessing.Process(target=worker, args=(content['metadata']['next_page'],))
-        jobs.append(p)
-        p.start()
+        queue.put(content['metadata']['next_page'])
     else:
         print "Build complete"
     
@@ -27,7 +29,8 @@ def worker(data_url):
 
 if __name__ == '__main__':
     jobs = []
-
-    p = multiprocessing.Process(target=worker, args=("http://api.ids.ac.uk/openapi/"+'eldis'+"/get_all/organisations/full?num_results=100",))
-    jobs.append(p)
-    p.start()   
+    q = Queue()
+    q.put("http://api.ids.ac.uk/openapi/"+'eldis'+"/get_all/organisations/full?num_results=100")
+    p = Process(target=worker, args=("http://api.ids.ac.uk/openapi/"+'eldis'+"/get_all/organisations/full?num_results=100",q,))
+    p.start()
+    p.join()

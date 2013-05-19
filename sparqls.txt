@@ -152,7 +152,7 @@ Or, using construct:
             OPTIONAL {?subject rdfs:label ?subjectTitle.}
        }
        OPTIONAL { ?resource dcterms:coverage ?coverage.
-            OPTIONAL { ?coverage rdfs:label ?coverageTitle. }
+            OPTIONAL {  { ?coverage rdfs:label ?coverageTitle. } UNION { ?coverage fao:nameList ?coverageTitle. } }
        }
        OPTIONAL { ?resource dcterms:language ?language. }
        OPTIONAL { ?resource dcterms:identifier ?identifier. }
@@ -306,7 +306,7 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
        ?resource dcterms:subject ?subject.
        ?subject rdfs:label ?subjectTitle.
        ?resource dcterms:coverage ?coverage.
-       ?coverage rdfs:label ?coverageTitle.
+       { ?coverage rdfs:label ?coverageTitle. } UNION { ?coverage fao:nameList ?coverageTitle. }
        ?resource dcterms:language ?language.
        ?resource dcterms:identifier ?identifier.
        ?resource rdfs:seeAlso ?document.
@@ -316,6 +316,21 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
    limit 100
    
 
+FILTERs
+
+By Country Code
+
+    ?resource dcterms:coverage ?coverage.
+    ?coverage fao:codeISO2 ?countryCode.
+    FILTER(regex(?countryCode, "^AF$"))
+
+By country or region name
+
+    ?resource dcterms:coverage ?coverage.
+    { ?coverage rdfs:label ?coverageTitle. } UNION { ?coverage fao:nameList ?coverageTitle. }
+    FILTER(regex(?coverageTitle, "^Afghanistan$","i"))
+
+Note that ELDIS and R4D do not use the same region names right now...
 
 /search/organisation/
 Searches for organisations
