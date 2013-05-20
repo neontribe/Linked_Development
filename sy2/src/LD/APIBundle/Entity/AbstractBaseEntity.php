@@ -164,5 +164,20 @@ abstract class AbstractBaseEntity implements CreateFromBinding
      *
      * @return array
      */
-    public abstract function short();
+    public function short()
+    {
+        return $this->toArray(AbstractBaseEntity::SHORT);
+    }
+
+    /**
+     * Return a full format array representation of this entity
+     *
+     * A wrapper for toArray(FULL)
+     *
+     * @return array
+     */
+    public function full()
+    {
+        return $this->toArray(AbstractBaseEntity::FULL);
+    }
 }

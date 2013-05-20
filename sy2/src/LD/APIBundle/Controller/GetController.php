@@ -62,16 +62,43 @@ class GetController extends APIController
      *
      * Currently the first 10 records are displayed (with a link to the next 10)
      *
-     * @Route("/{graph}/get_all/{parameter}")
+     * @Route("/{graph}/get_all/{parameter}/{format}")
      * @Method({"GET", "HEAD", "OPTIONS"})
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function getAllAction($parameter)
+    public function getAllAction($graph, $parameter, $format)
     {
-        $data = $this->getData($parameter);
+        $entity = '\\LD\\APIBundle\\Entity\\' . ucfirst($parameter);
+        $router = $this->get('router');
 
-        return $this->response($data);
+        $graphs = $this->container->getParameter('graphs');
+        if (isset($graphs[$graph])) {
+            $_graph = $graphs[$graph];
+        } else {
+            $_graph = null;
+        }
+
+        $spqlsrvc = $this->get('sparql');
+        $spqls = $this->container->getParameter('sparqls');
+        $spql = $spqls['get_all'][$parameter];
+        $data = $spqlsrvc->query($_graph, $spql);
+
+        foreach ($data as $row) {
+            $obj = $entity::createFromRow($row, $router, $graph);
+            if ($format == 'short') {
+                $data = $obj->short();
+            } else {
+                $data = $obj->full();
+            }
+            $response[] = $data;
+        }
+
+        $_response = array(
+            'results' => $response,
+        );
+
+        return $this->response($_response);
     }
 
     /**
