@@ -24,8 +24,10 @@ parameters:
 
     sparqls:
 
+      # Counts
       count:
 
+        # Count Documents
         documents:
           region:
             define: ~
@@ -43,6 +45,7 @@ parameters:
                 ?region <http://www.w3.org/2000/01/rdf-schema#label>
                 ?regionlabel .
               }
+
           theme:
             define: ~
             select: select distinct ?theme ?themelabel count(distinct ?article) as ?count
@@ -55,6 +58,7 @@ parameters:
                 ?article a <http://purl.org/ontology/bibo/Article> .
                 ?article <http://purl.org/dc/terms/subject> ?theme .
               }
+
           country:
             define: "prefix DCTERMS: <http://purl.org/dc/terms/>"
             select: select distinct ?countrycode ?countrylabel count(distinct ?article) as ?count
@@ -68,6 +72,7 @@ parameters:
                 ?country <http://www.w3.org/2000/01/rdf-schema#label> ?countrylabel .
               }
 
+        # Count orgs
         organisations:
           region:
             define: "prefix DCTERMS: <http://purl.org/dc/terms/>"
@@ -85,6 +90,7 @@ parameters:
                 ?article DCTERMS:publisher ?publisher .
                 ?article a <http://purl.org/ontology/bibo/Article> .
               }
+
           theme:
             define: "prefix DCTERMS: <http://purl.org/dc/terms/>"
             select: select distinct ?theme ?themelabel count(distinct ?publisher) as ?count
@@ -96,6 +102,7 @@ parameters:
                 ?article DCTERMS:publisher ?publisher .
                 ?publisher a <http://dbpedia.org/ontology/Organisation> .
               }
+
           country:
             define: "prefix DCTERMS: <http://purl.org/dc/terms/>"
             select: select distinct ?countrycode ?countrylabel count(distinct ?publisher) as ?count
@@ -108,7 +115,50 @@ parameters:
                 ?country <http://www.w3.org/2000/01/rdf-schema#label> ?countrylabel .
               }
 
+      # Gets
       get:
+        documents:
+          define: >
+            PREFIX dcterms: <http://purl.org/dc/terms/>
+            PREFIX bibo: <http://purl.org/ontology/bibo/>
+            PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+          select: >
+            CONSTRUCT {
+                ?resource a bibo:Article.
+                ?resource dcterms:title ?title.
+                ?resource dcterms:abstract ?abstract.
+                ?resource dcterms:creator ?creator.
+                ?resource dcterms:subject ?subject.
+                ?subject rdfs:label ?subjectTitle.
+                ?resource dcterms:coverage ?coverage.
+                ?coverage rdfs:label ?coverageTitle.
+                ?resource dcterms:language ?language.
+                ?resource dcterms:identifier ?identifier.
+                ?resource rdfs:seeAlso ?document.
+                ?resource dcterms:date ?date. 
+                ?resource dcterms:publisher ?publisher.
+                ?publisher foaf:name ?publisherName.
+            }
+          where: >
+            WHERE {
+                ?resource a bibo:Article.
+                ?resource dcterms:title ?title.
+                ?resource dcterms:abstract ?abstract.
+                ?resource dcterms:creator ?creator.
+                OPTIONAL { ?resource dcterms:subject ?subject. }
+                ?subject rdfs:label ?subjectTitle.
+                ?resource dcterms:coverage ?coverage.
+                ?coverage rdfs:label ?coverageTitle.
+                ?resource dcterms:language ?language.
+                ?resource dcterms:identifier ?identifier.
+                ?resource rdfs:seeAlso ?document.
+                ?resource dcterms:date ?date. 
+                OPTIONAL {
+                    ?resource dcterms:publisher ?publisher. 
+                    OPTIONAL { ?publisher foaf:name ?publisherName. }
+                }
+                FILTER(?resource = <http://linked-development.org/eldis/output/__ID__/>)
+            }
         assets:
           define: ~
           select: select distinct ?a ?b
@@ -146,6 +196,7 @@ parameters:
                 <http://linked-development.org/eldis/regions/C30/> ?a ?b .
             }
 
+      # Get all
       get_all:
         documents:
           define: ~

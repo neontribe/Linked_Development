@@ -107,6 +107,14 @@ class Sparql
         return $result;
     }
 
+    /**
+     * Check the http query for how many objects to return
+     * 
+     * @param Request $req The request object, if null Request::createFromGlobals will be used to create a new one
+     * 
+     * @access protected
+     * @return integer
+     */
     protected function getLimit(Request $req = null)
     {
         $_req = ($req) ? $req : Request::createFromGlobals();
@@ -118,6 +126,14 @@ class Sparql
         // num_results=10&start_offset=10", 
     }
 
+    /**
+     * Check the http query for offset to start returning objects from
+     * 
+     * @param Request $req The request object, if null Request::createFromGlobals will be used to create a new one
+     * 
+     * @access protected
+     * @return integer
+     */
     protected function getOffset(Request $req = null)
     {
         $_req = ($req) ? $req : Request::createFromGlobals();
