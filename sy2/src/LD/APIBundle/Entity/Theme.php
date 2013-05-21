@@ -83,42 +83,6 @@ class Theme extends AbstractBaseEntity
     }
 
     /**
-     * Take a binding entry from virtuoso and return a new Region object
-     *
-     * @param mixed                                      $row    The array of data from virtuoso
-     * @param \Symfony\Component\Routing\RouterInterface $router The router object used to generate the metadata url
-     * @param string                                     $graph  rd4 | eldis | all
-     *
-     * @return \LD\APIBundle\Entity\Region
-     * @throws \RuntimeException
-     */
-    public static function createFromRow($row, RouterInterface $router, $graph = 'all')
-    {
-        $level = 'Missing in sparql';
-
-        $url = $row->theme;
-
-        $objectName = $row->themelabel->getValue();
-        $objectType = 'theme';
-
-        $parts = explode('/', trim($url, ' /'));
-        $objectId = array_pop($parts);
-
-        $metadataUrl = $router->generate(
-            'ld_api_get_get_1',
-            array(
-                'graph' => $graph,
-                'obj' => 'theme',
-                'parameter' => $objectId,
-                'format' => 'full',
-            ),
-            UrlGeneratorInterface::ABSOLUTE_PATH
-        );
-
-        return new Theme($level, $metadataUrl, $objectId, $objectName, $objectType);
-    }
-
-    /**
      * Return a short format array representation of this entity
      *
      * A wrapper for toArray(SHORT)

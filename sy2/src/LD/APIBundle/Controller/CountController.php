@@ -50,9 +50,6 @@ class CountController extends APIController
      */
     public function countAction($graph, $object, $parameter, $format = 'short')
     {
-        $entity = '\\LD\\APIBundle\\Entity\\' . ucfirst($parameter);
-        $router = $this->get('router');
-
         $graphs = $this->container->getParameter('graphs');
         if (isset($graphs[$graph])) {
             $_graph = $graphs[$graph];
@@ -62,30 +59,22 @@ class CountController extends APIController
 
         $spqlsrvc = $this->get('sparql');
         $spqls = $this->container->getParameter('sparqls');
-        $spql = $spqls['count'][$object][$parameter];
-        $data = $spqlsrvc->query($_graph, $spql);
-
-        $response = array();
-        $total = 0;
-        foreach ($data as $row) {
-            $obj = $entity::createFromRow($row, $router, $graph);
-            if ($format == 'short') {
-                $data = $obj->short();
-            } else {
-                $data = $obj->full();
-            }
-            $data['count'] = $row->count->getValue();
-            $response[] = $data;
-            $total += $row->count->getValue();
-        }
-
-        $_response = array(
-            'metadata' => array(
-                'total_results' => $total,
-            ),
-            $parameter . '_count' => $response,
+        $this->container->get('logger')->info(
+            sprintf('Fetching sparql: count->%s->%s', $object, $parameter)
         );
+        $spql = $spqls['count'][$object][$parameter];
+        $data = $spqlsrvc->query($spql, $_graph);
 
-        return $this->response($_response);
+        $entfactories = $this->container->getParameter('factories');
+        $this->container->get('logger')->info(
+            sprintf('Fetching factory: count->%s->%s', $object, $parameter)
+        );
+        $factoryClass = $entfactories['count'][$object][$parameter];
+        $factory = new $factoryClass();
+        $factory->setContainer($this->container);
+        $factory->process($data, $parameter);
+        $response = $factory->getResponse($format);
+
+        return $this->response($response);
     }
 }

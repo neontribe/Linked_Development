@@ -2,7 +2,11 @@
 namespace LD\APIBundle\Services\ids;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Wrapper to making easy rdf sparql queries
+ */
 class Sparql
 {
     /*
@@ -19,13 +23,26 @@ class Sparql
     protected $logger = null;
     protected $endpoint = null;
 
-    public function __construct($endpoint, $container)
+    /**
+     * Create a new instance of this service
+     *
+     * @param string             $endpoint  The sparql endpoint to query
+     * @param ContainerInterface $container An instance of the current container
+     */
+    public function __construct($endpoint, ContainerInterface $container)
     {
         $this->endpoint = $endpoint;
         $this->container = $container;
         $this->logger = $container->get('logger');
     }
 
+    /**
+     * Use cURL to hit the endpoint
+     *
+     * @param string $spql The sparql query
+     *
+     * @return array
+     */
     public function curl($spql)
     {
         $this->logger->warn('Sparql::curl is depricated.  Use the EasyRDF function instead');
@@ -45,18 +62,34 @@ class Sparql
         $response = curl_exec($curl);
         $this->logger->debug($response);
 
-        return json_decode($response, TRUE);
+        return json_decode($response, true);
     }
 
     /**
-     * Build a query
+     * Build a sparql query.
      *
-     * @param string $graph
-     * @param array  $elements
+     * This funtion expects to get an array of query elements as the first
+     * paramter.  See the LD\APIBundle\Resources\config\services.yml for an
+     * example.
+     *
+     * It requires that the array has at least two elements, select and where,
+     * these are then glued together to make a sparql query.  So a simple query
+     * would be:
+     *
+     *     array(
+     *       'select' => 'select count(*)',
+     *       'where' => 'where {?a ?b ?c}',
+     *     );
+     *
+     * In addtion there can be a define index that will allow name spaces to be
+     * added.
+     *
+     * @param array  $elements The query in the form of an array
+     * @param string $graph    The graph to access
      *
      * @return string
      */
-    public function createQuery($graph, array $elements)
+    public function createQuery(array $elements, $graph = null)
     {
 
         if (isset($elements['define'])) {
@@ -92,14 +125,40 @@ class Sparql
     /**
      * Easy RDF Query of the endpoint
      *
-     * @param string $graph
-     * @param array  $elements
+     * @param array  $elements The query in the form of an array
+     * @param string $graph    The graph to access
      *
-     * @return EasyRdf_Sparql_Result|EasyRdf_Graph
+     * @return EasyRdf_Sparql_Result|EasyRdf_Graph|array
      */
-    public function query($graph, array $elements)
+    public function query(array $elements, $graph)
     {
-        $query = $this->createQuery($graph, $elements);
+        if (isset($elements['multiquery']) && $elements['multiquery'] == true) {
+            unset($elements['multiquery']);
+            $data = array();
+            foreach ($elements as $key => $query) {
+                $data[$key] = $this->__query($query, $graph);
+            }
+
+            return $data;
+        } else {
+
+            return $this->__query($elements, $graph);
+        }
+    }
+
+    /**
+     * Internal query function
+     *
+     * This will be called multiple times from Sparql::query
+     *
+     * @param array  $elements The query in the form of an array
+     * @param string $graph    The graph to access
+     *
+     * @return EasyRdf_Sparql_Result|EasyRdf_Graph|array
+     */
+    private function __query(array $elements, $graph)
+    {
+        $query = $this->createQuery($elements, $graph);
 
         $client = new \EasyRdf_Sparql_Client($this->endpoint);
         $result = $client->query($query);
@@ -143,5 +202,22 @@ class Sparql
             $this->container->getParameter('sparql_default_offset') // I can't see why this won't always be zero
         );
 
+    }
+
+    private function array_depth(array $array)
+    {
+        $maxDepth = 1;
+
+        foreach ($array as $value) {
+            if (is_array($value) && $maxDepth < 100) {
+                $depth = array_depth($value) + 1;
+
+                if ($depth > $maxDepth) {
+                    $maxDepth = $depth;
+                }
+            }
+        }
+
+        return $maxDepth;
     }
 }

@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Top level entity
  */
-abstract class AbstractBaseEntity implements CreateFromBinding
+abstract class AbstractBaseEntity
 {
     const SHORT = 1;
     const FULL = 2;
