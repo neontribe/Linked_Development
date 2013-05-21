@@ -2,8 +2,8 @@
 # executed after apply-overlay
 
 # setting up apache for sparql and snorql
-a2enmod auth_digest proxy_http
-a2ensite sparql custom_sparql_endpoints
+a2enmod auth_digest proxy_http rewrite
+a2ensite sparql custom_sparql_endpoints lodspeakr
 
 # clean up apache
 rm /var/www/index.html
@@ -21,3 +21,15 @@ rm /var/www/index.html
 
 # tell the world what we've done!
 echo 'Welcome to the Linked-Development appliance' >> /etc/issue
+
+#setup virtuoso install
+ln -s /opt/virtuoso6/bin/isql /usr/bin/isql-vt
+mkdir -p /var/lib/virtuoso-opensource-6.1/db/
+mkdir -p /var/log/virtuoso-opensource-6.1/
+echo 'PATH=/opt/virtuoso6/bin:$PATH' >> /root/.bashrc
+
+#setup lodspeakr permissions
+chmod 777 -R /var/www/htdocs/lodspeakr/cache /var/www/htdocs/lodspeakr/meta
+
+#setup virtuoso start/stopln -s /etc/init.d/virtuoso-opensource-6.1 /etc/rc2.d/S80virtuoso 
+update-rc.d virtuoso-opensource-6.1 start NN 2 3 4 5  . stop NN 0 1 6 .
