@@ -21,6 +21,7 @@ class Sparql
     // http://stackoverflow.com/questions/2930246/exploratory-sparql-queries
 
     protected $logger = null;
+    protected $container = null;
     protected $endpoint = null;
 
     /**
@@ -159,9 +160,14 @@ class Sparql
     private function __query(array $elements, $graph)
     {
         $query = $this->createQuery($elements, $graph);
-
         $client = new \EasyRdf_Sparql_Client($this->endpoint);
+
+        $time = microtime(true);
         $result = $client->query($query);
+        $this->container->get('logger')->debug(
+            sprintf('Sparql query took %d ms', microtime(true) - $time)
+        );
+
 
         return $result;
     }

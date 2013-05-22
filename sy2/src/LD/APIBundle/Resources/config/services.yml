@@ -26,8 +26,8 @@ parameters:
       count:
         documents:
           region: LD\APIBundle\Services\Factories\CountFactory
-          theme: LD\APIBundle\Services\Factories\DefaultFactory
-          country: LD\APIBundle\Services\Factories\DefaultFactory
+          theme: LD\APIBundle\Services\Factories\CountFactory
+          country: LD\APIBundle\Services\Factories\CountFactory
         organisations:
           region: LD\APIBundle\Services\Factories\DefaultFactory
           theme: LD\APIBundle\Services\Factories\DefaultFactory
@@ -50,7 +50,7 @@ parameters:
         # Count Documents
         documents:
           region:
-            # This demonstartes where multiple queries are needed.  The multiple index
+            # This demonstartes where multiple queries are needed.  The multiple index is set to true
             multiquery: true
             none:
               define: ~
@@ -58,7 +58,7 @@ parameters:
               where: where {?a ?b ?c}
             all:
               define: ~
-              select: select distinct ?region ?regionlabel count(distinct ?article) as ?count
+              select: select distinct ?region as ?url ?regionlabel as ?label count(distinct ?article) as ?count
               where: >
                 where {
                   ?article a <http://purl.org/ontology/bibo/Article> .
@@ -73,9 +73,10 @@ parameters:
                   ?regionlabel .
                 }
           theme:
+            # This demonstartes a single query
             multiquery: false
             define: ~
-            select: select distinct ?theme ?themelabel count(distinct ?article) as ?count
+            select: select distinct ?theme as ?url ?themelabel as ?label count(distinct ?article) as ?count
             where: >
               where {
                 ?b <http://purl.org/dc/terms/subject>
@@ -86,17 +87,20 @@ parameters:
                 ?article <http://purl.org/dc/terms/subject> ?theme .
               }
           country:
-            define: "prefix DCTERMS: <http://purl.org/dc/terms/>"
-            select: select distinct ?countrycode ?countrylabel count(distinct ?article) as ?count
-            where: >
-              where {
-                ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
-                ?publisher a <http://dbpedia.org/ontology/Organisation> .
-                ?article DCTERMS:publisher ?publisher .
-                ?article a <http://purl.org/ontology/bibo/Article> .
-                ?article <http://purl.org/dc/terms/coverage> ?country .
-                ?country <http://www.w3.org/2000/01/rdf-schema#label> ?countrylabel .
-              }
+            # This demonstartes a multiple query with a single query in it
+            multiquery: true
+            all:
+              define: "prefix DCTERMS: <http://purl.org/dc/terms/>"
+              select: select distinct ?countrycode ?countrylabel count(distinct ?article) as ?count
+              where: >
+                where {
+                  ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
+                  ?publisher a <http://dbpedia.org/ontology/Organisation> .
+                  ?article DCTERMS:publisher ?publisher .
+                  ?article a <http://purl.org/ontology/bibo/Article> .
+                  ?article <http://purl.org/dc/terms/coverage> ?country .
+                  ?country <http://www.w3.org/2000/01/rdf-schema#label> ?countrylabel .
+                }
         # Count orgs
         organisations:
           region:

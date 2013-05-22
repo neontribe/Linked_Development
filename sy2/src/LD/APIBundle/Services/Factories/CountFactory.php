@@ -2,6 +2,8 @@
 namespace LD\APIBundle\Services\Factories;
 
 use LD\APIBundle\Entity\Region;
+use LD\APIBundle\Entity\Theme;
+use LD\APIBundle\Entity\Country;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use \Iterator;
 
@@ -30,7 +32,7 @@ class CountFactory extends BaseFactory
         $func = 'count' . ucfirst($type);
         $this->data = call_user_func_array(
             array($this, $func),
-            array($data, $graph)
+            array($data, $graph, $type)
         );
 
         return $this->data;
@@ -80,6 +82,7 @@ class CountFactory extends BaseFactory
     protected function countRegion($data, $graph)
     {
         $router = $this->container->get('router');
+
         $response = array();
 
         // this we know is a multipart query
@@ -88,9 +91,9 @@ class CountFactory extends BaseFactory
                 // not yet defined
             } elseif ($key == 'all') {
                 foreach ($rows as $row) {
-                    $url = $row->region;
+                    $url = $row->url;
 
-                    $objectName = $row->regionlabel->getValue();
+                    $objectName = $row->label->getValue();
                     $objectType = 'region';
 
                     $parts = explode('/', trim($url, ' /'));
@@ -100,18 +103,19 @@ class CountFactory extends BaseFactory
                         'ld_dev_default_index', // TODO This needs correcting when get routes are done
                         array(
                             'graph' => $graph,
-                            'obj' => 'region',
+                            'obj' => $objectType,
                             'parameter' => $objectId,
                             'format' => 'full',
                         ),
                         UrlGeneratorInterface::ABSOLUTE_PATH
                     );
 
-                    $region = new Region(
+                    $entity = new Region(
                         $metadataUrl, $objectId, $objectName, $objectType
                     );
-                    $region->count = $row->count->getValue();
-                    $response[] = $region;
+                    $entity->count = $row->count->getValue();
+
+                    $response[] = $entity;
                 }
             } else {
                 // Not reachable
@@ -120,4 +124,51 @@ class CountFactory extends BaseFactory
 
         return $response;
     }
+
+    /**
+     * Parse the list of results and build the response data array
+     *
+     * @param mixed  $data  The list of result rows.
+     * @param string $graph The name of the graph it use.
+     *
+     * @return array
+     */
+    protected function countTheme($data, $graph)
+    {
+        $router = $this->container->get('router');
+
+        $response = array();
+
+        // this we know is a multipart query
+        foreach ($data as $row) {
+            $url = $row->url;
+
+            $objectName = trim($row->label->getValue());
+            $objectType = 'theme';
+
+            $parts = explode('/', trim($url, ' /'));
+            $objectId = array_pop($parts);
+
+            $metadataUrl = $router->generate(
+                'ld_dev_default_index', // TODO This needs correcting when get routes are done
+                array(
+                    'graph' => $graph,
+                    'obj' => $objectType,
+                    'parameter' => $objectId,
+                    'format' => 'full',
+                ),
+                UrlGeneratorInterface::ABSOLUTE_PATH
+            );
+
+            $entity = new Theme(
+                'NPIS', $metadataUrl, $objectId, $objectName, $objectType
+            );
+            $entity->count = $row->count->getValue();
+
+            $response[] = $entity;
+        }
+
+        return $response;
+    }
+
 }

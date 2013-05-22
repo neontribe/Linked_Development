@@ -81,16 +81,4 @@ class Theme extends AbstractBaseEntity
     {
         return $this->level;
     }
-
-    /**
-     * Return a short format array representation of this entity
-     *
-     * A wrapper for toArray(SHORT)
-     *
-     * @return array
-     */
-    public function short()
-    {
-        return $this->toArray(AbstractBaseEntity::SHORT);
-    }
 }

@@ -35,6 +35,13 @@ abstract class BaseFactory implements ContainerAwareInterface, FactoryInterface
         return $this->container;
     }
 
+    /**
+     * Get as human readable type for an object
+     *
+     * @param mixed $obj An array, object or literal
+     *
+     * @return string
+     */
     public function getType($obj)
     {
         if (is_object($obj)) {
