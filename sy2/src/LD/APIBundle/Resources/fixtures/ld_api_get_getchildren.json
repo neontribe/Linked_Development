@@ -1,0 +1,218 @@
+{
+    "metadata": {
+        "start_offset": 0,
+        "total_results": 5
+    },
+    "results": [
+        {
+            "archived": "false",
+            "cat_first_parent": "34",
+            "cat_level": "2",
+            "cat_parent": "34",
+            "cat_superparent": "2",
+            "category_id": 1819,
+            "category_path": "Ageing.Ageing policies",
+            "category_path_autocomplete": "Ageing.Ageing policies",
+            "category_path_facet": "Ageing.Ageing policies",
+            "category_path_sort": [
+                "Ageing.Ageing policies",
+                "Ageing.Ageing_policies"
+            ],
+            "children_url": "http://api.ids.ac.uk/openapi/eldis/get_children/themes/C1819/full/",
+            "deleted": "false",
+            "level": "2",
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/themes/C1819/full/ageing-policies/",
+            "name": "Ageing policies",
+            "object_id": "C1819",
+            "object_type": "theme",
+            "parent_object_array": {
+                "parent": [
+                    {
+                        "level": "1",
+                        "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/themes/C34/full/ageing/",
+                        "object_id": "C34",
+                        "object_name": "Ageing",
+                        "object_type": "theme"
+                    }
+                ]
+            },
+            "parent_object_id": "C34",
+            "parent_url": "http://api.ids.ac.uk/openapi/eldis/get/themes/C34/full/",
+            "site": "eldis",
+            "site_facet": "eldis",
+            "superparent_object_id": "C2",
+            "timestamp": "2013-05-02 09:39:19",
+            "title": "Ageing policies",
+            "title_sort": "Ageing policies",
+            "toplevel_object_id": "C34"
+        },
+        {
+            "archived": "false",
+            "cat_first_parent": "34",
+            "cat_level": "2",
+            "cat_parent": "34",
+            "cat_superparent": "2",
+            "category_id": 1826,
+            "category_path": "Ageing.Ageing and health issues",
+            "category_path_autocomplete": "Ageing.Ageing and health issues",
+            "category_path_facet": "Ageing.Ageing and health issues",
+            "category_path_sort": [
+                "Ageing.Ageing and health issues",
+                "Ageing.Ageing_and_health_issues"
+            ],
+            "children_url": "http://api.ids.ac.uk/openapi/eldis/get_children/themes/C1826/full/",
+            "deleted": "false",
+            "level": "2",
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/themes/C1826/full/ageing-and-health-issues/",
+            "name": "Ageing and health issues",
+            "object_id": "C1826",
+            "object_type": "theme",
+            "parent_object_array": {
+                "parent": [
+                    {
+                        "level": "1",
+                        "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/themes/C34/full/ageing/",
+                        "object_id": "C34",
+                        "object_name": "Ageing",
+                        "object_type": "theme"
+                    }
+                ]
+            },
+            "parent_object_id": "C34",
+            "parent_url": "http://api.ids.ac.uk/openapi/eldis/get/themes/C34/full/",
+            "site": "eldis",
+            "site_facet": "eldis",
+            "superparent_object_id": "C2",
+            "timestamp": "2013-05-02 09:39:20",
+            "title": "Ageing and health issues",
+            "title_sort": "Ageing and health issues",
+            "toplevel_object_id": "C34"
+        },
+        {
+            "archived": "false",
+            "cat_first_parent": "34",
+            "cat_level": "2",
+            "cat_parent": "34",
+            "cat_superparent": "2",
+            "category_id": 1525,
+            "category_path": "Ageing.Ageing and gender",
+            "category_path_autocomplete": "Ageing.Ageing and gender",
+            "category_path_facet": "Ageing.Ageing and gender",
+            "category_path_sort": [
+                "Ageing.Ageing and gender",
+                "Ageing.Ageing_and_gender"
+            ],
+            "children_url": "http://api.ids.ac.uk/openapi/eldis/get_children/themes/C1525/full/",
+            "deleted": "false",
+            "level": "2",
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/themes/C1525/full/ageing-and-gender/",
+            "name": "Ageing and gender",
+            "object_id": "C1525",
+            "object_type": "theme",
+            "parent_object_array": {
+                "parent": [
+                    {
+                        "level": "1",
+                        "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/themes/C34/full/ageing/",
+                        "object_id": "C34",
+                        "object_name": "Ageing",
+                        "object_type": "theme"
+                    }
+                ]
+            },
+            "parent_object_id": "C34",
+            "parent_url": "http://api.ids.ac.uk/openapi/eldis/get/themes/C34/full/",
+            "site": "eldis",
+            "site_facet": "eldis",
+            "superparent_object_id": "C2",
+            "timestamp": "2013-05-02 09:39:25",
+            "title": "Ageing and gender",
+            "title_sort": "Ageing and gender",
+            "toplevel_object_id": "C34"
+        },
+        {
+            "archived": "false",
+            "cat_first_parent": "34",
+            "cat_level": "2",
+            "cat_parent": "34",
+            "cat_superparent": "2",
+            "category_id": 37,
+            "category_path": "Ageing.Population dynamics",
+            "category_path_autocomplete": "Ageing.Population dynamics",
+            "category_path_facet": "Ageing.Population dynamics",
+            "category_path_sort": [
+                "Ageing.Population dynamics",
+                "Ageing.Population_dynamics"
+            ],
+            "children_url": "http://api.ids.ac.uk/openapi/eldis/get_children/themes/C37/full/",
+            "deleted": "false",
+            "level": "2",
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/themes/C37/full/population-dynamics/",
+            "name": "Population dynamics",
+            "object_id": "C37",
+            "object_type": "theme",
+            "parent_object_array": {
+                "parent": [
+                    {
+                        "level": "1",
+                        "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/themes/C34/full/ageing/",
+                        "object_id": "C34",
+                        "object_name": "Ageing",
+                        "object_type": "theme"
+                    }
+                ]
+            },
+            "parent_object_id": "C34",
+            "parent_url": "http://api.ids.ac.uk/openapi/eldis/get/themes/C34/full/",
+            "site": "eldis",
+            "site_facet": "eldis",
+            "superparent_object_id": "C2",
+            "timestamp": "2013-05-02 09:39:50",
+            "title": "Population dynamics",
+            "title_sort": "Population dynamics",
+            "toplevel_object_id": "C34"
+        },
+        {
+            "archived": "false",
+            "cat_first_parent": "34",
+            "cat_level": "2",
+            "cat_parent": "34",
+            "cat_superparent": "2",
+            "category_id": 36,
+            "category_path": "Ageing.Pensions",
+            "category_path_autocomplete": "Ageing.Pensions",
+            "category_path_facet": "Ageing.Pensions",
+            "category_path_sort": [
+                "Ageing.Pensions",
+                "Ageing.Pensions"
+            ],
+            "children_url": "http://api.ids.ac.uk/openapi/eldis/get_children/themes/C36/full/",
+            "deleted": "false",
+            "level": "2",
+            "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/themes/C36/full/pensions/",
+            "name": "Pensions",
+            "object_id": "C36",
+            "object_type": "theme",
+            "parent_object_array": {
+                "parent": [
+                    {
+                        "level": "1",
+                        "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/themes/C34/full/ageing/",
+                        "object_id": "C34",
+                        "object_name": "Ageing",
+                        "object_type": "theme"
+                    }
+                ]
+            },
+            "parent_object_id": "C34",
+            "parent_url": "http://api.ids.ac.uk/openapi/eldis/get/themes/C34/full/",
+            "site": "eldis",
+            "site_facet": "eldis",
+            "superparent_object_id": "C2",
+            "timestamp": "2013-05-02 09:39:50",
+            "title": "Pensions",
+            "title_sort": "Pensions",
+            "toplevel_object_id": "C34"
+        }
+    ]
+}

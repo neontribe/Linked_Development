@@ -1,0 +1,8 @@
+LOAD /opt/tools/rdfloader.sql;
+ld_dir('/home/eldis/rdf/','*.rdf','http://linked-development.org/eldis/new');
+rdf_loader_run();
+SPARQL CLEAR GRAPH <hhttp://linked-development.org/eldis/>;
+log_enable(3);
+UPDATE DB.DBA.RDF_QUAD TABLE OPTION (index RDF_QUAD_GS) SET g = iri_to_id ('http://linked-development.org/eldis/') WHERE g = iri_to_id ('http://linked-development.org/eldis/new', 0);
+log_enable(1);
+exit;

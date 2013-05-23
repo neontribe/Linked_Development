@@ -1,0 +1,2 @@
+SPARQL CLEAR GRAPH <http://linked-development.org/eldis/>;
+exit;
