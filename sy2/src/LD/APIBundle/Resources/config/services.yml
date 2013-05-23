@@ -54,14 +54,14 @@ parameters:
             multiquery: true
             none:
               define: ~
-              select: select count(*)
+              select: select count(distinct ?article) as ?count
               where: 
-                    where {
-                        ?article a <http://purl.org/ontology/bibo/Article> .
-                        OPTIONAL { ?article <http://purl.org/dc/terms/coverage> ?region .
-                            ?region a <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/geographical_region>.}
-                        FILTER(!BOUND(?region))
-                    }
+                where {
+                    ?article a <http://purl.org/ontology/bibo/Article> .
+                    OPTIONAL { ?article <http://purl.org/dc/terms/coverage> ?region .
+                        ?region a <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/geographical_region>.}
+                    FILTER(!BOUND(?region))
+                }
             all:
               define: ~
               select: select distinct ?region as ?url ?regionlabel as ?label count(distinct ?article) as ?count
