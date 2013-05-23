@@ -81,21 +81,30 @@ parameters:
                      FILTER(lang(?regionlabel) = 'en' || lang(?regionlabel) = "")
                 }
           theme:
-            # ToDo
             # IDS example: http://api.ids.ac.uk/openapi/eldis/count/documents/theme
             # Note: the linked data API may return a very large list of themes here. We may wish to (a) sort the results by count; and (b) offer pagination
-            multiquery: false
-            define: ~
-            select: select distinct ?theme as ?url ?themelabel as ?label count(distinct ?article) as ?count
-            where: >
-              where {
-                ?b <http://purl.org/dc/terms/subject>
-                ?theme .
-                ?theme <http://www.w3.org/2000/01/rdf-schema#label>
-                ?themelabel .
-                ?article a <http://purl.org/ontology/bibo/Article> .
-                ?article <http://purl.org/dc/terms/subject> ?theme .
-              }
+            # In future we may want to add a flag to switch between using the URI and the theme label to group themes
+            # Right now we use the category. 
+            multiquery: true
+            none:
+                define: ~
+                select: select count(distinct ?article) as ?count
+                where: >
+                 where {
+                        ?article a <http://purl.org/ontology/bibo/Article> .        
+                        OPTIONAL { ?article <http://purl.org/dc/terms/subject> ?theme .}
+                        FILTER(!BOUND(?theme))  
+                 }
+            all:
+                define: ~
+                select: select distinct ?theme as ?url ?identifier ?themelabel as ?label count(distinct ?article) as ?count
+                where: >
+                    where {
+                           ?article a <http://purl.org/ontology/bibo/Article> .        
+                           ?article <http://purl.org/dc/terms/subject> ?theme .
+                           ?theme <http://www.w3.org/2000/01/rdf-schema#label> ?themelabel .
+                           OPTIONAL { ?theme <http://purl.org/dc/terms/identifier> ?identifier. }
+                    } ORDER BY DESC(?count)
           country:
             # Updated 2013/05/23
             # IDS Example: http://api.ids.ac.uk/openapi/eldis/count/documents/country
@@ -143,46 +152,42 @@ parameters:
         # Note that this is not directly comparable to IDS used of ?q which searches the 'keywords' field, which is not included in our merged IDS and R4D test dataset. 
         
         
-        # Count orgs
+        # Count organisations
+        # 
+        # We don't currently have adequate data across both IDS and R4D sources to fully implement this section
+        # 
         organisations:
+          # http://api.ids.ac.uk/openapi/eldis/count/organisations/region
+          # ToDo - Requires updates to eldis_crawl_orgs.py before it can be implemented. Does not work across R4D data at present. 
+          # ToDo - Review R4D organisation model
           region:
-            define: "prefix DCTERMS: <http://purl.org/dc/terms/>"
-            select: select distinct ?region ?regionlabel count(distinct ?publisher) as ?count
-            where: >
-              where {
-                ?article <http://purl.org/dc/terms/coverage> ?region .
-                OPTIONAL {
-                  ?r <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?c .
-                  FILTER ( ?r = ?region ) .
-                }
-                FILTER ( !BOUND(?r) ) .
-                ?region <http://www.w3.org/2000/01/rdf-schema#label> ?regionlabel .
-                ?publisher a <http://dbpedia.org/ontology/Organisation> .
-                ?article DCTERMS:publisher ?publisher .
-                ?article a <http://purl.org/ontology/bibo/Article> .
-              }
+            define: ~
+            select: ~
+            where: ~
           theme:
-            define: "prefix DCTERMS: <http://purl.org/dc/terms/>"
-            select: select distinct ?theme ?themelabel count(distinct ?publisher) as ?count
-            where: >
-              where {
-                ?theme <http://www.w3.org/2000/01/rdf-schema#label> ?themelabel .
-                ?article a <http://purl.org/ontology/bibo/Article> .
-                ?article <http://purl.org/dc/terms/subject> ?theme .
-                ?article DCTERMS:publisher ?publisher .
-                ?publisher a <http://dbpedia.org/ontology/Organisation> .
-              }
+          # http://api.ids.ac.uk/openapi/eldis/count/organisations/theme
+          # ToDo - Needs to work from tags against organisations. May need to identify how to assign tags to R4D organisations. 
+            define: ~
+            select: ~
+            where: ~
           country:
-            define: "prefix DCTERMS: <http://purl.org/dc/terms/>"
-            select: select distinct ?countrycode ?countrylabel count(distinct ?publisher) as ?count
+          # Country
+          # http://api.ids.ac.uk/openapi/eldis/count/organisations/country
+            define: ~
+            select: SELECT ?country count(?org) as ?count
             where: >
-              where {
-                ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
-                ?publisher a <http://dbpedia.org/ontology/Organisation> .  ?article DCTERMS:publisher ?publisher .
-                ?article a <http://purl.org/ontology/bibo/Article> .
-                ?article <http://purl.org/dc/terms/coverage> ?country .
-                ?country <http://www.w3.org/2000/01/rdf-schema#label> ?countrylabel .
-              }
+              WHERE {
+               {
+                 ?org a <http://dbpedia.org/ontology/Organisation>.
+                 ?org <http://schemas.talis.com/2005/address/schemacountryName> ?country. 
+               } 
+               UNION 
+               { 
+                 ?org a <http://xmlns.com/foaf/0.1/Organization>.
+                 ?org <http://www.w3.org/2006/vcard/ns#hasAddress> ?address. 
+                 ?address <http://www.w3.org/2006/vcard/ns#country> ?country. 
+               }
+             } GROUP BY ?country ORDER BY DESC(?count)
       # Gets
       get:
         documents:
