@@ -55,7 +55,7 @@ parameters:
             none:
               define: ~
               select: select count(distinct ?article) as ?count
-              where: 
+              where: >
                 where {
                     ?article a <http://purl.org/ontology/bibo/Article> .
                     OPTIONAL { ?article <http://purl.org/dc/terms/coverage> ?region .
@@ -94,17 +94,32 @@ parameters:
           country:
             # This demonstartes a multiple query with a single query in it
             multiquery: true
+            none:
+                define:
+                select: select count(distinct ?article) as ?count
+                where: >
+                    where {
+                        ?article a <http://purl.org/ontology/bibo/Article> .
+                        OPTIONAL { 
+                            ?article <http://purl.org/dc/terms/coverage> ?country .
+                            ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode.
+                        }
+                        FILTER(!BOUND(?country))
+                    }
             all:
-              define: "prefix DCTERMS: <http://purl.org/dc/terms/>"
+              define: ~
               select: select distinct ?countrycode ?countrylabel count(distinct ?article) as ?count
               where: >
                 where {
                   ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
-                  ?publisher a <http://dbpedia.org/ontology/Organisation> .
-                  ?article DCTERMS:publisher ?publisher .
                   ?article a <http://purl.org/ontology/bibo/Article> .
                   ?article <http://purl.org/dc/terms/coverage> ?country .
-                  ?country <http://www.w3.org/2000/01/rdf-schema#label> ?countrylabel .
+                  { 
+                    ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/nameList> ?countrylabel.
+                  } UNION {
+                    ?country <http://www.w3.org/2000/01/rdf-schema#label> ?countrylabel.
+                  } 
+                  FILTER(lang(?countrylabel) = 'en' || lang(?countrylabel) = "")
                 }
         # Count orgs
         organisations:
