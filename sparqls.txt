@@ -18,10 +18,7 @@ select  count(distinct ?organisation) where {?organisation a <http://dbpedia.org
 select distinct ?region ?regionlabel count(distinct ?article) where {
                                ?article a <http://purl.org/ontology/bibo/Article> .
                                ?article <http://purl.org/dc/terms/coverage> ?region .
-                               OPTIONAL {?r <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?c . 
-                                         FILTER ( ?r = ?region ) . 
-                                        }
-                               FILTER ( !BOUND(?r) ) .
+                               ?region a <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/geographical_region>
                                ?region <http://www.w3.org/2000/01/rdf-schema#label> ?regionlabel .
                               }
  
