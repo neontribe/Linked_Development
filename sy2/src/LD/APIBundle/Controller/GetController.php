@@ -30,11 +30,11 @@ class GetController extends APIController
         $graph = \EasyRdf_Graph::newAndLoad($url);
 
         return new \Symfony\Component\HttpFoundation\Response(
-            '<h3>$graph->types</h3><pre>' . json_encode($graph->types(), JSON_PRETTY_PRINT) . '</pre>' .
-            '<h3>$graph->getUri</h3><pre>' . json_encode($graph->getUri(), JSON_PRETTY_PRINT) . '</pre>' .
-            '<h3>$graph->type</h3><pre>' . json_encode($graph->type(), JSON_PRETTY_PRINT) . '</pre>' .
-            '<h3>$graph->label</h3><pre>' . json_encode($graph->label(), JSON_PRETTY_PRINT) . '</pre>' .
-            '<h3>$graph->allOfType(http://www.w3.org/2000/01/rdf-schema#label),</h3><pre>' . json_encode($graph->allOfType('http://www.w3.org/2000/01/rdf-schema#label'), JSON_PRETTY_PRINT) . '</pre>' .
+            '<h3>$graph->types</h3><pre>' . json_encode($graph->types()) . '</pre>' .
+            '<h3>$graph->getUri</h3><pre>' . json_encode($graph->getUri()) . '</pre>' .
+            '<h3>$graph->type</h3><pre>' . json_encode($graph->type()) . '</pre>' .
+            '<h3>$graph->label</h3><pre>' . json_encode($graph->label()) . '</pre>' .
+            '<h3>$graph->allOfType(http://www.w3.org/2000/01/rdf-schema#label),</h3><pre>' . json_encode($graph->allOfType('http://www.w3.org/2000/01/rdf-schema#label')) . '</pre>' .
             '<h3>$graph->dumpResource</h3><p>' . $graph->dumpResource('http://linked-development.org/eldis/output/A64003/') . '</p>' .
             '<p>' . ($graph->dump()) . '</p>'
         );
