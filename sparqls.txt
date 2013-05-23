@@ -18,10 +18,7 @@ select  count(distinct ?organisation) where {?organisation a <http://dbpedia.org
 select distinct ?region ?regionlabel count(distinct ?article) where {
                                ?article a <http://purl.org/ontology/bibo/Article> .
                                ?article <http://purl.org/dc/terms/coverage> ?region .
-                               OPTIONAL {?r <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?c . 
-                                         FILTER ( ?r = ?region ) . 
-                                        }
-                               FILTER ( !BOUND(?r) ) .
+                               ?region a <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/geographical_region>
                                ?region <http://www.w3.org/2000/01/rdf-schema#label> ?regionlabel .
                               }
  
@@ -120,6 +117,55 @@ select distinct  ?a ?b
                                 <http://linked-development.org/eldis/output/A65066/> ?a ?b .
                                 }
 
+Or, using construct:
+# Note - this version of the query is not currently working on Virtuoso 6.1.3 - probably due to the bug reported here: 
+
+   PREFIX dcterms: <http://purl.org/dc/terms/>
+   PREFIX bibo:    <http://purl.org/ontology/bibo/>
+   PREFIX foaf:    <http://xmlns.com/foaf/0.1/>
+   
+   CONSTRUCT {
+       ?resource a bibo:Article.
+       ?resource dcterms:title ?title.
+       ?resource dcterms:abstract ?abstract.
+       ?resource dcterms:creator ?creator.
+       ?resource dcterms:subject ?subject.
+       ?subject rdfs:label ?subjectTitle.
+       ?resource dcterms:coverage ?coverage.
+       ?coverage rdfs:label ?coverageTitle.
+       ?resource dcterms:language ?language.
+       ?resource dcterms:identifier ?identifier.
+       ?resource rdfs:seeAlso ?document.
+       ?resource dcterms:date ?date. 
+       ?resource dcterms:publisher ?publisher.
+       ?publisher foaf:name ?publisherName.
+   }
+       WHERE {
+       ?resource a bibo:Article.
+       ?resource dcterms:title ?title.
+       ?resource dcterms:abstract ?abstract.
+       ?resource dcterms:creator ?creator.
+       OPTIONAL { ?resource dcterms:subject ?subject. 
+            OPTIONAL {?subject rdfs:label ?subjectTitle.}
+       }
+       OPTIONAL { ?resource dcterms:coverage ?coverage.
+            OPTIONAL {  { ?coverage rdfs:label ?coverageTitle. } UNION { ?coverage fao:nameList ?coverageTitle. } }
+       }
+       OPTIONAL { ?resource dcterms:language ?language. }
+       OPTIONAL { ?resource dcterms:identifier ?identifier. }
+       OPTIONAL { ?resource rdfs:seeAlso ?document. }
+
+        OPTIONAL { ?resource dcterms:publisher ?publisher. 
+                   OPTIONAL { ?publisher foaf:name ?publisherName. }
+         }
+
+        }
+        
+       FILTER(?resource = <http://r4d.dfid.gov.uk/Output/10004/>)
+   }
+
+
+
 /get/countries/<ID>
 this is getting country http://linked-development.org/eldis/countries/<ID>/
 select distinct  ?a ?b
@@ -206,6 +252,93 @@ ld_api_search_searchwithobject_1 GET|HEAD|OPTIONS ANY    ANY  /search/{obj}/{par
 
 
 
+/search/document/
+Searches for resources. Note that this may need more OPTIONAL clauses added to handle for where certain fields are not present...
+
+    PREFIX dcterms: <http://purl.org/dc/terms/>
+    PREFIX bibo:    <http://purl.org/ontology/bibo/>
+    SELECT * WHERE {
+        ?resource a bibo:Article.
+        ?resource dcterms:title ?title.
+        ?resource dcterms:abstract ?abstract.
+        ?resource dcterms:creator ?creator.
+        ?resource dcterms:subject ?subject.
+        ?subject rdfs:label ?subjectTitle.
+        ?resource dcterms:coverage ?coverage.
+        ?coverage rdfs:label ?coverageTitle.
+        ?resource dcterms:language ?language.
+        ?resource dcterms:identifier ?identifier.
+        ?resource rdfs:seeAlso ?document.
+        ?resource dcterms:date ?date. 
+        ?resource dcterms:publisher ?publisher.
+    }
+    limit 10
+
+
+
+Alternatively, by using a construct query we can get a graph to work with.
+
+PREFIX dcterms: <http://purl.org/dc/terms/>
+   PREFIX bibo:    <http://purl.org/ontology/bibo/>
+   CONSTRUCT {
+       ?resource a bibo:Article.
+       ?resource dcterms:title ?title.
+       ?resource dcterms:abstract ?abstract.
+       ?resource dcterms:creator ?creator.
+       ?resource dcterms:subject ?subject.
+       ?subject rdfs:label ?subjectTitle.
+       ?resource dcterms:coverage ?coverage.
+       ?coverage rdfs:label ?coverageTitle.
+       ?resource dcterms:language ?language.
+       ?resource dcterms:identifier ?identifier.
+       ?resource rdfs:seeAlso ?document.
+       ?resource dcterms:date ?date. 
+       ?resource dcterms:publisher ?publisher.
+   }
+       WHERE {
+       ?resource a bibo:Article.
+       ?resource dcterms:title ?title.
+       ?resource dcterms:abstract ?abstract.
+       ?resource dcterms:creator ?creator.
+       ?resource dcterms:subject ?subject.
+       ?subject rdfs:label ?subjectTitle.
+       ?resource dcterms:coverage ?coverage.
+       { ?coverage rdfs:label ?coverageTitle. } UNION { ?coverage fao:nameList ?coverageTitle. }
+       ?resource dcterms:language ?language.
+       ?resource dcterms:identifier ?identifier.
+       ?resource rdfs:seeAlso ?document.
+       ?resource dcterms:date ?date. 
+       ?resource dcterms:publisher ?publisher.
+   }
+   limit 100
+   
+
+FILTERs
+
+By Country Code
+
+    ?resource dcterms:coverage ?coverage.
+    ?coverage fao:codeISO2 ?countryCode.
+    FILTER(regex(?countryCode, "^AF$"))
+
+By country or region name
+
+    ?resource dcterms:coverage ?coverage.
+    { ?coverage rdfs:label ?coverageTitle. } UNION { ?coverage fao:nameList ?coverageTitle. }
+    FILTER(regex(?coverageTitle, "^Afghanistan$","i"))
+
+Note that ELDIS and R4D do not use the same region names right now...
+
+/search/organisation/
+Searches for organisations
+
+    PREFIX fao: <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/>
+    PREFIX dcterms: <http://purl.org/dc/terms/>
+    PREFIX bibo:    <http://purl.org/ontology/bibo/>
+    SELECT * WHERE {
+        ?resource a fao:Organisation.
+    }
+    limit 10
 
 
 

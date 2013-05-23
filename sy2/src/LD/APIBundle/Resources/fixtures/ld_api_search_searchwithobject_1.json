@@ -1,0 +1,26 @@
+{
+    "metadata": {
+        "start_offset": 0,
+        "total_results": 3
+    },
+    "results": [
+        {
+            "metadata_url": "http://api.ids.ac.uk/openapi/bridge/get/documents/A52425/full/towards-gender-equality-in-angola-a-profile-on-gender-relations/",
+            "object_id": "A52425",
+            "object_type": "Document",
+            "title": "Towards Gender Equality in Angola: A Profile on Gender Relations"
+        },
+        {
+            "metadata_url": "http://api.ids.ac.uk/openapi/bridge/get/documents/A21034/full/cycles-of-violence-gender-relations-and-armed-conflict/",
+            "object_id": "A21034",
+            "object_type": "Document",
+            "title": "Cycles of violence: gender relations and armed conflict"
+        },
+        {
+            "metadata_url": "http://api.ids.ac.uk/openapi/bridge/get/documents/A52761/full/engendering-budgets-a-practitioner-s-guide-to-understanding-and-implementing-gender-responsive-budgets/",
+            "object_id": "A52761",
+            "object_type": "Document",
+            "title": "Engendering Budgets: A Practitioner's Guide to Understanding and Implementing Gender-Responsive Budgets"
+        }
+    ]
+}

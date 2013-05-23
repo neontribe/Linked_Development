@@ -1,0 +1,10 @@
+
+{
+    "results": {
+        "children_url": "http://api.ids.ac.uk/openapi/bridge/get_children/themes/C1598/full/",
+        "metadata_url": "http://api.ids.ac.uk/openapi/bridge/get/themes/C1598/full/gender-budgets/",
+        "object_id": "C1598",
+        "object_type": "theme",
+        "title": "Gender budgets"
+    }
+}

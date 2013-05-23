@@ -47,6 +47,10 @@ def main():
     #unpack r4d data
     os.system('/usr/bin/unzip /home/r4d/rdf/new/R4DOutputsData.zip -d /home/r4d/rdf/new')
     os.system('/bin/rm -f /home/r4d/rdf/new/R4DOutputsData.zip')
+
+    #Get the FAO Ontology as well 
+    os.system('/usr/bin/wget  http://www.fao.org/countryprofiles/geoinfo/geopolitical/data')
+    os.system('/bin/mv data /home/r4d/rdf/new/fao.rdf')    
     
     #now copy to rdf folder with todays datestamp. The reason being
     #that we clear the graph before importing new data, if the new 
