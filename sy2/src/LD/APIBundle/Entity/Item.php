@@ -20,6 +20,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * Asset entity
  */
-class Asset extends AbstractBaseEntity
+class Item extends AbstractBaseEntity
 {
 }
