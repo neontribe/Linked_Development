@@ -48,9 +48,12 @@ parameters:
       # Counts
       count:
         # Count Documents
+        # IDS equivelent - http://api.ids.ac.uk/docs/functions/count/
         documents:
           region:
             # This demonstartes where multiple queries are needed.  The multiple index is set to true
+            # IDS Example: http://api.ids.ac.uk/openapi/eldis/count/documents/region
+            # Updated 2013/05/23
             multiquery: true
             none:
               define: ~
@@ -78,7 +81,9 @@ parameters:
                      FILTER(lang(?regionlabel) = 'en' || lang(?regionlabel) = "")
                 }
           theme:
-            # This demonstartes a single query
+            # ToDo
+            # IDS example: http://api.ids.ac.uk/openapi/eldis/count/documents/theme
+            # Note: the linked data API may return a very large list of themes here. We may wish to (a) sort the results by count; and (b) offer pagination
             multiquery: false
             define: ~
             select: select distinct ?theme as ?url ?themelabel as ?label count(distinct ?article) as ?count
@@ -92,7 +97,8 @@ parameters:
                 ?article <http://purl.org/dc/terms/subject> ?theme .
               }
           country:
-            # This demonstartes a multiple query with a single query in it
+            # Updated 2013/05/23
+            # IDS Example: http://api.ids.ac.uk/openapi/eldis/count/documents/country
             multiquery: true
             none:
                 define:
@@ -107,8 +113,9 @@ parameters:
                         FILTER(!BOUND(?country))
                     }
             all:
+              #Note the need for the GROUP BY clause and string functions to cater for fact that the ISO codes may be typed or untyped in different datasets 
               define: ~
-              select: select distinct ?countrycode ?countrylabel count(distinct ?article) as ?count
+              select: select distinct str(?countrycode) as ?countrycode ?countrylabel count(distinct ?article) as ?count
               where: >
                 where {
                   ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
@@ -120,7 +127,22 @@ parameters:
                     ?country <http://www.w3.org/2000/01/rdf-schema#label> ?countrylabel.
                   } 
                   FILTER(lang(?countrylabel) = 'en' || lang(?countrylabel) = "")
-                }
+                } GROUP BY str(?countrycode) ?countrylabel ORDER BY DESC(?count)
+
+        # To support the ?q= operator the IDS API supports we would need something like the following fragment added to any of the queries above before the closing bracket of WHERE
+        #
+        #    { 
+        #      ?article <http://purl.org/dc/terms/subject> ?searchsubject.
+        #      ?searchsubject <http://www.w3.org/2000/01/rdf-schema#label> ?search. 
+        #    } UNION { 
+        #      ?article <http://purl.org/dc/terms/title> ?search. 
+        #    }
+        #    FILTER(regex(?search,'__KEYWORD__','i'))   
+        #
+        # Which would search for the presence of the keyword in both the title of the article, and the subjects
+        # Note that this is not directly comparable to IDS used of ?q which searches the 'keywords' field, which is not included in our merged IDS and R4D test dataset. 
+        
+        
         # Count orgs
         organisations:
           region:
