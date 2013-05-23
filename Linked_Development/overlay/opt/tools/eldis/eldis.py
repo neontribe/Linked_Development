@@ -76,7 +76,7 @@ class Eldis(object):
         if data_url:
             self.data_url = data_url
         else:
-            contfile = open(outdir + 'nexturl', 'r')
+            contfile = open(out_dir + 'nexturl', 'r')
             data_url = contfile.readline()
             contfile.close()
         self.loop = loop

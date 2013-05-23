@@ -34,14 +34,16 @@ import new graph.
 import os
 
 global out_dir, script_dir
-script_dir = "/opt/tools/"
-# out_dir = "/home/eldis"
-out_dir = "/Users/timdavies/Documents/Business/Projects/CABI/Linked Development/data"
+script_dir = "/opt/tools/eldis/"
+out_dir = "/home/eldis/"
+
+
+
 
 def loop(script,url):
     #start import of eldis data
     loop = 1
-    os.system('/usr/bin/python /opt/tools/'+script+'.py "'+url+'" 1 "'+out_dir +'"')
+    os.system('/usr/bin/python '+script_dir+script+'.py "'+url+'" 1 "'+out_dir +'"')
 
     next_url_fh = open(out_dir+'/nexturl','r')
     next_url = next_url_fh.read()
@@ -49,12 +51,12 @@ def loop(script,url):
     #loop while there are new urls to go to. see Eldis documentation as to why
     while next_url != "No more pages":
         loop += 1
-        os.system('/usr/bin/python /opt/tools/'+script+'.py "' + next_url + '" ' + str(loop) + ' "'+out_dir +'"')
+        os.system('/usr/bin/python '+script_dir+script+'.py "' + next_url + '" ' + str(loop) + ' "'+out_dir +'"')
         next_url_fh = open(out_dir+'/nexturl','r')
         next_url = next_url_fh.read()
         next_url_fh.close()
         #safety
-        if loop > 500:
+        if loop > 60:
             break
 
 def main():
