@@ -20,16 +20,23 @@ class GetController extends APIController
 {
     /**
      * @Route("/get")
+     * @return Response
      */
     public function getAction()
-    {        
+    {
         \EasyRdf_TypeMapper::set('http:\/\/www.w3.org\/2004\/02\/skos\/core#Concept', '\\LD\\APIBundle\\Entity\\Theme');
-        
+
         $url = 'http://linked-development.org/eldis/themes/C833/';
         $graph = \EasyRdf_Graph::newAndLoad($url);
-                
+
         return new \Symfony\Component\HttpFoundation\Response(
-            '<p>' . htmlspecialchars($graph->resource('http://www.w3.org/1999/02/22-rdf-syntax-ns#type')) . '</p>'
+            '<h3>$graph->types</h3><pre>' . json_encode($graph->types(), JSON_PRETTY_PRINT) . '</pre>' .
+            '<h3>$graph->getUri</h3><pre>' . json_encode($graph->getUri(), JSON_PRETTY_PRINT) . '</pre>' .
+            '<h3>$graph->type</h3><pre>' . json_encode($graph->type(), JSON_PRETTY_PRINT) . '</pre>' .
+            '<h3>$graph->label</h3><pre>' . json_encode($graph->label(), JSON_PRETTY_PRINT) . '</pre>' .
+            '<h3>$graph->allOfType(http://www.w3.org/2000/01/rdf-schema#label),</h3><pre>' . json_encode($graph->allOfType('http://www.w3.org/2000/01/rdf-schema#label'), JSON_PRETTY_PRINT) . '</pre>' .
+            '<h3>$graph->dumpResource</h3><p>' . $graph->dumpResource('http://linked-development.org/eldis/output/A64003/') . '</p>' .
+            '<p>' . ($graph->dump()) . '</p>'
         );
     }
 }
