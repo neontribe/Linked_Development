@@ -228,17 +228,115 @@ Or, using construct:
 
 /get/countries/<ID>
 this is getting country http://linked-development.org/eldis/countries/<ID>/
-select distinct  ?a ?b
-                        where {
-                                <http://linked-development.org/eldis/countries/A1018/> <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
-                                <http://linked-development.org/eldis/countries/A1018/> ?a ?b .
-                                }
+The example below run against a datastore containing R4D and ELDIS data may return multiple country names and repeated ISO codes (for the different primary topics of countries in ELDIS and R4D). We should avoid duplicating in the output.  
+    
+    PREFIX dcterms: <http://purl.org/dc/terms/>
+    PREFIX bibo: <http://purl.org/ontology/bibo/>
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX fao: <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+    CONSTRUCT {
+      ?country a fao:territory.
+      ?country fao:codeISO2 ?iso2.
+      ?country fao:codeISO3 ?iso3.
+      ?country fao:codeUN ?uncode.
+      ?country rdfs:label ?countryName. 
+      ?country dcterms:identifier ?identifier. #ObjectID
+
+      ?country fao:isInGroup ?region.
+      ?region rdfs:label ?regionName.
+      ?region dcterms:identifiers ?regionID. 
+
+    } WHERE {
+
+      ?country fao:codeISO2 ?iso2.
+      OPTIONAL { ?country fao:codeISO3 ?iso3. }
+      OPTIONAL { ?country fao:codeUN ?uncode. }
+      { 
+        ?country fao:nameList ?countryName.
+        FILTER(lang(?countryName) = "en" || lang(?countryName) = "")
+      } UNION { 
+        ?country rdfs:label ?countryName. 
+      }
+
+      OPTIONAL {?country dcterms:identifier ?identifier. }
+
+      ?country fao:isInGroup ?region.
+      ?region a fao:geographical_region.
+      { 
+        ?region fao:nameList ?regionName.
+        FILTER(lang(?regionName) = "en" || lang(?regionName) = "")
+      } UNION { 
+        ?region rdfs:label ?regionName. 
+      }
+
+      OPTIONAL {?region dcterms:identifier ?regionID. }
+
+    }
+
+This can be filtered with:    
+  FILTER(str(?iso2) = "GH")  # For country code
+  
+or 
+  FILTER(regex(?countryName,"^Ghana$","i")) # For country name
 
 /get/themes/<ID>
 this is getting theme http://linked-development.org/eldis/themes/<ID>/
-select distinct  ?a ?b
-                        where {<http://linked-development.org/eldis/themes/C1310/> ?a ?b .
-                                }
+
+    PREFIX dcterms: <http://purl.org/dc/terms/>
+    PREFIX bibo: <http://purl.org/ontology/bibo/>
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX fao: <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+    CONSTRUCT { 
+       ?subject a skos:Concept.
+       ?subject rdfs:label ?subjectTitle.
+       ?subject dcterms:identifier ?identifier.
+       ?subject skos:broader ?subjectParent.
+       ?subjectParent rdfs:label ?subjectParentLabel.
+       ?subjectParent dcterms:identifier ?subjectParentID. 
+       ?subject skos:narrower ?subjectChild.
+       ?subjectChild rdfs:label ?subjectChildLabel.
+       ?subjectChild dcterms:identifier ?subjectChildID.
+
+    } WHERE {
+
+       ?subject a skos:Concept.
+       ?subject rdfs:label ?subjectTitle. 
+       OPTIONAL { ?subject dcterms:identifier ?identifier. }
+
+       #This line checks that we only get subjects which have at least one article
+       #Otherwise with AgroVoc in our database we get lots of extra terms with no articles.   
+       FILTER EXISTS { ?article dcterms:subject ?subject. }
+       FILTER(lang(?subjectTitle) = "en" || lang(?subjectTitle) = "")
+
+
+       OPTIONAL {
+         ?subject skos:broader ?subjectParent
+         # Uncomment out the line below to search up the category tree and give all the required steps for building a category path
+         # This is expensive, so unless there are use-cases drawing on the category tree from the API we may want to leave it out
+         OPTION (transitive, t_max(4), t_in(?subject), t_out(?subjectParent), t_step("step_no") as ?level)
+         .
+         ?subjectParent rdfs:label ?subjectParentLabel.
+         OPTIONAL { ?subjectParent dcterms:identifier ?subjectParentID. }
+         FILTER(lang(?subjectParentLabel) = "en" || lang(?subjectParentLabel) = "")
+       }
+
+       OPTIONAL {
+         ?subject skos:narrower ?subjectChild
+         # Uncomment out the line below to search up the category tree and give all the required steps for building a category path
+         # This is expensive, so unless there are use-cases drawing on the category tree from the API we may want to leave it out
+         OPTION (transitive, t_max(4), t_in(?subject), t_out(?subjectChild), t_step("step_no") as ?level)
+         .
+         ?subjectChild rdfs:label ?subjectChildLabel.
+         OPTIONAL { ?subjectChild dcterms:identifier ?subjectChildID. }
+         FILTER(lang(?subjectChildLabel) = "en" || lang(?subjectChildLabel) = "")
+       }
+
+
+    }
 
 get/organsiation/<ID>
 this is getting an organisation http://linked-development.org/eldis/organisation/<ID>/
