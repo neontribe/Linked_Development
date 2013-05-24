@@ -1,6 +1,6 @@
 <?php
 /**
- * The item entity
+ * The asset entity
  *
  * PHP Version 5.3
  *
@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * Asset entity
  */
-class Item extends AbstractBaseEntity
+class Asset extends AbstractBaseEntity
 {
     public function getAuthor()
     {
@@ -275,6 +275,7 @@ class Item extends AbstractBaseEntity
         return $this;
     }
 
+
     /**
      * Constructor
      *
@@ -322,15 +323,16 @@ class Item extends AbstractBaseEntity
      */
     public static function createFromRow($row, RouterInterface $router)
     {
-        $objectName = $row->label->getValue();
-        $objectType = 'Asset';
+        $objectName = $row->countrylabel->getValue();
+        $objectType = 'Country';
         $objectId = 'Not present in sparql';
+        $isoTwoLetterCode = $row->countrycode->getValue();
 
         $metadataUrl = $router->generate(
-            'ld_api_get_get',
+            'ld_api_get_get_1',
             array(
                 'graph' => $graph,
-                'obj' => 'asset',
+                'obj' => 'countries',
                 'parameter' => $objectId,
                 'format' => 'full',
                 'query' => $objectName,
@@ -338,9 +340,18 @@ class Item extends AbstractBaseEntity
             true
         );
 
-        return new Item(
-            $metadataUrl, $objectId, $objectName, $objectType
+        return new Country(
+            $isoTwoLetterCode, $metadataUrl, $objectId, $objectName, $objectType
         );
+    /*
+  {
+    "results": {
+        "metadata_url": "http://api.ids.ac.uk/openapi/eldis/get/documents/A12345/full/sharing-knowledge-for-community-development-and-transformation-a-handbook/",
+        "object_id": "A12345",
+        "object_type": "Document",
+        "title": "Sharing knowledge for community development and transformation: a handbook"
+    }
+} */
     }
 
     public function short()
