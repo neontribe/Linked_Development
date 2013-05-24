@@ -81,4 +81,11 @@ class Theme extends AbstractBaseEntity
     {
         return $this->level;
     }
+    
+    public static function createFromUri($uri)
+    {
+        
+        $graph = \EasyRdf_Graph::newAndLoad($uri);
+        
+    }
 }

@@ -66,7 +66,6 @@ parameters:
         documents: LD\APIBundle\Services\Factories\DefaultFactory
         themes: LD\APIBundle\Services\Factories\DefaultFactory
       default: LD\APIBundle\Services\Factories\DefaultFactory
-
     sparqls:
       # Counts
       count:
@@ -96,34 +95,34 @@ parameters:
                      ?article a <http://purl.org/ontology/bibo/Article> .
                      ?article <http://purl.org/dc/terms/coverage> ?region .
                      ?region a <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/geographical_region>.
-                     {
+                     { 
                         ?region <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/nameList> ?regionlabel.
                      } UNION {
                         ?region <http://www.w3.org/2000/01/rdf-schema#label> ?regionlabel.
-                     }
+                     } 
                      FILTER(lang(?regionlabel) = 'en' || lang(?regionlabel) = "")
                 }
           theme:
             # IDS example: http://api.ids.ac.uk/openapi/eldis/count/documents/theme
             # Note: the linked data API may return a very large list of themes here. We may wish to (a) sort the results by count; and (b) offer pagination
             # In future we may want to add a flag to switch between using the URI and the theme label to group themes
-            # Right now we use the category.
+            # Right now we use the category. 
             multiquery: true
             none:
                 define: ~
                 select: select count(distinct ?article) as ?count
                 where: >
                  where {
-                        ?article a <http://purl.org/ontology/bibo/Article> .
+                        ?article a <http://purl.org/ontology/bibo/Article> .        
                         OPTIONAL { ?article <http://purl.org/dc/terms/subject> ?theme .}
-                        FILTER(!BOUND(?theme))
+                        FILTER(!BOUND(?theme))  
                  }
             all:
                 define: ~
                 select: select distinct ?theme as ?url ?identifier ?themelabel as ?label count(distinct ?article) as ?count
                 where: >
                     where {
-                           ?article a <http://purl.org/ontology/bibo/Article> .
+                           ?article a <http://purl.org/ontology/bibo/Article> .        
                            ?article <http://purl.org/dc/terms/subject> ?theme .
                            ?theme <http://www.w3.org/2000/01/rdf-schema#label> ?themelabel .
                            OPTIONAL { ?theme <http://purl.org/dc/terms/identifier> ?identifier. }
@@ -138,14 +137,14 @@ parameters:
                 where: >
                     where {
                         ?article a <http://purl.org/ontology/bibo/Article> .
-                        OPTIONAL {
+                        OPTIONAL { 
                             ?article <http://purl.org/dc/terms/coverage> ?country .
                             ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode.
                         }
                         FILTER(!BOUND(?country))
                     }
             all:
-              #Note the need for the GROUP BY clause and string functions to cater for fact that the ISO codes may be typed or untyped in different datasets
+              #Note the need for the GROUP BY clause and string functions to cater for fact that the ISO codes may be typed or untyped in different datasets 
               define: ~
               select: select distinct str(?countrycode) as ?countrycode ?countrylabel count(distinct ?article) as ?count
               where: >
@@ -153,35 +152,35 @@ parameters:
                   ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
                   ?article a <http://purl.org/ontology/bibo/Article> .
                   ?article <http://purl.org/dc/terms/coverage> ?country .
-                  {
+                  { 
                     ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/nameList> ?countrylabel.
                   } UNION {
                     ?country <http://www.w3.org/2000/01/rdf-schema#label> ?countrylabel.
-                  }
+                  } 
                   FILTER(lang(?countrylabel) = 'en' || lang(?countrylabel) = "")
                 } GROUP BY str(?countrycode) ?countrylabel ORDER BY DESC(?count)
 
         # To support the ?q= operator the IDS API supports we would need something like the following fragment added to any of the queries above before the closing bracket of WHERE
         #
-        #    {
+        #    { 
         #      ?article <http://purl.org/dc/terms/subject> ?searchsubject.
-        #      ?searchsubject <http://www.w3.org/2000/01/rdf-schema#label> ?search.
-        #    } UNION {
-        #      ?article <http://purl.org/dc/terms/title> ?search.
+        #      ?searchsubject <http://www.w3.org/2000/01/rdf-schema#label> ?search. 
+        #    } UNION { 
+        #      ?article <http://purl.org/dc/terms/title> ?search. 
         #    }
-        #    FILTER(regex(?search,'__KEYWORD__','i'))
+        #    FILTER(regex(?search,'__KEYWORD__','i'))   
         #
         # Which would search for the presence of the keyword in both the title of the article, and the subjects
-        # Note that this is not directly comparable to IDS used of ?q which searches the 'keywords' field, which is not included in our merged IDS and R4D test dataset.
-
-
+        # Note that this is not directly comparable to IDS used of ?q which searches the 'keywords' field, which is not included in our merged IDS and R4D test dataset. 
+        
+        
         # Count organisations
-        #
+        # 
         # We don't currently have adequate data across both IDS and R4D sources to fully implement this section
-        #
+        # 
         organisations:
           # http://api.ids.ac.uk/openapi/eldis/count/organisations/region
-          # ToDo - Requires updates to eldis_crawl_orgs.py before it can be implemented. Does not work across R4D data at present.
+          # ToDo - Requires updates to eldis_crawl_orgs.py before it can be implemented. Does not work across R4D data at present. 
           # ToDo - Review R4D organisation model
           region:
             define: ~
@@ -189,7 +188,7 @@ parameters:
             where: ~
           theme:
           # http://api.ids.ac.uk/openapi/eldis/count/organisations/theme
-          # ToDo - Needs to work from tags against organisations. May need to identify how to assign tags to R4D organisations.
+          # ToDo - Needs to work from tags against organisations. May need to identify how to assign tags to R4D organisations. 
             define: ~
             select: ~
             where: ~
@@ -202,17 +201,19 @@ parameters:
               WHERE {
                 {
                   ?org a <http://dbpedia.org/ontology/Organisation>.
-                  ?org <http://schemas.talis.com/2005/address/schemacountryName> ?country.
-                }
-                UNION
-                {
+                  ?org <http://schemas.talis.com/2005/address/schemacountryName> ?country. 
+                } 
+                UNION 
+                { 
                   ?org a <http://xmlns.com/foaf/0.1/Organization>.
-                  ?org <http://www.w3.org/2006/vcard/ns#hasAddress> ?address.
-                  ?address <http://www.w3.org/2006/vcard/ns#country> ?country.
+                  ?org <http://www.w3.org/2006/vcard/ns#hasAddress> ?address. 
+                  ?address <http://www.w3.org/2006/vcard/ns#country> ?country. 
                 }
               } GROUP BY ?country ORDER BY DESC(?count)
       # Gets
       get:
+        # These CONSTRUCT based gets work for the long version of results. Simple selects could be used for short results. 
+        # Example: http://api.ids.ac.uk/openapi/eldis/get/documents/A43073/full/the-state-of-governance-in-africa/
         documents:
           define: >
             PREFIX dcterms: <http://purl.org/dc/terms/>
@@ -239,16 +240,16 @@ parameters:
             WHERE {
                 ?resource a bibo:Article.
                 ?resource dcterms:title ?title.
-                ?resource dcterms:abstract ?abstract.
-                ?resource dcterms:creator ?creator.
-                OPTIONAL { ?resource dcterms:subject ?subject. }
-                ?subject rdfs:label ?subjectTitle.
-                ?resource dcterms:coverage ?coverage.
-                ?coverage rdfs:label ?coverageTitle.
-                ?resource dcterms:language ?language.
-                ?resource dcterms:identifier ?identifier.
-                ?resource rdfs:seeAlso ?document.
-                ?resource dcterms:date ?date.
+                OPTIONAL { ?resource dcterms:abstract ?abstract. }
+                OPTIONAL { ?resource dcterms:creator ?creator.}
+                OPTIONAL { ?resource dcterms:subject ?subject.
+                    ?subject rdfs:label ?subjectTitle. }
+                OPTIONAL { ?resource dcterms:coverage ?coverage.
+                    ?coverage rdfs:label ?coverageTitle. }
+                OPTIONAL { ?resource dcterms:language ?language. }
+                OPTIONAL { ?resource dcterms:identifier ?identifier. }
+                OPTIONAL { ?resource rdfs:seeAlso ?document. }
+                OPTIONAL { ?resource dcterms:date ?date.}
                 OPTIONAL {
                     ?resource dcterms:publisher ?publisher.
                     OPTIONAL { ?publisher foaf:name ?publisherName. }
@@ -318,4 +319,3 @@ parameters:
             where {?article <http://purl.org/dc/terms/subject> ?theme .
                 ?theme ?a ?b .
             } order by ?theme
-
