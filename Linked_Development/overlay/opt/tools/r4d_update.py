@@ -51,7 +51,15 @@ def main():
     #Get the FAO Ontology as well 
     os.system('/usr/bin/wget  http://www.fao.org/countryprofiles/geoinfo/geopolitical/data')
     os.system('/bin/mv data /home/r4d/rdf/new/fao.rdf')    
-    
+
+    # And get Agrovoc
+    os.system('/usr/bin/wget ftp://ftp.fao.org/gi/gil/gilws/aims/kos/agrovoc_formats/current/agrovoc.skos.xml.en.zip')
+    os.system('/bin/mv agrovoc.skos.xml.en.zip /home/r4d/rdf/new/agrovoc.skos.xml.en.zip')    
+    #unpack r4d data
+    os.system('/usr/bin/unzip /home/r4d/rdf/new/agrovoc.skos.xml.en.zip -d /home/r4d/rdf/new')
+    os.system('/bin/rm -f /home/r4d/rdf/new/agrovoc.skos.xml.en.zip')
+
+        
     #now copy to rdf folder with todays datestamp. The reason being
     #that we clear the graph before importing new data, if the new 
     #data files names have not changed they are not by default imported
