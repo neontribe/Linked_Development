@@ -180,11 +180,12 @@ Or, using construct:
           }
           OPTIONAL {
               ?subject skos:broader ?subjectParent
-              # Uncomment out the line below to search the full category tree. 
+              # Uncomment out the line below to search up the category tree and give all the required steps for building a category path
+              # This is expensive, so unless there are use-cases drawing on the category tree from the API we may want to leave it out
               # OPTION (transitive, t_max(4), t_in(?subject), t_out(?subjectParent), t_step("step_no") as ?level)
               .
               ?subjectParent rdfs:label ?subjectParentLabel.
-              ?subjectParent dcterms:identifier ?subjectParentID.
+              OPTIONAL { ?subjectParent dcterms:identifier ?subjectParentID. }
           }
       }
           
