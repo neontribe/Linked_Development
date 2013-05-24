@@ -3,12 +3,20 @@ namespace LD\APIBundle\Services\ids;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 /**
  * Wrapper to making easy rdf sparql queries
  */
-abstract class AbstractQueryBuilder implements QueryBuilderInterface
+abstract class AbstractQueryBuilder implements QueryBuilderInterface, ContainerAwareInterface
 {
+    protected $container;
+    
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+    
     /**
      * Build a sparql query.
      *

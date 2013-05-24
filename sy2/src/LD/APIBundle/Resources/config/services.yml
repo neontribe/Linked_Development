@@ -26,24 +26,24 @@ parameters:
     querybuilder:
       count:
         documents:
-          region: LD\APIBundle\Services\ids\Sparql
-          theme: LD\APIBundle\Services\ids\Sparql
-          country: LD\APIBundle\Services\ids\Sparql
+          region: LD\APIBundle\Services\ids\DefaultQueryBuilder
+          theme: LD\APIBundle\Services\ids\DefaultQueryBuilder
+          country: LD\APIBundle\Services\ids\DefaultQueryBuilder
         organisations:
-          region: LD\APIBundle\Services\ids\Sparql
-          theme: LD\APIBundle\Services\ids\Sparql
-          country: LD\APIBundle\Services\ids\Sparql
+          region: LD\APIBundle\Services\ids\DefaultQueryBuilder
+          theme: LD\APIBundle\Services\ids\DefaultQueryBuilder
+          country: LD\APIBundle\Services\ids\DefaultQueryBuilder
       get:
-        documents: LD\APIBundle\Services\ids\Sparql
-        assets: LD\APIBundle\Services\ids\Sparql
-        countries: LD\APIBundle\Services\ids\Sparql
-        themes: LD\APIBundle\Services\ids\Sparql
-        organisations: LD\APIBundle\Services\ids\Sparql
-        region: LD\APIBundle\Services\ids\Sparql
+        documents: LD\APIBundle\Services\ids\DefaultQueryBuilder
+        assets: LD\APIBundle\Services\ids\DefaultQueryBuilder
+        countries: LD\APIBundle\Services\ids\DefaultQueryBuilder
+        themes: LD\APIBundle\Services\ids\DefaultQueryBuilder
+        organisations: LD\APIBundle\Services\ids\DefaultQueryBuilder
+        region: LD\APIBundle\Services\ids\DefaultQueryBuilder
       get_all:
-        documents: LD\APIBundle\Services\ids\Sparql
-        themes: LD\APIBundle\Services\ids\Sparql
-      default: LD\APIBundle\Services\ids\Sparql
+        documents: LD\APIBundle\Services\ids\DefaultQueryBuilder
+        themes: LD\APIBundle\Services\ids\DefaultQueryBuilder
+      default: LD\APIBundle\Services\ids\DefaultQueryBuilder
 
     factories:
       count:

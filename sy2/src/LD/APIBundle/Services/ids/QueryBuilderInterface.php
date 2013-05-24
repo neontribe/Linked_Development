@@ -4,7 +4,7 @@ namespace LD\APIBundle\Services\ids;
 /**
  * Wrapper to making easy rdf sparql queries
  */
-abstract class QueryBuilderInterface
+interface QueryBuilderInterface
 {
     /**
      * Build a sparql query.

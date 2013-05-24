@@ -84,7 +84,7 @@ class CountFactory extends BaseFactory
         $router = $this->container->get('router');
 
         $response = array();
-
+        
         // this we know is a multipart query
         foreach ($data as $key => $rows) {
             if ($key == 'none') {

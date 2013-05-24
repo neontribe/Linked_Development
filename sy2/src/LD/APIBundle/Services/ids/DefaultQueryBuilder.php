@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Wrapper to making easy rdf sparql queries
  */
-class DefaultQueryBuilder implements QueryBuilderInterface
+class DefaultQueryBuilder extends AbstractQueryBuilder
 {
     /**
      * Build a sparql query.
@@ -61,7 +61,7 @@ class DefaultQueryBuilder implements QueryBuilderInterface
             $define, $select, $from, $where, $offset, $limit
         );
 
-        $this->logger->debug('Query: ' . $query);
+        $this->container->get('logger')->debug('Query: ' . $query);
 
         return $query;
     }

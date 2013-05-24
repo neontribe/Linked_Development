@@ -57,14 +57,32 @@ class CountController extends APIController
             $_graph = null;
         }
 
+        // get the sparql service
         $spqlsrvc = $this->get('sparql');
+        // get and set  the query factory
+        $querybuilders = $this->container->getParameter('querybuilder');
+        if (isset($querybuilders['count'][$object][$parameter])) {
+            $builder = $querybuilders['count'][$object][$parameter];
+        } elseif (isset($querybuilders['default'])) {
+            $builder = $querybuilders['default'];
+        } else {
+            $builder = 'LD\APIBundle\Services\ids\DefaultQueryBuilder';
+        }
+        $_builder = new $builder();
+        $_builder->setContainer($this->container);
+        $spqlsrvc->setQueryBuilder($_builder);
+        
+        // get the sparql
         $spqls = $this->container->getParameter('sparqls');
         $this->container->get('logger')->info(
             sprintf('Fetching sparql: count->%s->%s', $object, $parameter)
         );
         $spql = $spqls['count'][$object][$parameter];
+        
+        // execute the query
         $data = $spqlsrvc->query($spql, $_graph);
 
+        // fetch factory
         $entfactories = $this->container->getParameter('factories');
         $this->container->get('logger')->info(
             sprintf('Fetching factory: count->%s->%s', $object, $parameter)
