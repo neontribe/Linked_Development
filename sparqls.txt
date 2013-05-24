@@ -240,13 +240,13 @@ The example below run against a datastore containing R4D and ELDIS data may retu
       ?country a fao:territory.
       ?country fao:codeISO2 ?iso2.
       ?country fao:codeISO3 ?iso3.
-      ?country fao:codeUN ?uncode.
+      ?country fao:codeUN ?uncode. 
       ?country rdfs:label ?countryName. 
       ?country dcterms:identifier ?identifier. #ObjectID
 
       ?country fao:isInGroup ?region.
       ?region rdfs:label ?regionName.
-      ?region dcterms:identifiers ?regionID. 
+      ?region dcterms:identifier ?regionID. 
 
     } WHERE {
 
@@ -260,7 +260,7 @@ The example below run against a datastore containing R4D and ELDIS data may retu
         ?country rdfs:label ?countryName. 
       }
 
-      OPTIONAL {?country dcterms:identifier ?identifier. }
+      {?country fao:codeISO2 ?identifier} UNION {?country dcterms:identifier ?identifier.} 
 
       ?country fao:isInGroup ?region.
       ?region a fao:geographical_region.
@@ -270,9 +270,9 @@ The example below run against a datastore containing R4D and ELDIS data may retu
       } UNION { 
         ?region rdfs:label ?regionName. 
       }
-
-      OPTIONAL {?region dcterms:identifier ?regionID. }
-
+      #Best efforts to get a region ID we can use. 
+      { ?region fao:codeUN ?regionID. } UNION {?region dcterms:identifier ?regionID. } UNION { ?region fao:codeFAOSTAT ?regionID. }
+  
     }
 
 This can be filtered with:    
@@ -302,41 +302,37 @@ this is getting theme http://linked-development.org/eldis/themes/<ID>/
        ?subjectChild dcterms:identifier ?subjectChildID.
 
     } WHERE {
-
-       ?subject a skos:Concept.
-       ?subject rdfs:label ?subjectTitle. 
-       OPTIONAL { ?subject dcterms:identifier ?identifier. }
-
-       #This line checks that we only get subjects which have at least one article
-       #Otherwise with AgroVoc in our database we get lots of extra terms with no articles.   
-       FILTER EXISTS { ?article dcterms:subject ?subject. }
-       FILTER(lang(?subjectTitle) = "en" || lang(?subjectTitle) = "")
-
-
-       OPTIONAL {
-         ?subject skos:broader ?subjectParent
-         # Uncomment out the line below to search up the category tree and give all the required steps for building a category path
-         # This is expensive, so unless there are use-cases drawing on the category tree from the API we may want to leave it out
-         OPTION (transitive, t_max(4), t_in(?subject), t_out(?subjectParent), t_step("step_no") as ?level)
-         .
-         ?subjectParent rdfs:label ?subjectParentLabel.
-         OPTIONAL { ?subjectParent dcterms:identifier ?subjectParentID. }
-         FILTER(lang(?subjectParentLabel) = "en" || lang(?subjectParentLabel) = "")
-       }
-
-       OPTIONAL {
-         ?subject skos:narrower ?subjectChild
-         # Uncomment out the line below to search up the category tree and give all the required steps for building a category path
-         # This is expensive, so unless there are use-cases drawing on the category tree from the API we may want to leave it out
-         OPTION (transitive, t_max(4), t_in(?subject), t_out(?subjectChild), t_step("step_no") as ?level)
-         .
-         ?subjectChild rdfs:label ?subjectChildLabel.
-         OPTIONAL { ?subjectChild dcterms:identifier ?subjectChildID. }
-         FILTER(lang(?subjectChildLabel) = "en" || lang(?subjectChildLabel) = "")
-       }
-
-
-    }
+           { SELECT ?subject WHERE {
+                ?subject a skos:Concept.
+                #This line checks that we only get subjects which have at least one article
+                #Otherwise with AgroVoc in our database we get lots of extra terms with no articles.   
+                FILTER EXISTS { ?article dcterms:subject ?subject. }
+                #
+                # Note that filters need to go in this nested SELECT, as in example below to fetch a particular category by ID
+                #  ?subject dcterms:identifier ?identifier.
+                #  FILTER(str(?identifier) = "C41")
+                # And limit and offset are here too.
+             } LIMIT 10 OFFSET 0
+           }   
+           #
+           ?subject rdfs:label ?subjectTitle. 
+           OPTIONAL { ?subject dcterms:identifier ?identifier. }
+           FILTER(lang(?subjectTitle) = "en" || lang(?subjectTitle) = "")
+           #
+           OPTIONAL {
+             ?subject skos:broader ?subjectParent OPTION (transitive, t_max(4), t_in(?subject), t_out(?subjectParent), t_step("step_no") as ?level).
+             ?subjectParent rdfs:label ?subjectParentLabel.
+             OPTIONAL { ?subjectParent dcterms:identifier ?subjectParentID. }
+             FILTER(lang(?subjectParentLabel) = "en" || lang(?subjectParentLabel) = "")
+           }
+           #
+           OPTIONAL {
+             ?subject skos:narrower ?subjectChild OPTION (transitive, t_max(4), t_in(?subject), t_out(?subjectChild), t_step("step_no") as ?level).
+             ?subjectChild rdfs:label ?subjectChildLabel.
+             OPTIONAL { ?subjectChild dcterms:identifier ?subjectChildID. }
+             FILTER(lang(?subjectChildLabel) = "en" || lang(?subjectChildLabel) = "")
+           }
+        }
 
 get/organsiation/<ID>
 this is getting an organisation http://linked-development.org/eldis/organisation/<ID>/
@@ -346,10 +342,31 @@ select ?a ?b
 
 get/region/<ID>
 this is getting http://linked-development.org/eldis/regions/<ID>/
-select ?a ?b 
-                        where {<http://linked-development.org/eldis/regions/C30/> ?a ?b .
-                                }
+# The query below allows use of either ELDIS or UN Codes for countries as their identifier. 
 
+    PREFIX dcterms: <http://purl.org/dc/terms/>
+    PREFIX bibo: <http://purl.org/ontology/bibo/>
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX fao: <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+    CONSTRUCT {
+       ?region a fao:geographical_region.
+       ?region rdfs:label ?regionName.
+       ?region fao:codeUN ?codeUN.
+       ?region dcterms:identifier ?identifier.
+    } WHERE {
+       ?region a fao:geographical_region.
+       { 
+         ?region fao:nameList ?regionName.
+         FILTER(lang(?regionName) = "en" || lang(?regionName) = "")
+       } UNION { 
+         ?region rdfs:label ?regionName. 
+       }
+       OPTIONAL {?region fao:codeUN ?codeUN. }
+       { ?region dcterms:identifier ?identifier.} UNION { ?region fao:codeUN ?identifier. } UNION { ?region fao:codeFAOSTAT ?identifier. }
+       # FILTER(str(?identifier) = "002")
+    }
 
 
 
