@@ -22,6 +22,29 @@ parameters:
     sparql_default_offset: 0
     sparql_default_limit: 10
 
+
+    querybuilder:
+      count:
+        documents:
+          region: LD\APIBundle\Services\ids\Sparql
+          theme: LD\APIBundle\Services\ids\Sparql
+          country: LD\APIBundle\Services\ids\Sparql
+        organisations:
+          region: LD\APIBundle\Services\ids\Sparql
+          theme: LD\APIBundle\Services\ids\Sparql
+          country: LD\APIBundle\Services\ids\Sparql
+      get:
+        documents: LD\APIBundle\Services\ids\Sparql
+        assets: LD\APIBundle\Services\ids\Sparql
+        countries: LD\APIBundle\Services\ids\Sparql
+        themes: LD\APIBundle\Services\ids\Sparql
+        organisations: LD\APIBundle\Services\ids\Sparql
+        region: LD\APIBundle\Services\ids\Sparql
+      get_all:
+        documents: LD\APIBundle\Services\ids\Sparql
+        themes: LD\APIBundle\Services\ids\Sparql
+      default: LD\APIBundle\Services\ids\Sparql
+
     factories:
       count:
         documents:

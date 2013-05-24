@@ -23,6 +23,7 @@ class Sparql
     protected $logger = null;
     protected $container = null;
     protected $endpoint = null;
+    protected $queryBuilder = null;
 
     /**
      * Create a new instance of this service
@@ -35,6 +36,31 @@ class Sparql
         $this->endpoint = $endpoint;
         $this->container = $container;
         $this->logger = $container->get('logger');
+    }
+
+    /**
+     * Set the current query builder
+     *
+     * @param \LD\APIBundle\Services\ids\QueryBuilderInterface $queryBuilder
+     */
+    public function setQueryBuilder(QueryBuilderInterface $queryBuilder)
+    {
+        $this->queryBuilder = $queryBuilder;
+    }
+
+    /**
+     * Get the current query builder
+     *
+     * @return \LD\APIBundle\Services\ids\DefaultQueryBuilder
+     */
+    public function getQueryBuilder()
+    {
+        if ($this->queryBuilder) {
+
+            return $this->queryBuilder;
+        }
+
+        return new DefaultQueryBuilder();
     }
 
     /**
@@ -64,63 +90,6 @@ class Sparql
         $this->logger->debug($response);
 
         return json_decode($response, true);
-    }
-
-    /**
-     * Build a sparql query.
-     *
-     * This funtion expects to get an array of query elements as the first
-     * paramter.  See the LD\APIBundle\Resources\config\services.yml for an
-     * example.
-     *
-     * It requires that the array has at least two elements, select and where,
-     * these are then glued together to make a sparql query.  So a simple query
-     * would be:
-     *
-     *     array(
-     *       'select' => 'select count(*)',
-     *       'where' => 'where {?a ?b ?c}',
-     *     );
-     *
-     * In addtion there can be a define index that will allow name spaces to be
-     * added.
-     *
-     * @param array  $elements The query in the form of an array
-     * @param string $graph    The graph to access
-     *
-     * @return string
-     */
-    public function createQuery(array $elements, $graph = null)
-    {
-
-        if (isset($elements['define'])) {
-            $define = $elements['define'];
-        } else {
-            $define = '';
-        }
-
-        $select = $elements['select'];
-
-        if ($graph && $graph != 'all') {
-            $from = " from <" . $graph . '>';
-        } else {
-            $from = '';
-        }
-
-        $where = $elements['where'];
-
-        $request = Request::createFromGlobals();
-        $offset = $this->getOffset($request);
-        $limit = $this->getLimit($request);
-
-        $query = sprintf(
-            '%s %s %s %s offset %s limit %s',
-            $define, $select, $from, $where, $offset, $limit
-        );
-
-        $this->logger->debug('Query: ' . $query);
-
-        return $query;
     }
 
     /**
