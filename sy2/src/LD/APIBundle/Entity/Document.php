@@ -22,48 +22,4 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class Document extends AbstractBaseEntity
 {
-    protected $authors = array();
-    protected $categories = array();
-
-    public function toArray($format = AbstractBaseEntity::SHORT)
-    {
-        $data = parent::toArray();
-        $data['title'] = $data['object_name'];
-        unset($data['object_name']);
-
-        return $data;
-    }
-
-    /**
-     * Take a binding entry from virtuoso and return a new Region object
-     *
-     * @param mixed                                      $row    The array of data from virtuoso
-     * @param \Symfony\Component\Routing\RouterInterface $router The router object used to generate the metadata url
-     * @param string                                     $graph  rd4 | eldis | all
-     *
-     * @return \LD\APIBundle\Entity\Region
-     * @throws \RuntimeException
-     */
-    public static function createFromRow($row, RouterInterface $router, $graph = 'all')
-    {
-        $objectName = $row->dctitle->getValue();
-        $objectType = 'Country';
-        $objectId = 'Not present in sparql';
-
-        $metadataUrl = $router->generate(
-            'ld_api_get_get',
-            array(
-                'graph' => $graph,
-                'obj' => 'documents',
-                'parameter' => $objectId,
-                'format' => 'full',
-                'query' => $objectName,
-            ),
-            true
-        );
-
-        return new Document(
-            $metadataUrl, $objectId, $objectName, $objectType
-        );
-    }
 }
