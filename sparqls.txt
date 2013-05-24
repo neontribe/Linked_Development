@@ -120,49 +120,109 @@ select distinct  ?a ?b
 Or, using construct:
 # Note - this version of the query is not currently working on Virtuoso 6.1.3 - probably due to the bug reported here: 
 
-   PREFIX dcterms: <http://purl.org/dc/terms/>
-   PREFIX bibo:    <http://purl.org/ontology/bibo/>
-   PREFIX foaf:    <http://xmlns.com/foaf/0.1/>
-   
-   CONSTRUCT {
-       ?resource a bibo:Article.
-       ?resource dcterms:title ?title.
-       ?resource dcterms:abstract ?abstract.
-       ?resource dcterms:creator ?creator.
-       ?resource dcterms:subject ?subject.
-       ?subject rdfs:label ?subjectTitle.
-       ?resource dcterms:coverage ?coverage.
-       ?coverage rdfs:label ?coverageTitle.
-       ?resource dcterms:language ?language.
-       ?resource dcterms:identifier ?identifier.
-       ?resource rdfs:seeAlso ?document.
-       ?resource dcterms:date ?date. 
-       ?resource dcterms:publisher ?publisher.
-       ?publisher foaf:name ?publisherName.
-   }
-       WHERE {
-       ?resource a bibo:Article.
-       ?resource dcterms:title ?title.
-       ?resource dcterms:abstract ?abstract.
-       ?resource dcterms:creator ?creator.
-       OPTIONAL { ?resource dcterms:subject ?subject. 
-            OPTIONAL {?subject rdfs:label ?subjectTitle.}
-       }
-       OPTIONAL { ?resource dcterms:coverage ?coverage.
-            OPTIONAL {  { ?coverage rdfs:label ?coverageTitle. } UNION { ?coverage fao:nameList ?coverageTitle. } }
-       }
-       OPTIONAL { ?resource dcterms:language ?language. }
-       OPTIONAL { ?resource dcterms:identifier ?identifier. }
-       OPTIONAL { ?resource rdfs:seeAlso ?document. }
+  PREFIX dcterms: <http://purl.org/dc/terms/>
+  PREFIX bibo: <http://purl.org/ontology/bibo/>
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX fao: <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/>
+  
+  CONSTRUCT {
+      ?resource a bibo:Article.
+      ?resource dcterms:title ?title.
+      ?resource dcterms:abstract ?abstract.
+      
+      ?resource dcterms:creator ?creator.
+      
+      ?resource dcterms:subject ?subject.
+      ?subject rdfs:label ?subjectTitle.
+      ?subject dcterms:identifier ?subjectID.
+      
+      # Term relationships
+      ?subject skos:broader ?subjectParent.
+      ?subjectParent rdfs:label ?subjectParentLabel.
+      ?subjectParent dcterms:identifier ?subjectParentID.
+  
+      ?resource dcterms:coverage ?coverage.
+      ?coverage rdfs:label ?coverageTitle.
+      ?resource dcterms:language ?language.
+      ?resource dcterms:identifier ?identifier.
+      ?resource rdfs:seeAlso ?document.
+      ?resource dcterms:date ?date.
+      ?resource dcterms:publisher ?publisher.
+      ?publisher foaf:name ?publisherName.
+  }
 
-        OPTIONAL { ?resource dcterms:publisher ?publisher. 
-                   OPTIONAL { ?publisher foaf:name ?publisherName. }
-         }
-
+    WHERE {
+      ?resource a bibo:Article.
+      ?resource dcterms:title ?title.
+      OPTIONAL { ?resource dcterms:abstract ?abstract. }
+      
+      # Creators
+      # Handle cases where Creator is directly attached (Eldis), or through a blank node (R4D)
+      OPTIONAL { 
+           { 
+           ?resource dcterms:creator ?creator. 
+           } UNION { 
+           ?resource dcterms:creator ?creatorURI. 
+           ?creatorURI foaf:name ?creator.
+           }
+       FILTER(isLiteral(?creator))
+      }
+      
+      # Subjects
+      OPTIONAL { 
+          ?resource dcterms:subject ?subject.
+          ?subject rdfs:label ?subjectTitle. 
+          OPTIONAL {
+              ?subject dcterms:identifier ?subjectID.
+          }
+          OPTIONAL {
+              ?subject skos:broader ?subjectParent
+              # Uncomment out the line below to search up the category tree and give all the required steps for building a category path
+              # This is expensive, so unless there are use-cases drawing on the category tree from the API we may want to leave it out
+              # OPTION (transitive, t_max(4), t_in(?subject), t_out(?subjectParent), t_step("step_no") as ?level)
+              .
+              ?subjectParent rdfs:label ?subjectParentLabel.
+              OPTIONAL { ?subjectParent dcterms:identifier ?subjectParentID. }
+          }
+      }
+          
+      # Coverage
+      OPTIONAL { 
+        ?resource dcterms:coverage ?coverage.
+        # Handle for different ways in which coverage may be labelled. 
+        { 
+         ?coverage rdfs:label ?coverageTitle.
+        } UNION {
+         ?coverage fao:nameList ?coverageTitle.
+         FILTER(lang(?coverageTitle) = 'en' || lang(?coverageTitle) = "")
         }
-        
-       FILTER(?resource = <http://r4d.dfid.gov.uk/Output/10004/>)
-   }
+      }
+      
+      # Language
+      OPTIONAL { ?resource dcterms:language ?language. }
+      
+      # Identifiers
+      OPTIONAL { ?resource dcterms:identifier ?identifier. }
+      
+      # SeeAlso
+      OPTIONAL { ?resource rdfs:seeAlso ?document. }
+      
+      # Date
+      OPTIONAL { ?resource dcterms:date ?date.}
+      
+      # Publisher Information
+      OPTIONAL {
+          ?resource dcterms:publisher ?publisher.
+          OPTIONAL { ?publisher foaf:name ?publisherName. }
+      }
+      
+      # URI to the document
+      OPTIONAL {
+          ?resource bibo:uri ?uri.
+      }
+      
+      FILTER(?resource = <http://linked-development.org/eldis/output/__ID__/>)
+  }
 
 
 
