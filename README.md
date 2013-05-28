@@ -49,28 +49,6 @@ A number of applications are already built which work against the Institute for 
 
 This project aims to create a feature and output compatible version of this API, backed by its own triple store. The is that existing applications can be pointed to a wider range of research resources, making both IDS and ELDIS data accessible through a common API layer.
 
-## Laravel
-==========
-
-Laravel is depricated.  Sorry.  The sparql/virtuoso is giving me a headache so I've gone back to symfony for this project.
-
-
-<del>The laravel install sits in the Laravel folder.  To set it up cd into the laravel root folder and run composer:
-
-    curl -sS https://getcomposer.org/installer | php
-    php composer.phar install
-
-Set the permissions:
-
-    sudo chmod -R www-data:www-data app/storage
-
-Create/link the correct enviroment:
-
-    cd app/config
-    ln -s sparql.`hostname`.php sparql.php
-
-And that should be it.  More as I get more foo with laravel</del>
-
 ## Vagrant
 ==========
 

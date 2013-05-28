@@ -15,4 +15,5 @@ parameters:
 
     # sparql_endpoint: http://public5.neontribe.co.uk/ld/eldis/sparql
     # sparql_endpoint: http://localhost:8890/sparql
-    sparql_endpoint: http://ld.neontribe.org/sparql
+    # sparql_endpoint: http://ld.neontribe.org/sparql
+    sparql_endpoint: http://192.168.21.138:8890/sparql
