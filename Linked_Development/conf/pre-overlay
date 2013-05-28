@@ -7,11 +7,11 @@ source $cwd/functions
 
 # Install packages
 # removed selinux-basics selinux-policy-default as they broke wheezy RC
-install apache2 openjdk-6-jre openssh-server php5 postfix python2.6  virtuoso-opensource virtuoso-vad-conductor virtuoso-vad-isparql wget python-pip selinux-basics selinux-policy-default
+install apache2 openjdk-6-jre openssh-server php5 postfix python2.6  wget python-pip selinux-basics selinux-policy-default curl sqlite3 php5-curl php5-sqlite
 
 
 
 pip install rdflib>3.1
 
 # Report on installation.
-echo 'Added apache2 openjdk-6-jre openssh-server php5 postfix python2.6  virtuoso-opensource virtuoso-vad-conductor virtuoso-vad-isparql wget python-pip selinux-basics selinux-policy-default' >> /etc/issue
+echo 'Added apache2 openjdk-6-jre openssh-server php5 postfix python2.6 wget python-pip selinux-basics selinux-policy-default' >> /etc/issue

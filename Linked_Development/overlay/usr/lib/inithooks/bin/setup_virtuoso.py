@@ -48,16 +48,17 @@ exit;"""
     f.close()
     
     #open default conection to isql and run commands in a file
-    command = "isql-vt 1111 dba dba /usr/lib/inithooks/firstboot.d/setpass"
+    command = "isql-vt 1111 dba dba /usr/lib/inithooks/firstboot.d/setpass > /root/setpass"
     os.system(command)
-    os.system('rm -f /usr/lib/inithooks/firstboot.d/setpass')
+    #os.system('rm -f /usr/lib/inithooks/firstboot.d/setpass')
 
     #we need to know the password for future use in scripts so we write it to a file
     fh = open('/etc/virtuoso-opensource-6.1/password', 'w')
     fh.write(password)
     fh.close()
     #activate vads as this was not done during the patch install
-    os.system("/opt/tools/call_isql /opt/tools/activate_vad.isql")
+    #not needed for prebuilt virtuoso
+    #os.system("/opt/tools/call_isql /opt/tools/activate_vad.isql")
     #add pathing and virtual hosts for custom endpoints
     os.system("/opt/tools/call_isql /opt/tools/multi-end-points.isql")
 

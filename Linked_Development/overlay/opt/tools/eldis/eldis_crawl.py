@@ -41,7 +41,7 @@ from rdflib.term import Literal, URIRef
 from urlparse import urlparse, urlunparse
 
 
-class Eldis_Crawl(object):
+class Eldis_Crawl(Eldis):
     
     def build_graph(self):
         """
@@ -169,7 +169,7 @@ def main():
         usage(e)
     data_url = "http://api.ids.ac.uk/openapi/"+'eldis'+"/get_all/documents/full?num_results=1000"
     loop = 0
-    out_dir='/home/neil/eldis/'
+    out_dir='/home/eldis/'
         
     if len(args) > 0:
         data_url = args[0]

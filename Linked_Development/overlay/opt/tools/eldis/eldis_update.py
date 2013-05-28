@@ -31,33 +31,43 @@ download new datestamped files
 delete graph
 import new graph.
 """
-
 import os
 
+global out_dir, script_dir
+script_dir = "/opt/tools/"
+# out_dir = "/home/eldis"
+out_dir = "/Users/timdavies/Documents/Business/Projects/CABI/Linked Development/data"
 
-def main():
-    os.system('/bin/rm -rf /home/eldis/rdf/*')
-    os.system('/bin/echo http://linked-development.org/eldis/ > /home/eldis/rdf/global.graph')
-    
+def loop(script,url):
     #start import of eldis data
     loop = 1
-    os.system('/usr/bin/python /opt/tools/eldis_crawl.py "http://api.ids.ac.uk/openapi/eldis/get_all/documents/full?num_results=1000" 1 /home/eldis/')
+    os.system('/usr/bin/python /opt/tools/'+script+'.py "'+url+'" 1 "'+out_dir +'"')
 
-    next_url_fh = open('/home/eldis/nexturl','r')
+    next_url_fh = open(out_dir+'/nexturl','r')
     next_url = next_url_fh.read()
     next_url_fh.close()
     #loop while there are new urls to go to. see Eldis documentation as to why
     while next_url != "No more pages":
         loop += 1
-        os.system('/use/bin/python /opt/tools/eldis_crawl.py "' + next_url + '" ' + str(loop) + ' /home/eldis/')
-        next_url_fh = open('/home/eldis/nexturl','r')
+        os.system('/usr/bin/python /opt/tools/'+script+'.py "' + next_url + '" ' + str(loop) + ' "'+out_dir +'"')
+        next_url_fh = open(out_dir+'/nexturl','r')
         next_url = next_url_fh.read()
         next_url_fh.close()
         #safety
         if loop > 500:
+            break
 
-   #open default conection to isql and run commands in a file
-   os.system("/opt/tools/call_isql /opt/tools/eldis_update2.isql")
+def main():
+    os.system('/bin/rm -rf '+out_dir+'/rdf/*')
+    os.system('/bin/echo http://linked-development.org/eldis/ > '+out_dir+'/rdf/global.graph')
+    
+    loop('eldis_crawl','http://api.ids.ac.uk/openapi/eldis/get_all/documents/full?num_results=1000')    
+    loop('eldis_crawl_countries','http://api.ids.ac.uk/openapi/eldis/get_all/countries/full?num_results=1000')
+    loop('eldis_crawl_orgs','http://api.ids.ac.uk/openapi/eldis/get_all/organisations/full?num_results=1000')
+    loop('eldis_crawl_subjects','http://api.ids.ac.uk/openapi/eldis/get_all/themes/full?num_results=1000')
+    
+    #open default conection to isql and run commands in a file
+    os.system("/opt/tools/call_isql /opt/tools/eldis/eldis_update2.isql")
 
 
 if __name__ == "__main__":

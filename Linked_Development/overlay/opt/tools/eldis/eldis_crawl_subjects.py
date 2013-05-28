@@ -115,8 +115,7 @@ class Eldis_Subjects(Eldis):
             rdf = open(self.out_dir + 'rdf/' + self.database + '-themes-' + date + '-' + str(self.loop) + '.rdf','w')
             rdf.write(self.graph.serialize())
             rdf.close()
-            #no longer needed
-            #self.graph.remove((None,None,None))
+
             
             contfile = open(self.out_dir + 'nexturl', 'w')
             try:
@@ -148,7 +147,7 @@ def main():
         usage(e)
     data_url = "http://api.ids.ac.uk/openapi/"+'eldis'+"/get_all/themes/full?num_results=2000"
     loop = 0
-    out_dir='/home/neil/eldis/'
+    out_dir='/home/eldis/'
         
     if len(args) > 0:
         data_url = args[0]

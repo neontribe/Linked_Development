@@ -157,14 +157,18 @@ class Eldis_Orgs(Eldis):
             #no longer needed
             #self.graph.remove((None,None,None))
             
+            contfile = open(self.out_dir + 'nexturl', 'w')
             try:
                 if(content['metadata']['next_page']):
-                    return content['metadata']['next_page']
+                    contfile.write(content['metadata']['next_page'])
+                    print str(int(content['metadata']['total_results']) - int(content['metadata']['start_offset'])) + " records remaining"
+                    #self.build_graph(content['metadata']['next_page'],n+1)
                 else:
                     print "Build complete"
             except:
-                print "Build Complete"
-
+                contfile.write("No more pages")
+                print "No more pages"
+            contfile.close()
 
         except Exception as inst:
             print inst
@@ -177,13 +181,15 @@ def usage(e=None):
     print >> sys.stderr, __doc__
     sys.exit(1)
 
-@profile
-def main(data_url = "http://api.ids.ac.uk/openapi/"+'eldis'+"/get_all/organisations/full?num_results=100", out_dir='/Users/timdavies/Documents/Business/Projects/CABI/Linked Development/data',loop=0):
+def main():
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], "", [])
     except getopt.GetoptError, e:
         usage(e)
-        
+    data_url = "http://api.ids.ac.uk/openapi/eldis/get_all/organisations/full?num_results=1000"
+    loop = 0
+    out_dir='/home/eldis/'
+
     if len(args) > 0:
         data_url = args[0]
     if len(args) > 1:
@@ -192,17 +198,15 @@ def main(data_url = "http://api.ids.ac.uk/openapi/"+'eldis'+"/get_all/organisati
         out_dir = args[2]
     if not out_dir[-1:] == os.sep:
         out_dir = out_dir + os.sep
-
+    try:
+        opts, args = getopt.gnu_getopt(sys.argv[1:], "", [])
+    except getopt.GetoptError, e:
+        usage(e)
+    
     crawler = Eldis_Orgs(out_dir,
                   data_url,
                   loop)
-    next_page = crawler.build_graph()
-    print next_page
-    del crawler
-    gc.collect 
-    if(next_page and loop < 5):
-        loop = loop + 1
-        main(next_page,out_dir,loop)
-
+    crawler.build_graph()
+    
 if __name__ == "__main__":
     main()
