@@ -4,6 +4,7 @@ namespace LD\APIBundle\Services\Factories;
 use LD\APIBundle\Entity\Region;
 use LD\APIBundle\Entity\Theme;
 use LD\APIBundle\Entity\Country;
+use LD\APIBundle\Entity\EmptyEntity;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use \Iterator;
 
@@ -56,13 +57,13 @@ class CountFactory extends BaseFactory
             switch ($format) {
                 case self::FULL:
                     $data = $row->full();
-                    $data['count'] = $row->count;
+                    $data['count'] = $row->getCount();
                     $response[] = $data;
                     break;
                 default:
                 case self::SHORT:
                     $data = $row->short();
-                    $data['count'] = $row->count;
+                    $data['count'] = $row->getCount();
                     $response[] = $data;
                     break;
             }
@@ -88,7 +89,10 @@ class CountFactory extends BaseFactory
         // this we know is a multipart query
         foreach ($data as $key => $rows) {
             if ($key == 'none') {
-                // not yet defined
+                $row = $rows[0]; // This is a single result
+                $entity = new EmptyEntity('', '', '', '');
+                $entity->setCount($row->count->getValue());
+                $response[] = $entity;
             } elseif ($key == 'all') {
                 foreach ($rows as $row) {
                     $url = $row->url;
@@ -114,7 +118,6 @@ class CountFactory extends BaseFactory
                         $metadataUrl, $objectId, $objectName, $objectType
                     );
                     $entity->count = $row->count->getValue();
-
                     $response[] = $entity;
                 }
             } else {
@@ -140,32 +143,41 @@ class CountFactory extends BaseFactory
         $response = array();
 
         // this we know is a multipart query
-        foreach ($data as $row) {
-            $url = $row->url;
+        foreach ($data as $key => $rows) {
+            if ($key == 'none') {
+                $row = $rows[0]; // This is a single result
+                $entity = new EmptyEntity('', '', '', '');
+                $entity->setCount($row->count->getValue());
+                $response[] = $entity;
+            } elseif ($key == 'all') {
+                foreach ($rows as $row) {
+                    $url = $row->url;
 
-            $objectName = trim($row->label->getValue());
-            $objectType = 'theme';
+                    $objectName = trim($row->label->getValue());
+                    $objectType = 'theme';
 
-            $parts = explode('/', trim($url, ' /'));
-            $objectId = array_pop($parts);
+                    $parts = explode('/', trim($url, ' /'));
+                    $objectId = array_pop($parts);
 
-            $metadataUrl = $router->generate(
-                'ld_dev_default_index', // TODO This needs correcting when get routes are done
-                array(
-                    'graph' => $graph,
-                    'obj' => $objectType,
-                    'parameter' => $objectId,
-                    'format' => 'full',
-                ),
-                UrlGeneratorInterface::ABSOLUTE_PATH
-            );
+                    $metadataUrl = $router->generate(
+                        'ld_dev_default_index', // TODO This needs correcting when get routes are done
+                        array(
+                            'graph' => $graph,
+                            'obj' => $objectType,
+                            'parameter' => $objectId,
+                            'format' => 'full',
+                        ),
+                        UrlGeneratorInterface::ABSOLUTE_PATH
+                    );
 
-            $entity = new Theme(
-                'NPIS', $metadataUrl, $objectId, $objectName, $objectType
-            );
-            $entity->count = $row->count->getValue();
+                    $entity = new Theme(
+                        'NPIS', $metadataUrl, $objectId, $objectName, $objectType
+                    );
+                    $entity->setCount($row->count->getValue());
 
-            $response[] = $entity;
+                    $response[] = $entity;
+                }
+            }
         }
 
         return $response;
@@ -178,35 +190,41 @@ class CountFactory extends BaseFactory
         $response = array();
 
         // this we know is a multipart query
-        foreach ($data as $row) {
-            $url = $row->url;
+        foreach ($data as $key => $rows) {
+            if ($key == 'none') {
+                $row = $rows[0]; // This is a single result
+                $entity = new EmptyEntity('', '', '', '');
+                $entity->setCount($row->count->getValue());
+                $response[] = $entity;
+            } elseif ($key == 'all') {
+                foreach ($rows as $row) {
+                    $url = $row->url;
 
-            $objectName = trim($row->countrylabel->getValue());
-            $objectType = 'Country';
+                    $objectName = trim($row->label->getValue());
+                    $objectType = 'country';
 
-            $parts = explode('/', trim($url, ' /'));
-            $objectId = array_pop($parts);
+                    $parts = explode('/', trim($url, ' /'));
+                    $objectId = array_pop($parts);
 
-            $twolettercode = trim($row->countrycode->getValue());
+                    $metadataUrl = $router->generate(
+                        'ld_dev_default_index', // TODO This needs correcting when get routes are done
+                        array(
+                            'graph' => $graph,
+                            'obj' => $objectType,
+                            'parameter' => $objectId,
+                            'format' => 'full',
+                        ),
+                        UrlGeneratorInterface::ABSOLUTE_PATH
+                    );
 
-            $metadataUrl = $router->generate(
-                'ld_dev_default_index', // TODO This needs correcting when get routes are done
-                array(
-                    'graph' => $graph,
-                    'obj' => $objectType,
-                    'parameter' => $objectId,
-                    'format' => 'full',
-                ),
-                UrlGeneratorInterface::ABSOLUTE_PATH
-            );
+                    $entity = new Theme(
+                        'NPIS', $metadataUrl, $objectId, $objectName, $objectType
+                    );
+                    $entity->setCount($row->count->getValue());
 
-            // $metadataUrl, $objectId, $objectName, $objectType
-            $entity = new Country(
-                $twolettercode, $metadataUrl, $objectId, $objectName, $objectType
-            );
-            $entity->count = $row->count->getValue();
-
-            $response[] = $entity;
+                    $response[] = $entity;
+                }
+            }
         }
 
         return $response;

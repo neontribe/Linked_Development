@@ -16,6 +16,8 @@ abstract class AbstractBaseEntity extends \EasyRdf_Resource
     private $objectName;
     private $objectType;
 
+    private $count;
+
     /**
      * Constructor
      *
@@ -84,6 +86,18 @@ abstract class AbstractBaseEntity extends \EasyRdf_Resource
     }
 
     /**
+     * Set count
+     *
+     * @param string $val
+     *
+     * @return void;
+     */
+    public function setCount($val)
+    {
+        $this->count = $val;
+    }
+
+    /**
      * Get metatdata url
      *
      * @return string
@@ -121,6 +135,16 @@ abstract class AbstractBaseEntity extends \EasyRdf_Resource
     public function getObjectType()
     {
         return $this->objectType;
+    }
+
+    /**
+     * Get count
+     *
+     * @return string
+     */
+    public function getCount()
+    {
+        return $this->count;
     }
 
     /**

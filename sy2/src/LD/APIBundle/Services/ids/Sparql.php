@@ -107,13 +107,13 @@ class Sparql
             $data = array();
             foreach ($elements as $key => $query) {
                 $data[$key] = $this->__query($query, $graph);
-                $count += count($data[$key]);
+                // $count += count($data[$key]);
             }
         } else {
             $data = $this->__query($elements, $graph);
-            $count = count($data);
+            // $count = count($data);
         }
-        $this->container->get('logger')->debug('Query returned ' . $count . ' records.');
+        // $this->container->get('logger')->debug('Query returned ' . $count . ' records.');
 
         return $data;
     }

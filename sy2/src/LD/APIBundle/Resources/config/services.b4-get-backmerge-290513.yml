@@ -1,0 +1,278 @@
+services:
+    sparql:
+        class: LD\APIBundle\Services\ids\Sparql
+        arguments: [%sparql_endpoint%, "@service_container"]
+
+parameters:
+    # This translates the Accepts header into supported mime types
+    # Note that when multiple types are supplied the first one match will used.
+    # The headers will be matched in the order listed here
+    mimetypes:
+      json:  ["application/json"]
+      html:  ["text/html"]
+      xhtml: ["application/xhtml+xml", "application/xhtmlxml"]
+      xml:   ["application/xml"]
+
+    graphs:
+      # define input:default-graph-uri <foo>
+      eldis: http://linked-development.org/eldis/
+      r4d: http://linked-development.org/r4d/
+      # all: ~, not used
+
+    sparql_default_offset: 0
+    sparql_default_limit: 10
+
+
+    querybuilder:
+      count:
+        documents:
+          region: LD\APIBundle\Services\ids\DefaultQueryBuilder
+          theme: LD\APIBundle\Services\ids\DefaultQueryBuilder
+          country: LD\APIBundle\Services\ids\DefaultQueryBuilder
+        organisations:
+          region: LD\APIBundle\Services\ids\DefaultQueryBuilder
+          theme: LD\APIBundle\Services\ids\DefaultQueryBuilder
+          country: LD\APIBundle\Services\ids\DefaultQueryBuilder
+      get:
+        documents: LD\APIBundle\Services\ids\DefaultQueryBuilder
+        assets: LD\APIBundle\Services\ids\DefaultQueryBuilder
+        countries: LD\APIBundle\Services\ids\DefaultQueryBuilder
+        themes: LD\APIBundle\Services\ids\DefaultQueryBuilder
+        organisations: LD\APIBundle\Services\ids\DefaultQueryBuilder
+        region: LD\APIBundle\Services\ids\DefaultQueryBuilder
+      get_all:
+        documents: LD\APIBundle\Services\ids\DefaultQueryBuilder
+        themes: LD\APIBundle\Services\ids\DefaultQueryBuilder
+      default: LD\APIBundle\Services\ids\DefaultQueryBuilder
+
+    factories:
+      count:
+        documents:
+          region: LD\APIBundle\Services\Factories\CountFactory
+          theme: LD\APIBundle\Services\Factories\CountFactory
+          country: LD\APIBundle\Services\Factories\CountFactory
+        organisations:
+          region: LD\APIBundle\Services\Factories\DefaultFactory
+          theme: LD\APIBundle\Services\Factories\DefaultFactory
+          country: LD\APIBundle\Services\Factories\CountFactory
+      get:
+        documents: LD\APIBundle\Services\Factories\DefaultFactory
+        assets: LD\APIBundle\Services\Factories\DefaultFactory
+        countries: LD\APIBundle\Services\Factories\DefaultFactory
+        themes: LD\APIBundle\Services\Factories\DefaultFactory
+        organisations: LD\APIBundle\Services\Factories\DefaultFactory
+        region: LD\APIBundle\Services\Factories\DefaultFactory
+      get_all:
+        documents: LD\APIBundle\Services\Factories\DefaultFactory
+        themes: LD\APIBundle\Services\Factories\DefaultFactory
+      default: LD\APIBundle\Services\Factories\DefaultFactory
+
+
+    sparqls:
+
+      # Counts
+      count:
+
+        # Count Documents
+        documents:
+          region:
+            unlimited: true
+            define: ~
+            select: select distinct ?region ?regionlabel count(distinct ?article) as ?count
+            where: >
+              where {
+                ?article a <http://purl.org/ontology/bibo/Article> .
+                ?article <http://purl.org/dc/terms/coverage>
+                ?region .
+                OPTIONAL {
+                  ?r <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2>
+                  ?c .
+                  FILTER ( ?r = ?region ) .
+                } FILTER ( !BOUND(?r) ) .
+                ?region <http://www.w3.org/2000/01/rdf-schema#label>
+                ?regionlabel .
+              }
+
+          theme:
+            unlimited: true
+            define: ~
+            select: select distinct ?theme ?themelabel count(distinct ?article) as ?count
+            where: >
+              where {
+                ?b <http://purl.org/dc/terms/subject>
+                ?theme .
+                ?theme <http://www.w3.org/2000/01/rdf-schema#label>
+                ?themelabel .
+                ?article a <http://purl.org/ontology/bibo/Article> .
+                ?article <http://purl.org/dc/terms/subject> ?theme .
+              }
+
+          country:
+            unlimited: true
+            define: "prefix DCTERMS: <http://purl.org/dc/terms/>"
+            select: select distinct ?countrycode ?countrylabel count(distinct ?article) as ?count
+            where: >
+              where {
+                ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
+                ?publisher a <http://dbpedia.org/ontology/Organisation> .
+                ?article DCTERMS:publisher ?publisher .
+                ?article a <http://purl.org/ontology/bibo/Article> .
+                ?article <http://purl.org/dc/terms/coverage> ?country .
+                ?country <http://www.w3.org/2000/01/rdf-schema#label> ?countrylabel .
+              }
+
+        # Count orgs
+        organisations:
+          region:
+            unlimited: true
+            define: "prefix DCTERMS: <http://purl.org/dc/terms/>"
+            select: select distinct ?region ?regionlabel count(distinct ?publisher) as ?count
+            where: >
+              where {
+                ?article <http://purl.org/dc/terms/coverage> ?region .
+                OPTIONAL {
+                  ?r <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?c .
+                  FILTER ( ?r = ?region ) .
+                }
+                FILTER ( !BOUND(?r) ) .
+                ?region <http://www.w3.org/2000/01/rdf-schema#label> ?regionlabel .
+                ?publisher a <http://dbpedia.org/ontology/Organisation> .
+                ?article DCTERMS:publisher ?publisher .
+                ?article a <http://purl.org/ontology/bibo/Article> .
+              }
+
+          theme:
+            unlimited: true
+            define: "prefix DCTERMS: <http://purl.org/dc/terms/>"
+            select: select distinct ?theme ?themelabel count(distinct ?publisher) as ?count
+            where: >
+              where {
+                ?theme <http://www.w3.org/2000/01/rdf-schema#label> ?themelabel .
+                ?article a <http://purl.org/ontology/bibo/Article> .
+                ?article <http://purl.org/dc/terms/subject> ?theme .
+                ?article DCTERMS:publisher ?publisher .
+                ?publisher a <http://dbpedia.org/ontology/Organisation> .
+              }
+
+          country:
+            unlimited: true
+            define: "prefix DCTERMS: <http://purl.org/dc/terms/>"
+            select: select distinct ?countrycode ?countrylabel count(distinct ?publisher) as ?count
+            where: >
+              where {
+                ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
+                ?publisher a <http://dbpedia.org/ontology/Organisation> .
+                ?article DCTERMS:publisher ?publisher .
+                ?article a <http://purl.org/ontology/bibo/Article> .
+                ?article <http://purl.org/dc/terms/coverage> ?country .
+                ?country <http://www.w3.org/2000/01/rdf-schema#label> ?countrylabel .
+              }
+
+      # Gets
+      get:
+        documents:
+          define: >
+            PREFIX dcterms: <http://purl.org/dc/terms/>
+            PREFIX bibo: <http://purl.org/ontology/bibo/>
+            PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+          select: >
+            CONSTRUCT {
+                ?resource a bibo:Article.
+                ?resource dcterms:title ?title.
+                ?resource dcterms:abstract ?abstract.
+                ?resource dcterms:creator ?creator.
+                ?resource dcterms:subject ?subject.
+                ?subject rdfs:label ?subjectTitle.
+                ?resource dcterms:coverage ?coverage.
+                ?coverage rdfs:label ?coverageTitle.
+                ?resource dcterms:language ?language.
+                ?resource dcterms:identifier ?identifier.
+                ?resource rdfs:seeAlso ?document.
+                ?resource dcterms:date ?date.
+                ?resource dcterms:publisher ?publisher.
+                ?publisher foaf:name ?publisherName.
+            }
+          where: >
+            WHERE {
+                ?resource a bibo:Article.
+                ?resource dcterms:title ?title.
+                ?resource dcterms:abstract ?abstract.
+                ?resource dcterms:creator ?creator.
+                OPTIONAL { ?resource dcterms:subject ?subject. }
+                ?subject rdfs:label ?subjectTitle.
+                ?resource dcterms:coverage ?coverage.
+                ?coverage rdfs:label ?coverageTitle.
+                ?resource dcterms:language ?language.
+                ?resource dcterms:identifier ?identifier.
+                ?resource rdfs:seeAlso ?document.
+                ?resource dcterms:date ?date.
+                OPTIONAL {
+                    ?resource dcterms:publisher ?publisher.
+                    OPTIONAL { ?publisher foaf:name ?publisherName. }
+                }
+                FILTER(?resource = <http://linked-development.org/eldis/output/__ID__/>)
+            }
+        assets:
+          define: ~
+          select: select distinct ?a ?b
+          where: >
+            where {
+              <http://linked-development.org/eldis/output/__ID__/> ?a ?b .
+            }
+        countries:
+          define: ~
+          select: select distinct  ?a ?b
+          where: >
+            where {
+              <http://linked-development.org/eldis/countries/__ID__/> <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
+              <http://linked-development.org/eldis/countries/__ID__/> ?a ?b .
+            }
+        themes:
+          define: ~
+          select: select distinct  ?a ?b
+          where: >
+            where {
+              <http://linked-development.org/eldis/themes/C1310/> ?a ?b .
+            }
+        organisations:
+          define: ~
+          select: select ?a ?b
+          where: >
+            where {
+              <http://linked-development.org/eldis/organisation/A64953/> ?a ?b .
+            }
+        region:
+          define: ~
+          select: select ?a ?b
+          where: >
+            where {
+                <http://linked-development.org/eldis/regions/C30/> ?a ?b .
+            }
+
+      # Get all
+      get_all:
+        documents:
+          define: ~
+          select: select distinct ?article ?also ?dcidentifier ?dctype ?dctitle ?dcdate ?dcabstract ?dccreator ?dccoverage ?dcpublisher  ?dclanguage ?theme
+          where: >
+            where {
+                ?article a <http://purl.org/ontology/bibo/Article> .
+                ?article <http://www.w3.org/2000/01/rdf-schema#seeAlso> ?also .
+                ?article <http://purl.org/dc/terms/identifier> ?dcidentifier .
+                ?article <http://purl.org/dc/terms/type> ?dctype .
+                ?article <http://purl.org/dc/terms/title> ?dctitle  .
+                ?article <http://purl.org/dc/terms/date> ?dcdate .
+                ?article <http://purl.org/dc/terms/abstract> ?dcabstract .
+                ?article <http://purl.org/dc/terms/creator> ?dccreator .
+                ?article <http://purl.org/dc/terms/coverage> ?dccoverage .
+                ?article <http://purl.org/dc/terms/publisher> ?dcpublisher .
+                ?article <http://purl.org/dc/terms/language> ?dclanguage .
+                ?article <http://purl.org/dc/terms/subject> ?theme .
+            }
+        themes:
+          define: ~
+          select: select distinct ?theme ?a ?b
+          where: >
+            where {?article <http://purl.org/dc/terms/subject> ?theme .
+                ?theme ?a ?b .
+            } order by ?theme
