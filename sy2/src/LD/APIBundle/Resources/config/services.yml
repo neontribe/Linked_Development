@@ -54,7 +54,7 @@ parameters:
         organisations:
           region: LD\APIBundle\Services\Factories\DefaultFactory
           theme: LD\APIBundle\Services\Factories\DefaultFactory
-          country: LD\APIBundle\Services\Factories\DefaultFactory
+          country: LD\APIBundle\Services\Factories\CountFactory
       get:
         documents: LD\APIBundle\Services\Factories\DefaultFactory
         assets: LD\APIBundle\Services\Factories\DefaultFactory
@@ -67,7 +67,7 @@ parameters:
         themes: LD\APIBundle\Services\Factories\DefaultFactory
       default: LD\APIBundle\Services\Factories\DefaultFactory
 
-      
+
     sparqls:
 
       # Counts
@@ -76,6 +76,7 @@ parameters:
         # Count Documents
         documents:
           region:
+            unlimited: true
             define: ~
             select: select distinct ?region ?regionlabel count(distinct ?article) as ?count
             where: >
@@ -93,6 +94,7 @@ parameters:
               }
 
           theme:
+            unlimited: true
             define: ~
             select: select distinct ?theme ?themelabel count(distinct ?article) as ?count
             where: >
@@ -106,6 +108,7 @@ parameters:
               }
 
           country:
+            unlimited: true
             define: "prefix DCTERMS: <http://purl.org/dc/terms/>"
             select: select distinct ?countrycode ?countrylabel count(distinct ?article) as ?count
             where: >
@@ -121,6 +124,7 @@ parameters:
         # Count orgs
         organisations:
           region:
+            unlimited: true
             define: "prefix DCTERMS: <http://purl.org/dc/terms/>"
             select: select distinct ?region ?regionlabel count(distinct ?publisher) as ?count
             where: >
@@ -138,6 +142,7 @@ parameters:
               }
 
           theme:
+            unlimited: true
             define: "prefix DCTERMS: <http://purl.org/dc/terms/>"
             select: select distinct ?theme ?themelabel count(distinct ?publisher) as ?count
             where: >
@@ -150,12 +155,14 @@ parameters:
               }
 
           country:
+            unlimited: true
             define: "prefix DCTERMS: <http://purl.org/dc/terms/>"
             select: select distinct ?countrycode ?countrylabel count(distinct ?publisher) as ?count
             where: >
               where {
                 ?country <http://www.fao.org/countryprofiles/geoinfo/geopolitical/resource/codeISO2> ?countrycode .
-                ?publisher a <http://dbpedia.org/ontology/Organisation> .  ?article DCTERMS:publisher ?publisher .
+                ?publisher a <http://dbpedia.org/ontology/Organisation> .
+                ?article DCTERMS:publisher ?publisher .
                 ?article a <http://purl.org/ontology/bibo/Article> .
                 ?article <http://purl.org/dc/terms/coverage> ?country .
                 ?country <http://www.w3.org/2000/01/rdf-schema#label> ?countrylabel .

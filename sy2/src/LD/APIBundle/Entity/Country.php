@@ -22,4 +22,17 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class Country extends AbstractBaseEntity
 {
+    protected $twolettercode;
+
+    public function __constuct($twolettercode, $metadataUrl, $objectId, $objectName, $objectType)
+    {
+        $this->twolettercode = $twolettercode;
+        parent::__construct($metadataUrl, $objectId, $objectName, $objectType);
+    }
+    
+    public function toArray($format)
+    {
+        $data = parent::toArray($format);
+        $data['iso_two_letter_code'] = $this->twolettercode;
+    }
 }

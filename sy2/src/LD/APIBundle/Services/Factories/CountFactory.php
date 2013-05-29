@@ -84,7 +84,7 @@ class CountFactory extends BaseFactory
         $router = $this->container->get('router');
 
         $response = array();
-        
+
         // this we know is a multipart query
         foreach ($data as $key => $rows) {
             if ($key == 'none') {
@@ -171,4 +171,44 @@ class CountFactory extends BaseFactory
         return $response;
     }
 
+    protected function countCountry($data, $graph)
+    {
+        $router = $this->container->get('router');
+
+        $response = array();
+
+        // this we know is a multipart query
+        foreach ($data as $row) {
+            $url = $row->url;
+
+            $objectName = trim($row->countrylabel->getValue());
+            $objectType = 'Country';
+
+            $parts = explode('/', trim($url, ' /'));
+            $objectId = array_pop($parts);
+
+            $twolettercode = trim($row->countrycode->getValue());
+
+            $metadataUrl = $router->generate(
+                'ld_dev_default_index', // TODO This needs correcting when get routes are done
+                array(
+                    'graph' => $graph,
+                    'obj' => $objectType,
+                    'parameter' => $objectId,
+                    'format' => 'full',
+                ),
+                UrlGeneratorInterface::ABSOLUTE_PATH
+            );
+
+            // $metadataUrl, $objectId, $objectName, $objectType
+            $entity = new Country(
+                $twolettercode, $metadataUrl, $objectId, $objectName, $objectType
+            );
+            $entity->count = $row->count->getValue();
+
+            $response[] = $entity;
+        }
+
+        return $response;
+    }
 }

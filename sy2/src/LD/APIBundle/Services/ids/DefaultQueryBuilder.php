@@ -52,14 +52,15 @@ class DefaultQueryBuilder extends AbstractQueryBuilder
 
         $where = $elements['where'];
 
-        $request = Request::createFromGlobals();
-        $offset = $this->getOffset($request);
-        $limit = $this->getLimit($request);
 
-        $query = sprintf(
-            '%s %s %s %s limit %s offset %s',
-            $define, $select, $from, $where, $offset, $limit
-        );
+        $query = sprintf('%s %s %s %s', $define, $select, $from, $where);
+
+        if (isset($elements['unlimited']) && $elements['unlimited']) {
+            $request = Request::createFromGlobals();
+            $offset = $this->getOffset($request);
+            $limit = $this->getLimit($request);
+            $query = sprintf('%s limit %s offset %s', $query, $limit, $offset);
+        }
 
         $this->container->get('logger')->debug('Query: ' . $query);
 
