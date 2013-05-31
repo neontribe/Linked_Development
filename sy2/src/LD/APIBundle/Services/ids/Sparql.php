@@ -131,6 +131,7 @@ class Sparql
     private function __query(array $elements, $graph)
     {
         $query = $this->getQueryBuilder()->createQuery($elements, $graph);
+        $this->container->get('logger')->debug('Query: ' . $query);
         $client = new \EasyRdf_Sparql_Client($this->endpoint);
 
         $time = microtime(true);

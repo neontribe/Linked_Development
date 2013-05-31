@@ -12,33 +12,54 @@ use LD\APIBundle\Entity\Region;
 use LD\APIBundle\Entity\Theme;
 
 /**
- * Get controller m16a3, mtar, m249, m98, pp19
+ * Get controller
  *
  * @see http://api.ids.ac.uk/
  */
 class GetController extends APIController
 {
     /**
-     * @Route("/get")
+     * @param string $graph  the graph to use, see service.yml
+     * @param string $object documents|assets|countries|themes|organisations|region
+     * @param string $id     the object id
+     *
+     * @Route(
+     *      "/{graph}/get/{object}/{id}",
+     *      requirements={
+     *          "object" = "documents|assets|countries|themes|organisations|region",
+     *      }
+     * )
+     * @Method({"GET", "HEAD", "OPTIONS"})
      * @return Response
      */
-    public function getAction()
+    public function getAction($graph, $object, $id)
     {
-        \EasyRdf_TypeMapper::set('http:\/\/www.w3.org\/2004\/02\/skos\/core#Concept', '\\LD\\APIBundle\\Entity\\Theme');
+        // get and set  the query factory
+        $querybuilders = $this->container->getParameter('querybuilder');
+        if (isset($querybuilders['get'][$object])) {
+            $builder = $querybuilders['get'][$object];
+        } elseif (isset($querybuilders['default'])) {
+            $builder = $querybuilders['default'];
+        } else {
+            $builder = 'LD\APIBundle\Services\ids\DefaultQueryBuilder';
+        }
 
-        $url = 'http://linked-development.org/eldis/output/A12345/';
-        $graph = \EasyRdf_Graph::newAndLoad($url);
-
-        return new \Symfony\Component\HttpFoundation\Response(
-            '<h3>$graph->types</h3><pre>' . json_encode($graph->types()) . '</pre>' .
-            '<h3>$graph->getUri</h3><pre>' . json_encode($graph->getUri()) . '</pre>' .
-            '<h3>$graph->type</h3><pre>' . json_encode($graph->type()) . '</pre>' .
-            '<h3>$graph->label</h3><pre>' . json_encode($graph->label()) . '</pre>' .
-            '<h3>$graph->get()</h3><pre>' . json_encode($graph->get("http://linked-development.org/eldis/output/A12345/", "dc:identifier")) . '</pre>' .
-            '<h3>$graph->getLiteral()</h3><pre>' . json_encode($graph->getLiteral("http://linked-development.org/eldis/output/A12345/", "http://purl.org/dc/terms/date")) . '</pre>' .
-            '<h3>$graph->allOfType(http://www.w3.org/2000/01/rdf-schema#label),</h3><pre>' . json_encode($graph->allOfType('http://www.w3.org/2000/01/rdf-schema#label')) . '</pre>' .
-            '<h3>$graph->dumpResource</h3><p>' . $graph->dumpResource('http://linked-development.org/eldis/output/A64003/') . '</p>' .
-            '<p>' . ($graph->dump()) . '</p>'
+        // get the sparql
+        $spqls = $this->container->getParameter('sparqls');
+        $this->container->get('logger')->info(
+            sprintf('Fetching sparql: get->%s', $object)
         );
+        $spql = $spqls['get'][$object];
+
+        // fetch factory
+        $entfactories = $this->container->getParameter('factories');
+        $this->container->get('logger')->info(
+            sprintf('Fetching factory: get->%s', $object)
+        );
+        $factoryClass = $entfactories['get'][$object];
+
+        $response = $this->chomp($graph, $spql, $factoryClass, $builder);
+
+        return $this->response($response);
     }
 }

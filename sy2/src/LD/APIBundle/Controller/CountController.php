@@ -25,6 +25,7 @@ class CountController extends APIController
      * categories  (theme, country, region, keywords). A count shows the number
      * of hits within the search that match that category.
      *
+     * @param string $graph     the graph to use, see service.yml
      * @param string $object    document|organisations|item
      * @param string $parameter theme|country|region|keyword
      * @param string $format    short|full
@@ -50,15 +51,6 @@ class CountController extends APIController
      */
     public function countAction($graph, $object, $parameter, $format = 'short')
     {
-        $graphs = $this->container->getParameter('graphs');
-        if (isset($graphs[$graph])) {
-            $_graph = $graphs[$graph];
-        } else {
-            $_graph = null;
-        }
-
-        // get the sparql service
-        $spqlsrvc = $this->get('sparql');
         // get and set  the query factory
         $querybuilders = $this->container->getParameter('querybuilder');
         if (isset($querybuilders['count'][$object][$parameter])) {
@@ -68,19 +60,13 @@ class CountController extends APIController
         } else {
             $builder = 'LD\APIBundle\Services\ids\DefaultQueryBuilder';
         }
-        $_builder = new $builder();
-        $_builder->setContainer($this->container);
-        $spqlsrvc->setQueryBuilder($_builder);
-        
+
         // get the sparql
         $spqls = $this->container->getParameter('sparqls');
         $this->container->get('logger')->info(
             sprintf('Fetching sparql: count->%s->%s', $object, $parameter)
         );
         $spql = $spqls['count'][$object][$parameter];
-        
-        // execute the query
-        $data = $spqlsrvc->query($spql, $_graph);
 
         // fetch factory
         $entfactories = $this->container->getParameter('factories');
@@ -88,10 +74,10 @@ class CountController extends APIController
             sprintf('Fetching factory: count->%s->%s', $object, $parameter)
         );
         $factoryClass = $entfactories['count'][$object][$parameter];
-        $factory = new $factoryClass();
-        $factory->setContainer($this->container);
-        $factory->process($data, $parameter);
-        $response = $factory->getResponse($format);
+
+        $response = $this->chomp(
+            $graph, $spql, $factoryClass, $builder, $format, $parameter
+        );
 
         return $this->response($response);
     }

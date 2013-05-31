@@ -34,7 +34,7 @@ parameters:
           theme: LD\APIBundle\Services\ids\DefaultQueryBuilder
           country: LD\APIBundle\Services\ids\DefaultQueryBuilder
       get:
-        documents: LD\APIBundle\Services\ids\DefaultQueryBuilder
+        documents: LD\APIBundle\Services\ids\GetQueryBuilder
         assets: LD\APIBundle\Services\ids\DefaultQueryBuilder
         countries: LD\APIBundle\Services\ids\DefaultQueryBuilder
         themes: LD\APIBundle\Services\ids\DefaultQueryBuilder
@@ -56,12 +56,12 @@ parameters:
           theme: LD\APIBundle\Services\Factories\CountFactory
           country: LD\APIBundle\Services\Factories\CountFactory
       get:
-        documents: LD\APIBundle\Services\Factories\DefaultFactory
-        assets: LD\APIBundle\Services\Factories\DefaultFactory
-        countries: LD\APIBundle\Services\Factories\DefaultFactory
-        themes: LD\APIBundle\Services\Factories\DefaultFactory
-        organisations: LD\APIBundle\Services\Factories\DefaultFactory
-        region: LD\APIBundle\Services\Factories\DefaultFactory
+        documents: LD\APIBundle\Services\Factories\GetFactory
+        assets: LD\APIBundle\Services\Factories\GetFactory
+        countries: LD\APIBundle\Services\Factories\GetFactory
+        themes: LD\APIBundle\Services\Factories\GetFactory
+        organisations: LD\APIBundle\Services\Factories\GetFactory
+        region: LD\APIBundle\Services\Factories\GetFactory
       get_all:
         documents: LD\APIBundle\Services\Factories\DefaultFactory
         themes: LD\APIBundle\Services\Factories\DefaultFactory
@@ -203,6 +203,7 @@ parameters:
           country:
           # Country
           # http://api.ids.ac.uk/openapi/eldis/count/organisations/country
+            unlimited: true
             define: ~
             select: SELECT ?country count(?org) as ?count
             where: >

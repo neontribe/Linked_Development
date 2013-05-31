@@ -15,6 +15,34 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class APIController extends Controller
 {
+    protected function chomp($graph, $spql, $factoryclass, $querybuilder, $format = 'short', $type = null)
+    {
+        // get the sparql service
+        $spqlsrvc = $this->get('sparql');
+
+        // get/set graph
+        $graphs = $this->container->getParameter('graphs');
+        if (isset($graphs[$graph])) {
+            $_graph = $graphs[$graph];
+        } else {
+            $_graph = null;
+        }
+
+        $_builder = new $querybuilder();
+        $_builder->setContainer($this->container);
+        $spqlsrvc->setQueryBuilder($_builder);
+
+        // execute the query
+        $data = $spqlsrvc->query($spql, $_graph);
+
+        $factory = new $factoryclass();
+        $factory->setContainer($this->container);
+        $factory->process($data, $type);
+        $response = $factory->getResponse($format);
+
+        return $response;
+    }
+
     protected function logger($msg, $lvl = 'debug')
     {
         $this->get('logger')->$lvl($msg);
@@ -25,7 +53,8 @@ class APIController extends Controller
      *
      * @return array
      */
-    protected function getData() {
+    protected function getData()
+    {
         $routeName = $this->container->get('request')->get('_route');
         $resource = sprintf(
             '%s/../Resources/fixtures/%s.%s',

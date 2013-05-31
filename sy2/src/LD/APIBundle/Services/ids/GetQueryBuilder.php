@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Wrapper to making easy rdf sparql queries
  */
-class DefaultQueryBuilder extends AbstractQueryBuilder
+class GetQueryBuilder extends DefaultQueryBuilder
 {
     /**
      * Build a sparql query.
@@ -35,39 +35,15 @@ class DefaultQueryBuilder extends AbstractQueryBuilder
      */
     public function createQuery(array $elements, $graph = null)
     {
-
-        if (isset($elements['define'])) {
-            $define = $elements['define'];
-        } else {
-            $define = '';
-        }
-
-        $select = $elements['select'];
-
-        if ($graph && $graph != 'all') {
-            $from = " from <" . $graph . '>';
-        } else {
-            $from = '';
-        }
-
-        $where = $elements['where'];
-
-
-        $query = sprintf('%s %s %s %s', $define, $select, $from, $where);
-
-        if (! (isset($elements['unlimited']) && $elements['unlimited']) ) {
-            $request = Request::createFromGlobals();
-            $offset = $this->getOffset($request);
-            $limit = $this->getLimit($request);
-            $query = sprintf('%s limit %s offset %s', $query, $limit, $offset);
-        }
-
         $request = Request::createFromGlobals();
-        $parambag = $request->query->all();
+        $params = $request->attributes->get('_route_params');
+        $_id = $params['id'];
 
-        foreach ($parambag as $key => $value) {
-            $query = str_replace('__' . $key . '__', $value, $query);
-        }
+        $query = str_replace(
+            '__URI__',
+            'http://linked-development.org/eldis/output/' . $_id . '/',
+            parent::createQuery($elements, $graph)
+        );
 
         return $query;
     }
