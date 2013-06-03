@@ -132,6 +132,15 @@ parameters:
                            ?article <http://purl.org/dc/terms/subject> ?theme .
                            ?theme <http://www.w3.org/2000/01/rdf-schema#label> ?themelabel .
                            OPTIONAL { ?theme <http://purl.org/dc/terms/identifier> ?identifier. }
+                           ++ FILTER
+                             {
+                               ?article <http://purl.org/dc/terms/subject> ?searchsubject.
+                               ?searchsubject <http://www.w3.org/2000/01/rdf-schema#label> ?search.
+                             } UNION {
+                               ?article <http://purl.org/dc/terms/title> ?search.
+                             }
+                           FILTER(regex(?search,'__KEYWORD__','i'))
+                           -- FILTER
                     } ORDER BY DESC(?count)
           country:
             # Updated 2013/05/23
@@ -167,6 +176,13 @@ parameters:
                   }
                   FILTER(lang(?countrylabel) = 'en' || lang(?countrylabel) = "")
                 } GROUP BY str(?countrycode) ?countrylabel ORDER BY DESC(?count)
+
+        # In the aboce example the ++FILTER -> -- FILTER block will be scanned
+        # for instances of __FOO__.  The get parameters will then be scanned for
+        # a parameter matching FOO that will substitued in place.  If no matches
+        # are made then entore filter block is removed.  This process is done
+        # in the default Query builder.  It may be necessary to use a custom
+        # query builder for more advanced replacement.
 
         # To support the ?q= operator the IDS API supports we would need something like the following fragment added to any of the queries above before the closing bracket of WHERE
         #

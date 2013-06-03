@@ -10,13 +10,16 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
  */
 abstract class AbstractQueryBuilder implements QueryBuilderInterface, ContainerAwareInterface
 {
+    const FILTER_START = '++ FILTER';
+    const FILTER_END = '-- FILTER';
+
     protected $container;
-    
+
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
     }
-    
+
     /**
      * Build a sparql query.
      *
@@ -42,6 +45,47 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface, ContainerA
      * @return string
      */
     public abstract function createQuery(array $elements, $graph = null);
+
+    /**
+     * Searches for ++FILTER/--FILTER blocks
+     *
+     * @param string $where
+     * 
+     * @return string
+     */
+    public function filterSubstitution($where)
+    {
+        $filterCount = substr_count($where, self::FILTER_START);
+        $request = Request::createFromGlobals();
+        $params = $request->query->all();
+        if ($filterCount) {
+            $offset = 0;
+            for ($i = 0; $i<$filterCount; $i++) {
+                $filterStart = strpos($where, self::FILTER_START, $offset);
+                $filterEnd = strpos($where, self::FILTER_END, $offset);
+                if ($filterStart === false && $filterEnd === false) {
+                    $this->container->get('logger')->error(
+                        sprintf(
+                            'Unable to locate filter %d in %s. (start = %d, end = %d)',
+                            $i, $where, $filterStart, $filterEnd
+                        )
+                    );
+                    break;
+                }
+                $head = substr($where, 0, $filterStart);
+                $tail = substr($where, $filterEnd + strlen(self::FILTER_END));
+                $filter = substr($where, $filterStart + strlen(self::FILTER_START), ($filterEnd - $filterStart) - strlen(self::FILTER_END));
+
+                foreach ($params as $key => $val) {
+                    $filter = str_replace($key, $val, $filter);
+                }
+
+                $where = $head . $filter . $tail;
+            }
+        } else {
+            return $where;
+        }
+    }
 
     /**
      * Check the http query for how many objects to return

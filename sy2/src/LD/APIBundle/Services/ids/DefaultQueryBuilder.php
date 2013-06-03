@@ -50,9 +50,9 @@ class DefaultQueryBuilder extends AbstractQueryBuilder
             $from = '';
         }
 
-        $where = $elements['where'];
-
-
+        $_where = $elements['where'];
+        $where = $this->filterSubstitution($_where);
+        
         $query = sprintf('%s %s %s %s', $define, $select, $from, $where);
 
         if (! (isset($elements['unlimited']) && $elements['unlimited']) ) {
@@ -60,13 +60,6 @@ class DefaultQueryBuilder extends AbstractQueryBuilder
             $offset = $this->getOffset($request);
             $limit = $this->getLimit($request);
             $query = sprintf('%s limit %s offset %s', $query, $limit, $offset);
-        }
-
-        $request = Request::createFromGlobals();
-        $parambag = $request->query->all();
-
-        foreach ($parambag as $key => $value) {
-            $query = str_replace('__' . $key . '__', $value, $query);
         }
 
         return $query;
