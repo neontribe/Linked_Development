@@ -50,7 +50,7 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface, ContainerA
      * Searches for ++FILTER/--FILTER blocks
      *
      * @param string $where
-     * 
+     *
      * @return string
      */
     public function filterSubstitution($where)
@@ -76,15 +76,23 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface, ContainerA
                 $tail = substr($where, $filterEnd + strlen(self::FILTER_END));
                 $filter = substr($where, $filterStart + strlen(self::FILTER_START), ($filterEnd - $filterStart) - strlen(self::FILTER_END));
 
+                $matched = false;
                 foreach ($params as $key => $val) {
-                    $filter = str_replace($key, $val, $filter);
+                    $_key = '__' . $key . '__';
+                    if (substr_count($filter, $_key)) {
+                        $matched = true;
+                        $filter = str_replace($_key, $val, $filter);
+                    }
                 }
 
-                $where = $head . $filter . $tail;
+                if ($matched) {
+                    $where = $head . $filter . $tail;
+                } else {
+                    $where = $head . $tail;
+                }
             }
-        } else {
-            return $where;
         }
+        return $where;
     }
 
     /**
