@@ -10,8 +10,6 @@ abstract class BaseFactory implements FactoryInterface
 {
     protected $container = null;
 
-    // $router = $this->get('router');
-
     /**
      * Sets the Container.
      *

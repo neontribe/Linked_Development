@@ -18,7 +18,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Level entity
+ * Theme entity
  */
 class Theme extends AbstractBaseEntity
 {
@@ -81,11 +81,11 @@ class Theme extends AbstractBaseEntity
     {
         return $this->level;
     }
-    
+
     public static function createFromUri($uri)
     {
-        
+
         $graph = \EasyRdf_Graph::newAndLoad($uri);
-        
+
     }
 }

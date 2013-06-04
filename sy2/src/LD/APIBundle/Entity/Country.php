@@ -24,12 +24,26 @@ class Country extends AbstractBaseEntity
 {
     protected $twolettercode;
 
+    /**
+     * Constructor
+     *
+     * @param string $twolettercode Two letter country code
+     * @param string $metadataUrl   metadataUrl
+     * @param string $objectId      objectId
+     * @param string $objectName    objectName
+     * @param string $objectType    objectType
+     */
     public function __constuct($twolettercode, $metadataUrl, $objectId, $objectName, $objectType)
     {
         $this->twolettercode = $twolettercode;
         parent::__construct($metadataUrl, $objectId, $objectName, $objectType);
     }
-    
+
+    /**
+     * Turn this object into an array
+     *
+     * @param string $format full|short
+     */
     public function toArray($format)
     {
         $data = parent::toArray($format);

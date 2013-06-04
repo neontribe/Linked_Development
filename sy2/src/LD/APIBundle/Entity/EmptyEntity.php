@@ -18,7 +18,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Asset entity
+ * Empty entity
  */
 class EmptyEntity extends AbstractBaseEntity
 {

@@ -3,6 +3,7 @@
 namespace LD\APIBundle\Entity;
 
 use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Top level entity
  */

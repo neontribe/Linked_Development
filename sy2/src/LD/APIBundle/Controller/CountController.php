@@ -12,7 +12,7 @@ use LD\APIBundle\Entity\Region;
 use LD\APIBundle\Entity\Theme;
 
 /**
- * Top level API controller
+ * Count controller
  *
  * @see http://api.ids.ac.uk/
  */

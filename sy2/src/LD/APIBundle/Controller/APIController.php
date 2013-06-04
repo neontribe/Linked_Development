@@ -72,22 +72,6 @@ class APIController extends Controller
     }
 
     /**
-     * Get data for current route
-     *
-     * @return array
-     */
-    protected function getData()
-    {
-        $routeName = $this->container->get('request')->get('_route');
-        $resource = sprintf(
-            '%s/../Resources/fixtures/%s.%s',
-            __DIR__, $routeName, 'json'
-        );
-
-        return json_decode(file_get_contents($resource), true);
-    }
-
-    /**
      * Detect format and create appropriate response
      *
      * @param array $data The data to encode

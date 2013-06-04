@@ -183,6 +183,14 @@ class CountFactory extends BaseFactory
         return $response;
     }
 
+    /**
+     * Parse the list of results and build the response data array
+     *
+     * @param mixed  $data  The list of result rows.
+     * @param string $graph The name of the graph it use.
+     *
+     * @return array
+     */
     protected function countCountry($data, $graph)
     {
         $router = $this->container->get('router');

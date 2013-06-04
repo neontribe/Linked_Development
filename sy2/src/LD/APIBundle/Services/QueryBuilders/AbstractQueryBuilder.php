@@ -101,12 +101,21 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface, ContainerA
         return $where;
     }
 
+    /**
+     * Detect and add offest and limit if needed
+     *
+     * @param array  $elements The query definition
+     * @param string $query    The current query in string form
+     *
+     * @return string
+     */
     protected function addOffsetLImit($elements, $query)
     {
         if (! (isset($elements['unlimited']) && $elements['unlimited']) ) {
             $request = Request::createFromGlobals();
             $offset = $this->getOffset($request);
             $limit = $this->getLimit($request);
+
             return sprintf('%s limit %s offset %s', $query, $limit, $offset);
         }
 
