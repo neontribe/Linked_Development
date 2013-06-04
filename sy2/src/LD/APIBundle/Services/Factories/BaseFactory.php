@@ -1,13 +1,12 @@
 <?php
 namespace LD\APIBundle\Services\Factories;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base entity factory
  */
-abstract class BaseFactory implements ContainerAwareInterface, FactoryInterface
+abstract class BaseFactory implements FactoryInterface
 {
     protected $container = null;
 

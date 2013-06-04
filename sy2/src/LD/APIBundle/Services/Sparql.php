@@ -1,25 +1,15 @@
 <?php
-namespace LD\APIBundle\Services\ids;
+namespace LD\APIBundle\Services;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use LD\APIBundle\Services\QueryBuilders\QueryBuilderInterface;
 
 /**
  * Wrapper to making easy rdf sparql queries
  */
 class Sparql
 {
-    /*
-    SELECT DISTINCT ?class
-    WHERE {
-      ?s a ?class .
-    }
-    LIMIT 25
-    OFFSET 0
-     */
-
-    // http://stackoverflow.com/questions/2930246/exploratory-sparql-queries
-
     protected $logger = null;
     protected $container = null;
     protected $endpoint = null;
@@ -102,18 +92,11 @@ class Sparql
      */
     public function query(array $elements, $graph)
     {
-        if (isset($elements['multiquery']) && $elements['multiquery'] == true) {
-            unset($elements['multiquery']);
-            $data = array();
-            foreach ($elements as $key => $query) {
-                $data[$key] = $this->__query($query, $graph);
-                // $count += count($data[$key]);
-            }
-        } else {
-            $data = $this->__query($elements, $graph);
-            // $count = count($data);
+        $data = array();
+        foreach ($elements['queries'] as $key => $query) {
+            $data[$key] = $this->__query($query, $graph);
+            // $count += count($data[$key]);
         }
-        // $this->container->get('logger')->debug('Query returned ' . $count . ' records.');
 
         return $data;
     }

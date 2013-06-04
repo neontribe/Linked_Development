@@ -3,11 +3,12 @@
  * Entity factory interface
  */
 namespace LD\APIBundle\Services\Factories;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 /**
  * Defines function for Entity factories
  */
-interface FactoryInterface
+interface FactoryInterface extends ContainerAwareInterface
 {
     const SHORT = 0;
     const FULL = 1;
