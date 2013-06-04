@@ -28,7 +28,7 @@ def main():
     os.system('/bin/echo http://linked-development.org/eldis/ > /home/eldis/rdf/global.graph')
     os.system('/usr/bin/touch /home/eldis/active')
     
-""" #start import of eldis data
+    """ #start import of eldis data
     # UPDATE - 23rd May 2013 - @timdavies 
     # Replaced so that we just call eldis_update.py. 
     # This script should work for first load as well as refreshes
@@ -53,7 +53,7 @@ def main():
             break
     #add data to triple store
     os.system("/opt/tools/call_isql /opt/tools/eldis/eldis_load.isql")
-"""
+    """
     os.system('/usr/bin/python /opt/tools/eldis/eldis_update.py')
     
     #so now look at add file to cron tab
