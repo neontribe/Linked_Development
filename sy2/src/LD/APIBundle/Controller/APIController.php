@@ -1,5 +1,4 @@
 <?php
-
 namespace LD\APIBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -9,12 +8,30 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Top level API controller
+ * Top level API controller.
+ *
+ * This controller provides common functions for controllers.
  *
  * @see http://api.ids.ac.uk/
  */
 class APIController extends Controller
 {
+    /**
+     * A generic query builder, maker and processor
+     *
+     * THis should work for most queries.  It detects and defines the graph,
+     * builds the sparql and sends it to virtuoso via the sparql service.
+     * the Response is parsed and the data readied to be returned.
+     *
+     * @param string $graph        eldis|rdf|all
+     * @param string $spql         The array defining the sparql query
+     * @param string $factoryclass The name of the class to be used to process the response
+     * @param string $querybuilder The name of query builder class.
+     * @param string $format       The resonse format to encode to, short|full
+     * @param string $type         The type of the data object being passed, EasyRdf/Sparql/Result, EasyRdf/Graph or EasyRdf/Resource
+     *
+     * @return Response
+     */
     protected function chomp($graph, $spql, $factoryclass, $querybuilder, $format = 'short', $type = null)
     {
         // get the sparql service
@@ -43,6 +60,12 @@ class APIController extends Controller
         return $response;
     }
 
+    /**
+     * Wrapper to the symfony logger
+     *
+     * @param string $msg The message to log
+     * @param string $lvl The level to log at, Default: debug
+     */
     protected function logger($msg, $lvl = 'debug')
     {
         $this->get('logger')->$lvl($msg);
@@ -85,11 +108,6 @@ class APIController extends Controller
                 $this->logger('Format detected via header: ' . $format);
             }
         }
-//        if (!$format) {
-//            // fail over to json
-//            $format = 'json';
-//            $this->logger('Format not specified failing over: ' . $format);
-//        }
 
         $func = '_encode' . ucfirst($format);
 
