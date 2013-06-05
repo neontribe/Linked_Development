@@ -1,8 +1,8 @@
 #!/bin/bash
 
 PWD=`pwd`
-CWD=/home/tobias/tmp/Linked_Development/sy2
-COMPOSER=/home/tobias/tmp/composer.phar
+CWD=`dirname $0`/..
+COMPOSER=$CWD/app/composer.phar
 SYUSER=nobody
 SYGROUP=nogroup
 WEBUSER=www-data
@@ -33,3 +33,5 @@ rm -rf /vagrant/sy2/app/{cache,logs}/*
 chown -R $SYUSER:$SYGROUP $CWD
 chown -R $WEBUSER:$WEBGROUP $CWD/app/{logs,cache}
 chmod -R 1775 $CWD/app/{logs,cache}
+
+cd $PWD
