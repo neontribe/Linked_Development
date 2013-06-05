@@ -1,5 +1,0 @@
-ldapi:
-    resource: "@LDAPIBundle/Controller/"
-    type:     annotation
-    prefix:   /
-
