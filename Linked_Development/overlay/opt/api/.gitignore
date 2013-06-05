@@ -1,0 +1,41 @@
+app/config/apikey
+
+build/
+composer.phar
+
+# Bootstrap
+#app/bootstrap*
+app/bootstrap.php.cache
+
+# Symfony directories
+vendor/*
+*/logs/*
+*/cache/*
+web/uploads/*
+web/bundles/*
+web/js/*
+web/css/*
+sql
+web/media/cache/
+
+# Configuration files
+app/config/parameters.yml
+
+# backup files
+*~
+*.swp
+
+# Composer
+composer.phar
+composer.lock
+/nbproject/private/
+
+# Eclipse files
+.externalToolBuilders/
+.buildpath
+.project
+.settings/*
+
+# phpdocs & test coveage
+web/docs
+web/coverage

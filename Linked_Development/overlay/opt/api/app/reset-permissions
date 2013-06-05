@@ -1,0 +1,209 @@
+#!/bin/bash
+
+CWD=`dirname $0`/..
+
+USAGE="$0 [-h] [-y symfonyuser symfonygroup webuser webgroup] [-p path]"
+
+function help
+{
+    echo $USAGE
+    cat <<EOF
+
+This script will reset ownership and permissions on the symfony stack.  It will
+try and guess the correct users and groups but may be run in a uninteractive
+mode.  If run in non-interactive mode the you must pass the correct users and
+groups to the script on the command line.  If you can figure out how to use the
+script with these instructions you are probably too stupid to have sudo/root
+access which, incedentaly, you will need to run this script.
+
+  -h Show this message
+  -y Run non interactive, you will need to pass the users and groups
+  -p The root of the symfony to reset
+
+EOF
+}
+
+_user=$SUDO_USER
+_root="$(id -u)"
+
+while getopts "yhp:" options; do
+  case $options in
+    y)  NONINTER=1;;
+    h)  help; exit 0;;
+    p)  CWD="$OPTARG";;
+  esac
+done
+
+if [ -z "$_user" ] && [ "$(id -u)" != "0" ]; then
+    echo "You must run this script as root or using sudo"
+    exit 1
+fi
+
+if [ "$NONINTER" == 1 ]; then
+    shift $((OPTIND-1))
+    syuser=$1
+    shift $((OPTIND-1))
+    sygroup=$1
+    shift $((OPTIND-1))
+    webuser=$1
+    shift $((OPTIND-1))
+    webgroup=$1
+else
+    
+    syuser=$_user
+    sygroup=users
+    webuser=`grep 'www-data\|apache\|httpd\|http' /etc/passwd`
+    webuser=`echo "$webuser"|awk -F : '{print $1}' | head -n 1`
+    webgroup=`grep 'www-data\|apache\|httpd\|http' /etc/group`
+    webgroup=`echo "$webgroup"|awk -F : '{print $1}'`
+
+    until [ "$a" == 'y' ]; do
+        echo
+        echo -n "Enter the user name for the symfony user [$syuser] "
+        read input
+        if [ ! -z "$input" ]; then
+            syuser=${input//[^a-zA-Z0-9]/}
+        fi
+    
+        echo -n "Enter the group name for the symfony group [$sygroup] "
+        read input
+        if [ ! -z "$input" ]; then
+            sygroup=${input//[^a-zA-Z0-9]/}
+        fi
+    
+        echo -n "Enter the user name for the webuser [$webuser] "
+        read input
+        if [ ! -z "$input" ]; then
+            webuser=${input//[^-a-zA-Z0-9]/}
+        fi
+    
+        echo -n "Enter the user name for the webgroup [$webgroup] "
+        read input
+        if [ ! -z "$input" ]; then
+            webgroup=${input//[^-a-zA-Z0-9]/}
+        fi
+
+        a=n
+        echo
+        echo "Symfony user name = $syuser"
+        echo "Symfony group name = $sygroup "
+        echo "Webuser group name = $webuser"
+        echo "Webgroup group name = $webgroup"
+        echo
+        echo -n "Proceed (Y/n)"
+        read a
+        if [ -z "$a" ]; then
+            a=y
+        fi
+    done
+fi
+
+if [ -z "$syuser" ]; then
+    echo "Symfony user not set, aborting"
+    echo $USAGE
+    exit 2;
+fi
+
+if [ -z "$sygroup" ]; then
+    echo "Symfony group not set, aborting"
+    echo $USAGE
+    exit 3;
+fi
+
+if [ -z "$webuser" ]; then
+    echo "Web not set, aborting"
+    echo $USAGE
+    exit 4;
+fi
+
+if [ -z "$webgroup" ]; then
+    echo "Web not set, aborting"
+    echo $USAGE
+    exit 5;
+fi
+
+setfacl=`which setfacl`
+if [ -z "$setfacl" ]; then
+    cat << EOF
+
+I am unable to find the setfacl command.  To get permissions
+to work both for the $webuser and $syuser I would like to use
+setfacl.  Without this I will set the permissions on the files
+
+  $CWD/app/{logs,cache}
+
+to be owned by the $webuser with the sticky bit set but you need
+to add the $syuser to the $webgroup and alter the apache umask
+to 0002.
+
+I recommend you install setfacl and remount the folder
+
+  $CWD
+
+with the acl flag:
+
+  mount -o remount,acl /
+
+Use ctrl-c to exit this script and install setfacl or hit any
+key to continue.
+
+EOF
+    read
+fi
+
+echo syuser  = $syuser
+echo sygroup = $sygroup
+echo webuser = $webuser
+echo webgroup = $webgroup
+echo symfony dir = $CWD
+
+set -x
+
+for x in app build .git src web; do
+    find $CWD/$x -type d -exec chmod 775 {} \;
+    find $CWD/$x -type f -exec chmod 664 {} \;
+done
+find . ! -name . -prune -type f -exec chmod 664 {} \;
+
+sudo mkdir $CWD/web/imagecache
+
+chown -R $syuser:$sygroup $CWD
+# chown -R $webuser:$webgroup $CWD/app/{logs,cache}
+# chown -R $webuser:$webgroup $CWD/web/imagecache
+chmod a+x $CWD/composer.phar
+chmod a+x $CWD/app/console*
+chmod a+x $CWD/app/composer
+chmod a+x $CWD/app/db*
+chmod a+x $CWD/app/randpass
+chmod a+x $CWD/app/reset-permissions
+
+if [ -z "$setfacl" ]; then
+    sudo chmod -R 1775 $CWD/app/{logs,cache}
+    sudo chmod -R 1775 $CWD/app/imagecache
+else
+    sudo setfacl -R  -m   u:$webuser:rwx -m u:$syuser:rwx -m g:$sygroup:rwx $CWD/app/{cache,logs}
+    sudo setfacl -dR -m   u:$webuser:rwx -m u:$syuser:rwx -m g:$sygroup:rwx $CWD/app/{cache,logs}
+    sudo setfacl -R  -m d:u:$webuser:rwx -m u:$syuser:rwx -m g:$sygroup:rwx $CWD/app/{cache,logs}
+
+    sudo setfacl -R  -m   u:$webuser:rwx -m u:$syuser:rwx -m g:$sygroup:rwx $CWD/web/imagecache
+    sudo setfacl -dR -m   u:$webuser:rwx -m u:$syuser:rwx -m g:$sygroup:rwx $CWD/web/imagecache
+    sudo setfacl -R  -m d:u:$webuser:rwx -m u:$syuser:rwx -m g:$sygroup:rwx $CWD/web/imagecache
+    
+    sudo setfacl -R  -m   u:$webuser:rwx -m u:$syuser:rwx -m g:$sygroup:rwx $CWD/src/TOCC/HRBundle/Resources/content
+    sudo setfacl -dR -m   u:$webuser:rwx -m u:$syuser:rwx -m g:$sygroup:rwx $CWD/src/TOCC/HRBundle/Resources/content
+    sudo setfacl -R  -m d:u:$webuser:rwx -m u:$syuser:rwx -m g:$sygroup:rwx $CWD/src/TOCC/HRBundle/Resources/content
+
+    sudo setfacl -R  -m   u:$webuser:rwx -m u:$syuser:rwx -m g:$sygroup:rwx $CWD/src/TOCC/HRBundle/Resources/public/images
+    sudo setfacl -dR -m   u:$webuser:rwx -m u:$syuser:rwx -m g:$sygroup:rwx $CWD/src/TOCC/HRBundle/Resources/public/images
+    sudo setfacl -R  -m d:u:$webuser:rwx -m u:$syuser:rwx -m g:$sygroup:rwx $CWD/src/TOCC/HRBundle/Resources/public/images
+
+    sudo setfacl -R  -m   u:$webuser:rwx -m u:$syuser:rwx -m g:$sygroup:rwx $CWD/web/media
+    sudo setfacl -dR -m   u:$webuser:rwx -m u:$syuser:rwx -m g:$sygroup:rwx $CWD/web/media
+    sudo setfacl -R  -m d:u:$webuser:rwx -m u:$syuser:rwx -m g:$sygroup:rwx $CWD/web/media
+    
+    sudo setfacl -R  -m   u:$webuser:rwx -m u:$syuser:rwx -m g:$sygroup:rwx $CWD/src/TOCC/HRBundle/Resources/config/blocks.yml
+    sudo setfacl -dR -m   u:$webuser:rwx -m u:$syuser:rwx -m g:$sygroup:rwx $CWD/src/TOCC/HRBundle/Resources/config/blocks.yml
+    sudo setfacl -R  -m d:u:$webuser:rwx -m u:$syuser:rwx -m g:$sygroup:rwx $CWD/src/TOCC/HRBundle/Resources/config/blocks.yml
+fi
+
+set +x
