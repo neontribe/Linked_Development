@@ -1,0 +1,58 @@
+#!/bin/sh
+
+until [ "$email_address" != "" ]; do
+  DIALOG=${DIALOG=dialog}
+  email_address_file=`tempfile 2>/dev/null` || email_address_file=/tmp/test$$
+  trap "rm -f $email_address_file" 0 1 2 5 15
+
+  $DIALOG --title "Administration email" --clear \
+          --inputbox "Please enter an administration email alias." 16 51 2> $email_address_file
+  email_address=`cat $email_address_file`
+
+  retval=$?
+
+  case $retval in
+    0)
+      #echo "Input string is `cat $hostname_file`";;
+      ;;
+    1)
+      #echo "Cancel pressed.";;
+      ;;
+    255)
+      #if test -s $hostname_file ; then
+      #  cat $hostname_file
+      #else
+      #  echo "ESC pressed."
+      #fi
+      ;;
+  esac
+done
+
+until [ "$email_address_2" = "$email_address" ]; do
+  DIALOG=${DIALOG=dialog}
+  email_address_file2=`tempfile 2>/dev/null` || email_address_file2=/tmp/test$$
+  trap "rm -f $email_address_file2" 0 1 2 5 15
+
+  $DIALOG --title "Please confirm administration email address." --clear \
+        --inputbox "Please re-enter the administration email address" 16 51 2> $email_address_file2
+  email_address_2=`cat $email_address_file2`
+  retval2=$?
+
+  case $retval2 in
+    0)
+      #echo "Input string is `cat $domainname_file`";;
+      ;;
+    1)
+      #echo "Cancel pressed.";;
+      ;;
+    255)
+      #if test -s $domainname_file ; then
+      #  cat $domainname_file
+      #else
+      #  echo "ESC pressed."
+      #fi
+      ;;
+  esac
+done
+
+echo $email_address
