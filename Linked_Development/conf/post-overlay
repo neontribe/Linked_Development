@@ -42,8 +42,8 @@ update-rc.d virtuoso-opensource-6.1 start NN 2 3 4 5  . stop NN 0 1 6 .
 ln -s /opt/openapi/web /var/www/htdocs/openapi
 
 #Install composer.phar (twice because it often fails first time)
-php /opt/openapi/app/composer.phar --working-directory=/opt/openapi update
-php /opt/openapi/app/composer.phar --working-directory=/opt/openapi update
+php /opt/openapi/app/composer.phar --working-dir=/opt/openapi update
+php /opt/openapi/app/composer.phar --working-dir=/opt/openapi update
 
 # clear the composer logs
 rm -rf /opt/openapi/app/{cache,logs}/*
