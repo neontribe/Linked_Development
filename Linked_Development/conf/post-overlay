@@ -40,3 +40,7 @@ update-rc.d virtuoso-opensource-6.1 start NN 2 3 4 5  . stop NN 0 1 6 .
 
 #symlink /opt/openapi/web to /var/www/htdocs/openapi
 ln -s /opt/openapi/web /var/www/htdocs/openapi
+
+#Install composer.phar (twice because it often fails first time)
+php /opt/openapi/app/composer.phar update
+php /opt/openapi/app/composer.phar update
