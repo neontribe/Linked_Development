@@ -37,3 +37,6 @@ chmod 777 -R /var/www/htdocs/lodspeakr/cache /var/www/htdocs/lodspeakr/meta
 
 #setup virtuoso start/stopln -s /etc/init.d/virtuoso-opensource-6.1 /etc/rc2.d/S80virtuoso 
 update-rc.d virtuoso-opensource-6.1 start NN 2 3 4 5  . stop NN 0 1 6 .
+
+#symlink /opt/openapi/web to /var/www/htdocs/openapi
+ln -s /opt/openapi/web /var/www/htdocs/openapi
