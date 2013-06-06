@@ -28,6 +28,10 @@ mkdir -p /var/lib/virtuoso-opensource-6.1/db/
 mkdir -p /var/log/virtuoso-opensource-6.1/
 echo 'PATH=/opt/virtuoso6/bin:$PATH' >> /root/.bashrc
 
+#make lodspeakr directories
+mkdir /var/www/htdocs/lodspeakr/cache
+mkdir /var/www/htdocs/lodspeakr/meta
+
 #setup lodspeakr permissions
 chmod 777 -R /var/www/htdocs/lodspeakr/cache /var/www/htdocs/lodspeakr/meta
 
