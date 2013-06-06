@@ -23,7 +23,7 @@ WEBGROUP=www-data
 # rewrite already enabled
 #a2enmod rewrite
 
-ln -s $CWD/web /var/www/htdocs/openapi
+ln -s /opt/openapi/web /var/www/htdocs/openapi
 
 # API Setup
 cd $CWD
