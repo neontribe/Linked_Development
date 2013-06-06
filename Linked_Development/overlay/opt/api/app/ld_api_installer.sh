@@ -9,25 +9,30 @@ WEBUSER=www-data
 WEBGROUP=www-data
 
 # ensure system status
-apt-get install -y acl apache2 php5-curl php-pear php5-cli git git-flow curl acl php5-sqlite php-apc libapache2-mod-php5
+# now integrated in Linked_Development/Linked_Development/conf/pre-overlay - AB
+# apt-get install -y apache2 php5-curl php-pear php5-cli curl php5-sqlite php-apc libapache2-mod-php5
 
 # Set up apache
 ## Turn allow override on
-sed -i -r -e \
-        '/Directory \/var\/www\// { n ; n ; s/AllowOverride None/AllowOverride All/ }' \
-            /etc/apache2/sites-available/default
+# dont turn it on - we integrate .htaccess into the webserver rules
+#sed -i -r -e \
+#        '/Directory \/var\/www\// { n ; n ; s/AllowOverride None/AllowOverride All/ }' \
+#            /etc/apache2/sites-available/default
+
 ## enable rewiring
-a2enmod rewrite
-ln -s $CWD/web /var/www/htdocs/api
+# rewrite already enabled
+#a2enmod rewrite
+
+ln -s $CWD/web /var/www/htdocs/openapi
 
 # API Setup
 cd $CWD
-# run the vendoe install (twice, it occasionally fails half way through the first run)
+# run the vendor install (twice, it occasionally fails half way through the first run)
 php $COMPOSER update
 php $COMPOSER update
 
 # clear caches/logs the agressive way
-rm -rf /vagrant/sy2/app/{cache,logs}/*
+rm -rf $CWD/app/{cache,logs}/*
 
 # reset permissions
 chown -R $SYUSER:$SYGROUP $CWD
