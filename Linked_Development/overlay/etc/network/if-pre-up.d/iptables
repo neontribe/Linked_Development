@@ -1,2 +1,2 @@
 #!/bin/bash
-/sbin/iptables-restore < /etc/iptables.up.rules
+/sbin/iptables-restore < /etc/network/iptables.up.rules
