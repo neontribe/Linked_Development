@@ -24,7 +24,7 @@ class GetController extends APIController
      * @param string $id     the object id
      *
      * @Route(
-     *      "/{graph}/get/{object}/{id}",
+     *      "/{graph}/search/{object}/{id}",
      *      requirements={
      *          "object" = "documents|assets|countries|themes|organisations|region",
      *      }
@@ -32,11 +32,11 @@ class GetController extends APIController
      * @Method({"GET", "HEAD", "OPTIONS"})
      * @return Response
      */
-    public function getAction($graph, $object, $id)
+    public function searchAction($graph, $object, $id)
     {
         // get and set  the query factory
         $querybuilders = $this->container->getParameter('querybuilder');
-        if (isset($querybuilders['get'][$object])) {
+        if (isset($querybuilders['search'][$object])) {
             $builder = $querybuilders['get'][$object];
         } elseif (isset($querybuilders['default'])) {
             $builder = $querybuilders['default'];
