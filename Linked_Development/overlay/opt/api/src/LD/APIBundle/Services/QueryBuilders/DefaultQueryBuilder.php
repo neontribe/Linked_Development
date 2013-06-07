@@ -58,13 +58,6 @@ class DefaultQueryBuilder extends AbstractQueryBuilder
             sprintf('%s %s %s %s', $define, $select, $from, $where)
         );
 
-        if (! (isset($elements['unlimited']) && $elements['unlimited']) ) {
-            $request = Request::createFromGlobals();
-            $offset = $this->getOffset($request);
-            $limit = $this->getLimit($request);
-            $query = sprintf('%s limit %s offset %s', $query, $limit, $offset);
-        }
-
         return $query;
     }
 }
