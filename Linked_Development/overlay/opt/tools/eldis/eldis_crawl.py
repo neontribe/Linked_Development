@@ -125,6 +125,7 @@ class Eldis_Crawl(Eldis):
                 try:
                     for category in document['category_theme_array']['theme']:
                         themeuri = self.BASE['themes/' + category['object_id'] +'/']
+                        self.graph.add((uri,self.DCTERMS['subject'],themeuri))
                 except:
                     pass
     
