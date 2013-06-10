@@ -17,6 +17,16 @@ use Symfony\Component\HttpFoundation\Response;
 class APIController extends Controller
 {
     /**
+     * @Route("/")
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function indexAction()
+    {
+        return new Response('Linked data open API');
+    }
+
+    /**
      * A generic query builder, maker and processor
      *
      * THis should work for most queries.  It detects and defines the graph,
