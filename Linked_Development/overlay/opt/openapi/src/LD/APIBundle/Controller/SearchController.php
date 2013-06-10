@@ -16,7 +16,7 @@ use LD\APIBundle\Entity\Theme;
  *
  * @see http://api.ids.ac.uk/
  */
-class GetController extends APIController
+class SearchController extends APIController
 {
     /**
      * @param string $graph  the graph to use, see service.yml

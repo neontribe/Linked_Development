@@ -3,7 +3,7 @@
 
 # setting up apache for sparql and snorql
 a2enmod auth_digest proxy_http rewrite
-a2ensite sparql custom_sparql_endpoints lodspeakr
+a2ensite sparql custom_sparql_endpoints lodspeakr openapi
 
 # clean up apache
 rm /var/www/index.html
