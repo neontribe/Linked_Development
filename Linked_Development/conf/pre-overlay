@@ -5,6 +5,9 @@
 cwd=$(dirname $0)
 source $cwd/functions
 
+# install curl - needed to add backports
+install curl
+
 # Add dotdebs php54 backport
 echo "# dotdebs backports and php54" >> /etc/apt/sources.list.d/sources.list
 echo "deb http://packages.dotdeb.org squeeze all" >> /etc/apt/sources.list.d/sources.list
