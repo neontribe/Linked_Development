@@ -59,6 +59,6 @@ echo "deb http://packages.dotdeb.org squeeze all" >> /etc/apt/sources.list.d/sou
 echo "deb-src http://packages.dotdeb.org squeeze all" >> /etc/apt/sources.list.d/sources.list
 echo "deb http://packages.dotdeb.org squeeze-php54 all" >> /etc/apt/sources.list.d/sources.list
 echo "deb-src http://packages.dotdeb.org squeeze-php54 all" >> /etc/apt/sources.list.d/sources.list
-curl http://www.dotdeb.org/dotdeb.gpg | sudo apt-key add -
+curl http://www.dotdeb.org/dotdeb.gpg | apt-key add -
 sudo apt-get update
 apt-get dist-upgrade
