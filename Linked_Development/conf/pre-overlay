@@ -5,24 +5,9 @@
 cwd=$(dirname $0)
 source $cwd/functions
 
-# install curl - needed to add backports
-install curl
-
-# Add dotdebs php54 backport
-echo "# dotdebs backports and php54" >> /etc/apt/sources.list.d/sources.list
-echo "deb http://packages.dotdeb.org squeeze all" >> /etc/apt/sources.list.d/sources.list
-echo "deb-src http://packages.dotdeb.org squeeze all" >> /etc/apt/sources.list.d/sources.list
-echo "deb http://packages.dotdeb.org squeeze-php54 all" >> /etc/apt/sources.list.d/sources.list
-echo "deb-src http://packages.dotdeb.org squeeze-php54 all" >> /etc/apt/sources.list.d/sources.list
-curl http://www.dotdeb.org/dotdeb.gpg | sudo apt-key add -
-sudo apt-get update
-apt-get dist-upgrade
-
 # Install packages
 # removed selinux-basics selinux-policy-default as they broke wheezy RC
 install apache2 curl openjdk-6-jre openssh-server php5 php5-curl php-pear php5-cli php5-sqlite php-apc postfix python2.6 python-pip selinux-basics selinux-policy-default sqlite3 wget
-
-
 
 pip install rdflib>3.1
 
