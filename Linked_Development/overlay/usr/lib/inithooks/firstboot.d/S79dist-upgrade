@@ -1,0 +1,5 @@
+apt-get -y update
+apt-get -y dist-upgrade
+rm /etc/php5/conf.d/suhosin.ini
+rm /etc/php5/conf.d/apc.ini
+apt-get -y install php5-apc
