@@ -52,17 +52,3 @@ rm -rf /opt/openapi/app/{cache,logs}/*
 chown -R nobody:nogroup /opt/openapi
 chown -R www-data:www-data /opt/openapi/app/{logs,cache}
 chmod -R 1775 /opt/openapi/app/{logs,cache}
-
-# Add dotdebs php54 backport
-echo "# dotdebs backports and php54" >> /etc/apt/sources.list.d/sources.list
-echo "deb http://packages.dotdeb.org squeeze all" >> /etc/apt/sources.list.d/sources.list
-echo "deb-src http://packages.dotdeb.org squeeze all" >> /etc/apt/sources.list.d/sources.list
-echo "deb http://packages.dotdeb.org squeeze-php54 all" >> /etc/apt/sources.list.d/sources.list
-echo "deb-src http://packages.dotdeb.org squeeze-php54 all" >> /etc/apt/sources.list.d/sources.list
-curl http://www.dotdeb.org/dotdeb.gpg | apt-key add -
-apt-get update
-apt-get dist-upgrade
-
-rm /etc/php5/conf.d/suhosin.ini
-rm /etc/php5/conf.d/apc.ini
-apt-get install php5-apc
