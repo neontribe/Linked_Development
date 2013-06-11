@@ -60,6 +60,14 @@ def main():
     os.system('cd /home/r4d/rdf/new/; for f in *.rdf; do /bin/mv /home/r4d/rdf/new/"$f" /home/r4d/rdf/' +
                  date + '"$f"; done')
     os.system('/bin/rmdir /home/r4d/rdf/new')   
+    
+    #Run SED to switch the URL base
+    print "Running SED replacements"
+    os.system('cd /home/r4d/rdf/; /bin/sed -i "s/r4d.dfid.gov.uk\/Output/linked-development.org\/r4d\/output/g" *.rdf')
+    os.system('cd /home/r4d/rdf/; /bin/sed -i "s/r4d.dfid.gov.uk\/Project/linked-development.org\/r4d\/project/g" *.rdf')
+    os.system('cd /home/r4d/rdf/; /bin/sed -i "s/r4d.dfid.gov.uk\/Organisation/linked-development.org\/r4d\/organisation/g" *.rdf')
+
+    
     #open default conection to isql and run commands in a file
     os.system("/opt/tools/call_isql /opt/tools/r4d_update.isql")
 
