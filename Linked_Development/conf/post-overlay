@@ -39,19 +39,19 @@ chmod 777 -R /var/www/htdocs/lodspeakr/cache /var/www/htdocs/lodspeakr/meta
 update-rc.d virtuoso-opensource-6.1 start NN 2 3 4 5  . stop NN 0 1 6 .
 
 #symlink /opt/openapi/web to /var/www/htdocs/openapi
-ln -s /opt/openapi/web /var/www/htdocs/openapi
+#ln -s /opt/openapi/web /var/www/htdocs/openapi
 
 #Install composer.phar (twice because it often fails first time)
-php /opt/openapi/app/composer.phar --working-dir=/opt/openapi update
-php /opt/openapi/app/composer.phar --working-dir=/opt/openapi update
+#php /opt/openapi/app/composer.phar --working-dir=/opt/openapi update
+#php /opt/openapi/app/composer.phar --working-dir=/opt/openapi update
 
 # clear the composer logs
-rm -rf /opt/openapi/app/{cache,logs}/*
+#rm -rf /opt/openapi/app/{cache,logs}/*
 
 # reset permissions
-chown -R nobody:nogroup /opt/openapi
-chown -R www-data:www-data /opt/openapi/app/{logs,cache}
-chmod -R 1775 /opt/openapi/app/{logs,cache}
+#chown -R nobody:nogroup /opt/openapi
+#chown -R www-data:www-data /opt/openapi/app/{logs,cache}
+#chmod -R 1775 /opt/openapi/app/{logs,cache}
 
 # Add dotdebs php54 backport
 echo "# dotdebs backports and php54" >> /etc/apt/sources.list.d/sources.list
