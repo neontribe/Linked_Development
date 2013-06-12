@@ -1,0 +1,7 @@
+/var/log/pycentral.log {
+    missingok
+    monthly
+    create 0664 root utmp
+    rotate 1
+}
+
