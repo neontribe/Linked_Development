@@ -56,4 +56,5 @@ until [ "$email_address_2" = "$email_address" ]; do
 done
 
 echo "root: "$email_address >> /etc/aliases
+newaliases
 # echo $email_address
