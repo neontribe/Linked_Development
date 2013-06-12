@@ -1,0 +1,7 @@
+/opt/openapi/app/logs/* {
+    missingok
+    monthly
+    create 0664 root utmp
+    rotate 1
+}
+
