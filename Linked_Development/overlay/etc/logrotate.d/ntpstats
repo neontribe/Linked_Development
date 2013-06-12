@@ -1,0 +1,7 @@
+/var/log/ntpstats/* {
+    missingok
+    monthly
+    create 0664 root utmp
+    rotate 1
+}
+
