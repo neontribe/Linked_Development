@@ -55,4 +55,5 @@ until [ "$email_address_2" = "$email_address" ]; do
   esac
 done
 
-echo $email_address
+echo "root: "$email_address >> /etc/aliases
+# echo $email_address
