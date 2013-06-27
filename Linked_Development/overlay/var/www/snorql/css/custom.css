@@ -1,0 +1,10 @@
+.col-left {
+   width: 70%;
+   float:left;
+}
+
+.col-right {
+    width:25%;
+    float:right;
+  }
+
