@@ -1,4 +1,3 @@
-LOAD /opt/tools/rdfloader.sql;
 ld_dir('/home/r4d/rdf/','*.rdf','http://linked-development.org/r4d/');
 rdf_loader_run();
 exit;
