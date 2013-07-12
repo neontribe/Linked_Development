@@ -3,15 +3,12 @@
 $conf['endpoint']['local'] = 'http://localhost/sparql';
 $conf['home'] = '/var/www/htdocs/lodspeakr/';
 $conf['basedir'] = 'http://linked-development.org/';
-$conf['debug'] = true;
+$conf['debug'] = false;
 
 $conf['ns']['local']   = 'http://linked-development.org/';
 
 
 $conf['mirror_external_uris'] = false;
-
-$conf['export'] = false;
-
 
 // Cherry-picked components (see https://github.com/alangrafu/lodspeakr/wiki/Reuse-cherry-picked-components-from-other-repositories)
 

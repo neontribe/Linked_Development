@@ -219,15 +219,18 @@ class Utils{
   	case 'rdf':
   	  $ser = ARC2::getRDFXMLSerializer();
   	  break;
+  	case 'html':
+  	  return array("content" => $triples, "serialized" => false);
+  	  break;
   	default:
   	  $ser = null;
   	}
   	if($ser != null){
-  	$doc = $ser->getSerializedTriples($triples);
+  	  $doc = $ser->getSerializedTriples($triples);
   	}else{
-  	$doc = var_export($data, true);
+  	  $doc = var_export($data, true);
   	}
-  	return $doc;
+  	return array("content" => $doc, "serialized" => true);
   }
   
   public static function processDocument($viewFile, $lodspk, $data){
@@ -238,7 +241,114 @@ class Utils{
   	
   	header('Content-Type: '.$contentType);
   	if(isset($lodspk['resultRdf']) && $lodspk['resultRdf'] == true){
-  	  echo Utils::serializeRdf($data, $extension);
+  	  $rdfData = Utils::serializeRdf($data, $extension);
+  	  if($rdfData["serialized"]){
+  	    echo $rdfData["content"];
+  	  }else{
+  	    $data['rdf'] = new stdClass();
+
+  	    $subjectCounter = 0;
+  	    $sIndex = array();
+  	    $sCounter = array();
+  	    $spCounter = array();
+  	    foreach($rdfData["content"] as $t){
+  	      //SUBJECT
+  	      if($t['s_type'] == 'uri'){
+  	        $subject = $t['s'];
+  	        $subjectCurie = Utils::uri2curie($subject);
+  	        $subjectMethod = str_replace(":", "__", $subjectCurie);
+  	      }else{
+  	        if(isset($sIndex[$t['s']])){
+  	          $subject = $sIndex[$t['s']];
+  	          $subjectCurie = $sIndex[$t['s']];
+  	          $subjectMethod = $sIndex[$t['s']];
+  	        }else{
+  	          $subject = "_bnode".$subjectCounter;
+  	          $subjectCurie = "_bnode".$subjectCounter;
+  	          $subjectMethod = "_bnode".$subjectCounter;
+  	          $sIndex[$t['s']] = "_bnode".$subjectCounter++;
+  	        }
+  	      }
+  	      if(!isset($data['rdf']->subjects)){
+  	        $data['rdf']->subjects = new stdClass();
+  	      }
+  	      
+  	      if(!isset($data['rdf']->$subjectMethod)){
+  	        $data['rdf']->$subjectMethod = new stdClass();
+  	        $data['rdf']->$subjectMethod->predicates = new stdClass();
+  	      }
+  	      $data['rdf']->$subjectMethod->mirroredUri = $subject;
+  	      $data['rdf']->$subjectMethod->mirroredCurie = $subjectCurie;
+  	      
+  	      $data['rdf']->$subjectMethod->value = Utils::getUnMirroredUri($subject);
+  	      $data['rdf']->$subjectMethod->curie = Utils::uri2curie( $data['rdf']->$subjectMethod->value);
+  	        	        	      
+  	      if(!isset($data['rdf']->subjects->$subjectMethod)){
+  	        $data['rdf']->subjects->$subjectMethod = $data['rdf']->$subjectMethod;
+  	      }
+  	      
+  	      
+  	      
+  	      
+  	      //PREDICATE
+	        $predicate = $t['p'];	        
+	        $predicateCurie = Utils::uri2curie($predicate);
+ 	        $predicateMethod = str_replace(":", "__", $predicateCurie);
+  	      if(!isset($data['rdf']->$subjectMethod->$predicateMethod)){
+  	        $data['rdf']->$subjectMethod->$predicateMethod = new stdClass();
+  	      }
+  	      
+  	      
+  	      $data['rdf']->$subjectMethod->$predicateMethod->mirroredUri = $predicate;
+  	      $data['rdf']->$subjectMethod->$predicateMethod->mirroredCurie = $predicateCurie;
+  	      $data['rdf']->$subjectMethod->$predicateMethod->value = Utils::getUnMirroredUri($predicate);
+  	      $data['rdf']->$subjectMethod->$predicateMethod->curie = Utils::uri2curie( $data['rdf']->$subjectMethod->$predicateMethod->value);
+
+  	        	      
+  	      if(!isset($data['rdf']->$subjectMethod->predicates)){
+  	        $data['rdf']->$subjectMethod->predicates = new stdClass();
+  	      }
+  	      if(!isset($sCounter[$subjectMethod])){
+  	        $sCounter[$subjectMethod] = 0;
+  	      }
+  	      $sCount = $sCounter[$subjectMethod]++;
+  	      $data['rdf']->$subjectMethod->predicates->$sCount = $data['rdf']->$subjectMethod->$predicateMethod;  	     
+  	      
+  	      
+  	      //OBJECT
+  	      if($t['o_type'] == 'uri'){
+  	        $object = $t['o'];
+  	        $objectCurie = Utils::uri2curie($object);
+  	      }elseif($t['o_type'] == 'literal'){
+  	        $object = $t['o'];
+  	        $objectCurie = $object;
+  	      }else{
+  	        if(isset($sIndex[$t['o']])){
+  	          $object = $sIndex[$t['o']];
+  	          $objectCurie = $sIndex[$t['o']];
+  	        }else{
+  	          $object = "_bnode".$objectCounter;
+  	          $objectCurie = "_bnode".$objectCounter;
+  	          $sIndex[$t['s']] = "_bnode".$objectCounter++;
+  	        }
+  	      }  	      
+  	      
+  	      
+  	      $obj = new stdClass();
+  	      $obj->mirroredUri = $object;
+  	      $obj->mirroredCurie = $objectCurie;
+  	      $obj->value = Utils::getUnMirroredUri($object);
+  	      $obj->curie = Utils::uri2curie($obj->value);
+
+  	        	      
+  	      if(!isset($spCounter[$subjectMethod." ".$predicateMethod])){
+  	        $spCounter[$subjectMethod." ".$predicateMethod] = 0;
+  	      }
+  	      $sCount = $spCounter[$subjectMethod." ".$predicateMethod]++;
+  	      $data['rdf']->$subjectMethod->$predicateMethod->objects->$sCount = $obj;  	       	      
+  	    }
+    	  Utils::showView($lodspk, $data, $viewFile);  	
+  	  }
   	}else{
   	  Utils::showView($lodspk, $data, $viewFile);  	
   	}
@@ -429,7 +539,9 @@ class Utils{
 	  	  	  //For now, assuming variables are in the GRAPH ?g
 	  	  	  $query = "CONSTRUCT {?g ?x ?y} WHERE{GRAPH ?g{?g ?x ?y}}";
 	  	  	}else{
-	  	  	  HTTPStatus::send500();
+	  	  	  if(!preg_match('/construct/i', $query)){	  	  	  
+	  	  	    HTTPStatus::send500();
+	  	  	  }
 	  	  	}
 	  	  }else{
 	  	  	$query = preg_replace('/select\s*[^{]*\s*(where)?\s*{/i', 'CONSTRUCT {'.$construct.'} WHERE{', $query);
@@ -510,16 +622,9 @@ class Utils{
   	  	  $value['mirroredUri'] = $value['value'];
   	  	  $value['mirroredCurie'] = Utils::uri2curie($value['value']);
   	  	  if(isset($conf['mirror_external_uris']) && $conf['mirror_external_uris'] != false){  	  	  	
-  	  	  	if(is_bool($conf['mirror_external_uris'])){
-  	  	  	  $value['value'] = preg_replace("|^".$conf['ns']['local']."|", $conf['basedir'], $value['value']);
-  	  	  	}elseif(is_string($conf['mirror_external_uris'])){
-  	  	  	  $value['value'] = preg_replace("|^".$conf['mirror_external_uris']."|", $conf['basedir'], $value['value']);
-  	  	  	}else{
-  	  	  	  HTTPStatus::send500("Error in mirroring configuration");
-  	  	  	  exit(1);
-  	  	  	}
+  	  	  	$value['value'] = Utils::getUnMirroredUri($value['value']);
   	  	  }
-  	  	  $value['curie'] = $value['mirroredCurie'];
+  	  	  $value['curie'] = Utils::uri2curie($value['value']);
   	  	  $array[$key] = $value;
   	  	}  	  	  	  	
   	  } 
@@ -566,12 +671,18 @@ class Utils{
   	  'template_dir' => $viewPath,
   	  'cache_dir' => $conf['home'].'cache/',
   	  ));
+	  $rdf = null;
+  	if(array_key_exists('rdf', $data)){
+     	$rdf = $data['rdf'];
+  	  unset($data['rdf']);
+  	}else{
+  	}
   	$models = $data;
   	Convert::getPaths($models, "");
   	$first = $lodspk['firstResults'];
   	unset($lodspk['firstResults']);
   	//unset($lodspk);
-  	$vars = compact('uri','lodspk', 'conf',  'models', 'first');
+  	$vars = compact('uri','lodspk', 'conf',  'models', 'rdf', 'first');
  	if($conf['debug']){
  	  //Logging::log(var_export($vars, true)); 	
  	}
@@ -645,6 +756,54 @@ class Utils{
     return $result;
   }
   
+  public static function getMirroredUri($localUri){
+    global $conf;
+    $uri = $localUri;
+    if(isset($conf['mirror_external_uris']) && $conf['mirror_external_uris'] != false){      
+      if(is_bool($conf['mirror_external_uris'])){
+        $uri = preg_replace("|^".$conf['basedir']."|", $conf['ns']['base'], $localUri);
+      }elseif(is_string($conf['mirror_external_uris'])){
+        $uri = preg_replace("|^".$conf['basedir']."|", $conf['mirror_external_uris'], $localUri);
+      }elseif(is_array($conf['mirror_external_uris'])){
+        $defaultKey = ""; //Default namespace is empty string ""
+        $namespaceFragment = array_shift(split("/", str_replace($conf['basedir'], "", $localUri)));
+        $uri = preg_replace("|^".$conf['basedir']."|",$conf['mirror_external_uris'][$defaultKey], $localUri);
+        foreach($conf['mirror_external_uris'] as $k => $v){
+          if($namespaceFragment == $k){
+            $uri = preg_replace("|^".$conf['basedir'].$k."/"."|",$conf['mirror_external_uris'][$k], $localUri);
+            break;    
+          }
+        }
+      }else{
+        HTTPStatus::send500("Error in mirroring configuration");
+        exit(1);
+      }      
+    }
+    return $uri;
+  }
+  
+  public static function getUnMirroredUri($uri){
+    global $conf;
+    $localUri = $uri;
+    if(is_bool($conf['mirror_external_uris'])){
+      $localUri = preg_replace("|^".$conf['ns']['local']."|", $conf['basedir'], $uri);
+    }elseif(is_string($conf['mirror_external_uris'])){
+      $localUri = preg_replace("|^".$conf['mirror_external_uris']."|", $conf['basedir'], $uri);
+    }elseif(is_array($conf['mirror_external_uris'])){
+      //Instead of doing expensive regex, jsut use str_replace
+      foreach($conf['mirror_external_uris'] as $k => $v){
+        if(strlen(str_replace($v, "", $uri)) != strlen($uri)){
+          $fragment = ($k == "")?$k: $k."/";
+          $localUri = preg_replace("|^".$v."|",$conf['basedir'].$fragment, $uri);
+          break;    
+        }
+      }
+    }else{
+      HTTPStatus::send500("Error in mirroring configuration");
+      exit(1);
+    }
+    return $localUri;
+  }
 }
 
 ?>
