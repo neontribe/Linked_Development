@@ -58,5 +58,6 @@ echo "deb http://packages.dotdeb.org squeeze-php54 all" >> /etc/apt/sources.list
 echo "deb-src http://packages.dotdeb.org squeeze-php54 all" >> /etc/apt/sources.list.d/sources.list
 apt-key add /etc/apt/sources.list.d/dotdeb.gpg
 rm /etc/apt/sources.list.d/dotdeb.gpg
-apt-get -t squeeze-backports install php5
+apt-get update
+apt-get -y -t squeeze-backports install php5
 
