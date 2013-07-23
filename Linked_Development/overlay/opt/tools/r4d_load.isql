@@ -1,3 +1,4 @@
 ld_dir('/home/r4d/rdf/','*.rdf','http://linked-development.org/r4d/');
 rdf_loader_run();
+DB.DBA.RDF_GRAPH_GROUP_INS('http://linked-development.org/all/','http://linked-development.org/r4d/');
 exit;

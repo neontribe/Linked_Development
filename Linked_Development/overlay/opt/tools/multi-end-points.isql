@@ -3,3 +3,7 @@ Insert INTO "DB"."DBA"."SYS_SPARQL_HOST" (DB.DBA.SYS_SPARQL_HOST.SH_HOST,DB.DBA.
 
 VHOST_DEFINE (vhost=>'localhost',   lhost=>':8891',   lpath=>'/sparql',   ppath=>'/!sparql/',   is_dav=>1,   vsp_user=>'dba', ses_vars=>0, opts=>vector('noinherit', 1), is_default_host=>1);
 VHOST_DEFINE (vhost=>'localhost',   lhost=>':8892',   lpath=>'/sparql',   ppath=>'/!sparql/',   is_dav=>1,   vsp_user=>'dba', ses_vars=>0, opts=>vector('noinherit', 1), is_default_host=>1);
+
+
+CREATE BITMAP INDEX RDF_QUAD_PGOS  ON DB.DBA.RDF_QUAD (G, P, O, S)    PARTITION (O VARCHAR (-1, 0hexffff));
+DB.DBA.RDF_GRAPH_GROUP_CREATE('http://linked-development.org/all/',1);
